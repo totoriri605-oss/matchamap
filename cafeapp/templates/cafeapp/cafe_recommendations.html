@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>말차 취향 찾기 | 말차지도</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; color: #26352a; font-family: Arial, sans-serif; background: #fafcf9; }
+        a { color: #315c3b; }
+        header { padding: 20px max(20px, calc((100% - 1000px)/2)); border-bottom: 1px solid #dce7d8; background: white; }
+        header a { font-size: 20px; font-weight: 700; text-decoration: none; }
+        main { max-width: 1000px; margin: auto; padding: 40px 20px 60px; }
+        h1 { margin-bottom: 12px; color: #244b2d; font-size: 38px; }
+        .description { color: #526558; line-height: 1.7; }
+        .preference-form { margin-top: 28px; padding: 24px; border: 1px solid #dce5d7; border-radius: 16px; background: white; }
+        .taste-fields { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+        .field label { display: block; margin-bottom: 7px; font-size: 14px; font-weight: 700; }
+        .field select { width: 100%; padding: 10px; border: 1px solid #bdcdb8; border-radius: 8px; background: white; }
+        .options { display: flex; flex-wrap: wrap; gap: 12px 22px; margin: 20px 0; }
+        button, .detail-link { padding: 10px 14px; border: 1px solid #52735a; border-radius: 8px; color: white; background: #52735a; cursor: pointer; text-decoration: none; }
+        .results { margin-top: 42px; }
+        .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; padding: 0; list-style: none; }
+        .card { scroll-margin-top: 20px; overflow: hidden; border: 1px solid #dce5d7; border-radius: 14px; background: white; }
+        .card img, .placeholder { display: block; width: 100%; aspect-ratio: 4/3; object-fit: cover; background: #edf3e9; }
+        .card-body { padding: 18px; }
+        .match { color: #315c3b; font-size: 22px; font-weight: 700; }
+        .reason { min-height: 44px; color: #526558; line-height: 1.5; }
+        .scores { color: #657168; font-size: 13px; line-height: 1.6; }
+        .actions { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+        .actions form { margin: 0; }
+        .empty { padding: 24px; border-radius: 12px; background: #edf3e9; }
+        @media (max-width: 800px) { .taste-fields { grid-template-columns: repeat(2, 1fr); } .cards { grid-template-columns: 1fr; } }
+        @media (max-width: 480px) { .taste-fields { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header><a href="{% url 'cafe_list' %}">🍵 말차지도</a></header>
+    <main>
+        <h1>내 취향 말차 카페 찾기</h1>
+        <p class="description">원하는 맛을 1점부터 5점까지 선택하면 취향 차이가 가장 작은 카페를 최대 3곳 추천해드려요.</p>
+        <form class="preference-form" method="get">
+            {% if form.errors %}<p>모든 맛 항목을 1점부터 5점 사이로 선택해주세요.</p>{% endif %}
+            <div class="taste-fields">
+                <div class="field">{{ form.matcha_strength.label_tag }}{{ form.matcha_strength }}</div>
+                <div class="field">{{ form.bitterness.label_tag }}{{ form.bitterness }}</div>
+                <div class="field">{{ form.sweetness.label_tag }}{{ form.sweetness }}</div>
+                <div class="field">{{ form.milkiness.label_tag }}{{ form.milkiness }}</div>
+                <div class="field">{{ form.matcha_aroma.label_tag }}{{ form.matcha_aroma }}</div>
+            </div>
+            <div class="options">
+                <label>{{ form.is_decaf }} {{ form.is_decaf.label }}</label>
+                <label>{{ form.is_vegan }} {{ form.is_vegan.label }}</label>
+                <label>{{ form.has_parking }} {{ form.has_parking.label }}</label>
+                <label>{{ form.has_takeout }} {{ form.has_takeout.label }}</label>
+            </div>
+            <button type="submit">내 취향 카페 추천받기</button>
+        </form>
+        {% if form.is_bound and form.is_valid %}
+            <section class="results">
+                <h2>취향과 가까운 말차 카페</h2>
+                {% if recommendations %}
+                    <ol class="cards">
+                        {% for result in recommendations %}
+                            <li class="card" id="recommendation-{{ result.cafe.id }}">
+                                {% if result.cafe.image %}<img src="{{ result.cafe.image.url }}" alt="{{ result.cafe.name }}">{% else %}<div class="placeholder"></div>{% endif %}
+                                <div class="card-body">
+                                    <div class="match">{{ result.match_percentage }}% 일치</div>
+                                    <h3>{{ forloop.counter }}위 · {{ result.cafe.name }}</h3>
+                                    <p class="reason">{{ result.reason }}</p>
+                                    <p class="scores">진하기 {{ result.cafe.matcha_strength }} · 쌉싸름함 {{ result.cafe.bitterness }} · 단맛 {{ result.cafe.sweetness }} · 우유맛 {{ result.cafe.milkiness }} · 말차 향 {{ result.cafe.matcha_aroma }}</p>
+                                    <div class="actions">
+                                        <a class="detail-link" href="{% url 'cafe_detail' result.cafe.id %}">상세보기</a>
+                                        <form method="post" action="{% url 'toggle_favorite' result.cafe.id %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}#recommendation-{{ result.cafe.id }}"><button type="submit">{% if result.cafe.id in favorite_cafe_ids %}♥{% else %}♡{% endif %}</button></form>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}<p class="empty">선택한 조건으로 추천할 수 있는 카페가 아직 없습니다.</p>{% endif %}
+            </section>
+        {% endif %}
+    </main>
+</body>
+</html>

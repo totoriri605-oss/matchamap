@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>즐겨찾기 | 말차지도</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: #26352a;
+            font-family: Arial, sans-serif;
+            background-color: #fafcf9;
+        }
+
+        .page-content {
+            width: min(1180px, calc(100% - 48px));
+            margin: 0 auto;
+            padding: 48px 0;
+        }
+
+        .page-link {
+            color: #315c3b;
+        }
+
+        .cafe-list {
+            scroll-margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 24px;
+            margin: 32px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .cafe-card {
+            overflow: hidden;
+            border: 1px solid #dce5d7;
+            border-radius: 12px;
+            background-color: #ffffff;
+        }
+
+        .cafe-card__image,
+        .cafe-card__placeholder {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+        }
+
+        .cafe-card__image {
+            object-fit: cover;
+        }
+
+        .cafe-card__placeholder {
+            background-color: #edf3e9;
+        }
+
+        .cafe-card__body {
+            padding: 16px;
+        }
+
+        .cafe-card__name {
+            margin: 0 0 12px;
+        }
+
+        .cafe-card__name a {
+            color: #315c3b;
+            text-decoration: none;
+        }
+
+        .cafe-card__info {
+            margin: 6px 0;
+        }
+
+        .favorite-button {
+            margin-top: 10px;
+            padding: 8px 11px;
+            border: 1px solid #91a78d;
+            border-radius: 7px;
+            color: #315c3b;
+            background-color: #ffffff;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .cafe-list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 520px) {
+            .page-content {
+                width: min(100% - 32px, 1180px);
+                padding: 32px 0;
+            }
+
+            .cafe-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page-content">
+        <p><a class="page-link" href="{% url 'cafe_list' %}">← 말차지도로 돌아가기</a></p>
+        <h1>가보고 싶은 말차 카페</h1>
+
+        <ul class="cafe-list" id="favorite-list">
+            {% for cafe in cafes %}
+                <li class="cafe-card">
+                    {% if cafe.image %}
+                        <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
+                    {% else %}
+                        <div class="cafe-card__placeholder" aria-label="대표 이미지 없음"></div>
+                    {% endif %}
+
+                    <div class="cafe-card__body">
+                        <h2 class="cafe-card__name">
+                            <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
+                        </h2>
+                        <p class="cafe-card__info">지역: {{ cafe.area }}</p>
+                        <p class="cafe-card__info">대표 메뉴: {{ cafe.menu_name }}</p>
+                        <p class="cafe-card__info">가격: {{ cafe.price }}원</p>
+
+                        <form method="post" action="{% url 'toggle_favorite' cafe.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'favorite_list' %}#favorite-list">
+                            <button class="favorite-button" type="submit">♥ 즐겨찾기 해제</button>
+                        </form>
+                    </div>
+                </li>
+            {% empty %}
+                <li>즐겨찾기한 카페가 없습니다.</li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>

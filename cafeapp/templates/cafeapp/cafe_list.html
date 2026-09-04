@@ -81,6 +81,9 @@
             margin-left: auto;
         }
 
+        .site-login form { display: inline; }
+        .site-login button { border: 0; color: #536257; background: transparent; cursor: pointer; }
+
         .page-content {
             width: 100%;
             max-width: calc(var(--content-max-width) + 64px);
@@ -129,7 +132,8 @@
         }
 
         .hero__search button,
-        .hero__filters button {
+        .hero__filters button,
+        .taste-filter__actions button {
             padding: 11px 16px;
             border: 1px solid #52735a;
             border-radius: 8px;
@@ -142,6 +146,71 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+        }
+
+        .taste-filter {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid #cddbc8;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.72);
+        }
+
+        .taste-filter__title {
+            margin: 0 0 16px;
+            color: #294f32;
+            font-size: 19px;
+        }
+
+        .taste-filter__fields {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .taste-filter__field label {
+            display: block;
+            margin-bottom: 6px;
+            color: #465247;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .taste-filter__field select {
+            width: 100%;
+            padding: 9px;
+            border: 1px solid #bdcdb8;
+            border-radius: 7px;
+            background: #ffffff;
+        }
+
+        .taste-filter__options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin-top: 16px;
+        }
+
+        .taste-filter__options label {
+            cursor: pointer;
+        }
+
+        .taste-filter__actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .taste-filter__reset {
+            padding: 10px 14px;
+            color: #526558;
+            text-decoration: none;
+        }
+
+        .filter-errors {
+            margin: 0 0 12px;
+            color: #a12626;
         }
 
         .hero__filters button {
@@ -171,6 +240,11 @@
             font-size: 28px;
         }
 
+        .cafe-section__count {
+            margin: -10px 0 20px;
+            color: #68766b;
+        }
+
         .cafe-list {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -183,6 +257,7 @@
         .cafe-card {
             display: flex;
             flex-direction: column;
+            scroll-margin-top: 20px;
             overflow: hidden;
             border: 1px solid #dce5d7;
             border-radius: 12px;
@@ -229,11 +304,50 @@
             color: #465247;
         }
 
+        .cafe-card__taste {
+            margin: 12px 0 0;
+            color: #526558;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .cafe-card__tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .cafe-card__tag {
+            padding: 4px 7px;
+            border-radius: 999px;
+            color: #315c3b;
+            font-size: 12px;
+            background: #e8f1e4;
+        }
+
+        .favorite-form {
+            margin-top: 14px;
+        }
+
+        .favorite-button {
+            padding: 8px 11px;
+            border: 1px solid #91a78d;
+            border-radius: 7px;
+            color: #315c3b;
+            background-color: #ffffff;
+            cursor: pointer;
+        }
+
         .cafe-list__empty {
             grid-column: 1 / -1;
         }
 
         @media (max-width: 900px) {
+            .taste-filter__fields {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
             .cafe-list {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
@@ -265,6 +379,10 @@
                 flex-direction: column;
             }
 
+            .taste-filter__fields {
+                grid-template-columns: 1fr;
+            }
+
             #map {
                 height: 360px;
                 border-radius: 12px;
@@ -284,12 +402,21 @@
             <nav class="site-nav" aria-label="주요 메뉴">
                 <a class="site-nav__item site-nav__item--active" href="{% url 'cafe_list' %}" aria-current="page">지도</a>
                 <a class="site-nav__item" href="#cafe-list">카페 목록</a>
-                <span class="site-nav__item site-nav__item--disabled">말차 취향 찾기</span>
+                <a class="site-nav__item" href="{% url 'favorite_list' %}">즐겨찾기</a>
+                <a class="site-nav__item" href="{% url 'cafe_suggestion' %}">카페 제보</a>
+                <a class="site-nav__item" href="{% url 'cafe_recommendations' %}">말차 취향 찾기</a>
                 <span class="site-nav__item site-nav__item--disabled">리뷰</span>
                 <span class="site-nav__item site-nav__item--disabled">이벤트</span>
             </nav>
 
-            <span class="site-login">로그인</span>
+            <div class="site-login">
+                {% if user.is_authenticated %}
+                    <span>{{ user.username }}님</span>
+                    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">로그아웃</button></form>
+                {% else %}
+                    <a href="{% url 'login' %}">로그인</a> · <a href="{% url 'signup' %}">회원가입</a>
+                {% endif %}
+            </div>
         </div>
     </header>
 
@@ -303,6 +430,9 @@
                     {% if selected_area in areas %}
                         <input type="hidden" name="area" value="{{ selected_area }}">
                     {% endif %}
+                    {% for key, value in request.GET.items %}
+                        {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
+                    {% endfor %}
                     <input type="text" name="q" value="{{ query }}" placeholder="카페 이름 검색">
                     <button type="submit">검색</button>
                 </form>
@@ -311,10 +441,37 @@
                     {% if query %}
                         <input type="hidden" name="q" value="{{ query }}">
                     {% endif %}
+                    {% for key, value in request.GET.items %}
+                        {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
+                    {% endfor %}
                     <button type="submit">서울 전체</button>
                     {% for area in areas %}
                         <button type="submit" name="area" value="{{ area }}">{{ area }}</button>
                     {% endfor %}
+                </form>
+
+                <form class="taste-filter" method="get">
+                    <h2 class="taste-filter__title">내 취향에 맞는 말차 찾기</h2>
+                    {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                    {% if selected_area in areas %}<input type="hidden" name="area" value="{{ selected_area }}">{% endif %}
+                    {% if taste_filter_form.errors %}<p class="filter-errors">필터 값을 다시 확인해주세요.</p>{% endif %}
+                    <div class="taste-filter__fields">
+                        <div class="taste-filter__field">{{ taste_filter_form.matcha_strength.label_tag }}{{ taste_filter_form.matcha_strength }}</div>
+                        <div class="taste-filter__field">{{ taste_filter_form.bitterness.label_tag }}{{ taste_filter_form.bitterness }}</div>
+                        <div class="taste-filter__field">{{ taste_filter_form.sweetness.label_tag }}{{ taste_filter_form.sweetness }}</div>
+                        <div class="taste-filter__field">{{ taste_filter_form.milkiness.label_tag }}{{ taste_filter_form.milkiness }}</div>
+                        <div class="taste-filter__field">{{ taste_filter_form.matcha_aroma.label_tag }}{{ taste_filter_form.matcha_aroma }}</div>
+                    </div>
+                    <div class="taste-filter__options">
+                        <label>{{ taste_filter_form.is_decaf }} {{ taste_filter_form.is_decaf.label }}</label>
+                        <label>{{ taste_filter_form.is_vegan }} {{ taste_filter_form.is_vegan.label }}</label>
+                        <label>{{ taste_filter_form.has_parking }} {{ taste_filter_form.has_parking.label }}</label>
+                        <label>{{ taste_filter_form.has_takeout }} {{ taste_filter_form.has_takeout.label }}</label>
+                    </div>
+                    <div class="taste-filter__actions">
+                        <button type="submit">취향 필터 적용</button>
+                        <a class="taste-filter__reset" href="{% url 'cafe_list' %}">전체 초기화</a>
+                    </div>
                 </form>
             </div>
         </section>
@@ -323,10 +480,11 @@
 
         <section class="cafe-section" id="cafe-list">
             <h2 class="cafe-section__title">지금 제일 인기 있는 말차 카페 🌿</h2>
+            <p class="cafe-section__count">조건에 맞는 카페 {{ result_count }}곳</p>
 
             <ul class="cafe-list">
                 {% for cafe in cafes %}
-                    <li class="cafe-card">
+                    <li class="cafe-card" id="cafe-{{ cafe.id }}">
                         {% if cafe.image %}
                             <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
                         {% else %}
@@ -339,6 +497,30 @@
                             <p class="cafe-card__info">지역: {{ cafe.area }}</p>
                             <p class="cafe-card__info">대표 메뉴: {{ cafe.menu_name }}</p>
                             <p class="cafe-card__info">가격: {{ cafe.price }}원</p>
+                            {% if cafe.matcha_strength or cafe.bitterness or cafe.sweetness or cafe.milkiness or cafe.matcha_aroma %}
+                                <p class="cafe-card__taste">
+                                    {% if cafe.matcha_strength %}진하기 {{ cafe.matcha_strength }}{% endif %}
+                                    {% if cafe.sweetness %} · 단맛 {{ cafe.sweetness }}{% endif %}
+                                    {% if cafe.matcha_aroma %} · 말차 향 {{ cafe.matcha_aroma }}{% endif %}
+                                </p>
+                            {% else %}
+                                <p class="cafe-card__taste">맛 정보 준비 중</p>
+                            {% endif %}
+                            {% if cafe.is_decaf or cafe.is_vegan or cafe.has_parking or cafe.has_takeout %}
+                                <div class="cafe-card__tags" aria-label="편의 정보">
+                                    {% if cafe.is_decaf %}<span class="cafe-card__tag">디카페인</span>{% endif %}
+                                    {% if cafe.is_vegan %}<span class="cafe-card__tag">비건</span>{% endif %}
+                                    {% if cafe.has_parking %}<span class="cafe-card__tag">주차</span>{% endif %}
+                                    {% if cafe.has_takeout %}<span class="cafe-card__tag">테이크아웃</span>{% endif %}
+                                </div>
+                            {% endif %}
+                            <form class="favorite-form" method="post" action="{% url 'toggle_favorite' cafe.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}#cafe-{{ cafe.id }}">
+                                <button class="favorite-button" type="submit">
+                                    {% if cafe.id in favorite_cafe_ids %}♥ 가보고 싶어요{% else %}♡ 가보고 싶어요{% endif %}
+                                </button>
+                            </form>
                         </div>
                     </li>
                 {% empty %}

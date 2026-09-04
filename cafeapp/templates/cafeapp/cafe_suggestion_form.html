@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카페 제보 | 말차지도</title>
+</head>
+<body>
+    <main>
+        <h1>말차 카페 제보</h1>
+        <p>알리고 싶은 말차 카페 정보를 입력해 주세요.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">제보하기</button>
+        </form>
+
+        <p><a href="{% url 'cafe_list' %}">카페 목록으로 돌아가기</a></p>
+    </main>
+</body>
+</html>
