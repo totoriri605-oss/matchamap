@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>말차 카페 목록</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --content-max-width: 1180px;
+            --desktop-gutter: 32px;
+            --section-gap: 36px;
+        }
+
+        body {
+            margin: 0;
+            color: #26352a;
+            font-family: Arial, sans-serif;
+            background-color: #fafcf9;
+        }
+
+        .site-header {
+            border-bottom: 1px solid #dce7d8;
+            background-color: #ffffff;
+        }
+
+        .site-header__inner {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            width: 100%;
+            max-width: calc(var(--content-max-width) + 64px);
+            min-height: 68px;
+            margin: 0 auto;
+            padding-right: var(--desktop-gutter);
+            padding-left: var(--desktop-gutter);
+        }
+
+        .site-brand {
+            flex-shrink: 0;
+            color: #244b2d;
+            font-size: 21px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .site-nav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .site-nav__item,
+        .site-login {
+            display: inline-block;
+            padding: 9px 11px;
+            border-radius: 7px;
+            color: #536257;
+            font-size: 14px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .site-nav__item--active {
+            color: #244b2d;
+            font-weight: 700;
+            background-color: #e7f0e3;
+        }
+
+        .site-nav__item--disabled,
+        .site-login {
+            color: #7e8a81;
+            cursor: default;
+        }
+
+        .site-login {
+            margin-left: auto;
+        }
+
+        .page-content {
+            width: 100%;
+            max-width: calc(var(--content-max-width) + 64px);
+            margin: 0 auto;
+            padding: 36px var(--desktop-gutter) 56px;
+        }
+
+        .hero {
+            margin-bottom: var(--section-gap);
+            padding: 48px;
+            border-radius: 16px;
+            background-color: #e8f1e4;
+        }
+
+        .hero__content {
+            max-width: 650px;
+        }
+
+        .hero__title {
+            margin: 0;
+            color: #234b2d;
+            font-size: clamp(36px, 5vw, 58px);
+            line-height: 1.15;
+        }
+
+        .hero__description {
+            margin: 18px 0 28px;
+            color: #526558;
+            font-size: 18px;
+        }
+
+        .hero__search {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .hero__search input[type="text"] {
+            min-width: 0;
+            flex: 1;
+            padding: 13px 15px;
+            border: 1px solid #bdcdb8;
+            border-radius: 8px;
+            background-color: #ffffff;
+            font-size: 16px;
+        }
+
+        .hero__search button,
+        .hero__filters button {
+            padding: 11px 16px;
+            border: 1px solid #52735a;
+            border-radius: 8px;
+            color: #ffffff;
+            background-color: #52735a;
+            cursor: pointer;
+        }
+
+        .hero__filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .hero__filters button {
+            padding: 8px 13px;
+            color: #36533d;
+            background-color: #ffffff;
+        }
+
+        #map {
+            width: 100%;
+            height: 520px;
+            margin-bottom: var(--section-gap);
+            overflow: hidden;
+            border: 1px solid #d5e0d1;
+            border-radius: 16px;
+            background-color: #edf3e9;
+            box-shadow: 0 8px 24px rgba(39, 70, 46, 0.08);
+        }
+
+        .cafe-section {
+            scroll-margin-top: 20px;
+        }
+
+        .cafe-section__title {
+            margin: 0 0 20px;
+            color: #294f32;
+            font-size: 28px;
+        }
+
+        .cafe-list {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 24px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .cafe-card {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #dce5d7;
+            border-radius: 12px;
+            background-color: #ffffff;
+            box-shadow: 0 5px 16px rgba(39, 70, 46, 0.06);
+        }
+
+        .cafe-card__image,
+        .cafe-card__image-placeholder {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+        }
+
+        .cafe-card__image {
+            object-fit: cover;
+        }
+
+        .cafe-card__image-placeholder {
+            background-color: #edf3e9;
+        }
+
+        .cafe-card__body {
+            flex: 1;
+            padding: 16px;
+        }
+
+        .cafe-card__name {
+            margin: 0 0 12px;
+            font-size: 18px;
+        }
+
+        .cafe-card__name a {
+            color: #315c3b;
+            text-decoration: none;
+        }
+
+        .cafe-card__name a:hover {
+            text-decoration: underline;
+        }
+
+        .cafe-card__info {
+            margin: 6px 0;
+            color: #465247;
+        }
+
+        .cafe-list__empty {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 900px) {
+            .cafe-list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 520px) {
+            .site-header__inner {
+                align-items: flex-start;
+                flex-wrap: wrap;
+                gap: 8px 16px;
+                padding: 14px 16px;
+            }
+
+            .site-nav {
+                order: 3;
+                flex-basis: 100%;
+                flex-wrap: wrap;
+            }
+
+            .hero {
+                padding: 30px 22px;
+            }
+
+            .page-content {
+                padding: 24px 16px 40px;
+            }
+
+            .hero__search {
+                flex-direction: column;
+            }
+
+            #map {
+                height: 360px;
+                border-radius: 12px;
+            }
+
+            .cafe-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="site-brand" href="{% url 'cafe_list' %}">🍵 말차지도</a>
+
+            <nav class="site-nav" aria-label="주요 메뉴">
+                <a class="site-nav__item site-nav__item--active" href="{% url 'cafe_list' %}" aria-current="page">지도</a>
+                <a class="site-nav__item" href="#cafe-list">카페 목록</a>
+                <span class="site-nav__item site-nav__item--disabled">말차 취향 찾기</span>
+                <span class="site-nav__item site-nav__item--disabled">리뷰</span>
+                <span class="site-nav__item site-nav__item--disabled">이벤트</span>
+            </nav>
+
+            <span class="site-login">로그인</span>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <section class="hero">
+            <div class="hero__content">
+                <h1 class="hero__title">오늘,<br>어디서 말차 마실까?</h1>
+                <p class="hero__description">말차러버를 위한 진짜 말차 카페 지도 🌿</p>
+
+                <form class="hero__search" method="get">
+                    {% if selected_area in areas %}
+                        <input type="hidden" name="area" value="{{ selected_area }}">
+                    {% endif %}
+                    <input type="text" name="q" value="{{ query }}" placeholder="카페 이름 검색">
+                    <button type="submit">검색</button>
+                </form>
+
+                <form class="hero__filters" method="get">
+                    {% if query %}
+                        <input type="hidden" name="q" value="{{ query }}">
+                    {% endif %}
+                    <button type="submit">서울 전체</button>
+                    {% for area in areas %}
+                        <button type="submit" name="area" value="{{ area }}">{{ area }}</button>
+                    {% endfor %}
+                </form>
+            </div>
+        </section>
+
+        <div id="map"></div>
+
+        <section class="cafe-section" id="cafe-list">
+            <h2 class="cafe-section__title">지금 제일 인기 있는 말차 카페 🌿</h2>
+
+            <ul class="cafe-list">
+                {% for cafe in cafes %}
+                    <li class="cafe-card">
+                        {% if cafe.image %}
+                            <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
+                        {% else %}
+                            <div class="cafe-card__image-placeholder" aria-label="대표 이미지 없음"></div>
+                        {% endif %}
+                        <div class="cafe-card__body">
+                            <h3 class="cafe-card__name">
+                                <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
+                            </h3>
+                            <p class="cafe-card__info">지역: {{ cafe.area }}</p>
+                            <p class="cafe-card__info">대표 메뉴: {{ cafe.menu_name }}</p>
+                            <p class="cafe-card__info">가격: {{ cafe.price }}원</p>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="cafe-list__empty">등록된 카페가 없습니다.</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
+
+    {{ map_cafes|json_script:"map-cafes-data" }}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([37.5665, 126.9780], 11);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const mapCafes = JSON.parse(document.getElementById('map-cafes-data').textContent);
+
+        mapCafes.forEach((cafe) => {
+            const cafeLatitude = Number(cafe.latitude);
+            const cafeLongitude = Number(cafe.longitude);
+            const popupContent = document.createElement('div');
+            const cafeName = document.createElement('strong');
+            const detailLink = document.createElement('a');
+
+            cafeName.textContent = cafe.name;
+            detailLink.textContent = '상세보기';
+            detailLink.href = cafe.detail_url;
+
+            popupContent.append(cafeName, document.createElement('br'), detailLink);
+
+            L.marker([cafeLatitude, cafeLongitude])
+                .bindPopup(popupContent)
+                .addTo(map);
+        });
+    </script>
+</body>
+</html>

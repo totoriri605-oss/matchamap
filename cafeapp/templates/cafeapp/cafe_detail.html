@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cafe.name }}</title>
+</head>
+<body>
+    <h1>{{ cafe.name }}</h1>
+
+    {% if cafe.image %}
+        <img src="{{ cafe.image.url }}" alt="{{ cafe.name }}" width="300">
+    {% endif %}
+
+    <p>지역: {{ cafe.area }}</p>
+    <p>주소: {{ cafe.address }}</p>
+    <p>대표 메뉴: {{ cafe.menu_name }}</p>
+    <p>가격: {{ cafe.price }}원</p>
+    <p>설명: {{ cafe.description }}</p>
+</body>
+</html>
