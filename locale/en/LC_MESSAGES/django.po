@@ -1,0 +1,209 @@
+# English translations for 말차지도 (Matcha Map).
+msgid ""
+msgstr ""
+"Project-Id-Version: matchamap\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-20 11:20+0000\n"
+"PO-Revision-Date: 2026-09-20 10:57+0000\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "말차 카페 목록"
+msgstr "Matcha Cafe List"
+
+msgid "좋은 말차가 좋은 하루를 만든다."
+msgstr "Good matcha makes a good day."
+
+msgid "주요 메뉴"
+msgstr "Main menu"
+
+msgid "지도"
+msgstr "Map"
+
+msgid "카페 목록"
+msgstr "Cafes"
+
+msgid "즐겨찾기"
+msgstr "Favorites"
+
+msgid "카페 제보"
+msgstr "Suggest a Cafe"
+
+msgid "말차 취향 찾기"
+msgstr "Find by Taste"
+
+msgid "리뷰"
+msgstr "Reviews"
+
+msgid "이벤트"
+msgstr "Events"
+
+msgid "검색"
+msgstr "Search"
+
+#, python-format
+msgid "%(username)s님"
+msgstr "Hi, %(username)s"
+
+msgid "로그아웃"
+msgstr "Log Out"
+
+msgid "로그인"
+msgstr "Log In"
+
+msgid "회원가입"
+msgstr "Sign Up"
+
+msgid "오늘, 어디서 말차 마실까?"
+msgstr "Today, where should I drink matcha?"
+
+msgid "나만의 취향에 맞는 말차 카페를 찾아보세요."
+msgstr "Find a matcha cafe that matches your taste."
+
+msgid "카페 이름, 지역을 검색해보세요"
+msgstr "Search by cafe name or area"
+
+msgid "전체"
+msgstr "All"
+
+msgid "서울 지도"
+msgstr "Seoul Map"
+
+msgid "지도의 마커를 클릭하면 카페 정보를 볼 수 있어요."
+msgstr "Click a marker on the map to see cafe details."
+
+msgid "지도 크게 보기"
+msgstr "View map full screen"
+
+msgid "목록"
+msgstr "List"
+
+msgid "말차 카페"
+msgstr "Matcha Cafe"
+
+msgid "내 취향으로 찾기"
+msgstr "Find by My Taste"
+
+msgid "나만의 말차 취향으로, 딱 맞는 카페를 찾아보세요."
+msgstr "Find the perfect cafe based on your own matcha taste."
+
+msgid "필터 값을 다시 확인해주세요."
+msgstr "Please check your filter values again."
+
+msgid "진하기(이상)"
+msgstr "Strength (min)"
+
+msgid "쌉싸름함(이상)"
+msgstr "Bitterness (min)"
+
+msgid "단맛(이하)"
+msgstr "Sweetness (max)"
+
+msgid "우유맛(이하)"
+msgstr "Milkiness (max)"
+
+msgid "말차 향(이상)"
+msgstr "Aroma (min)"
+
+msgid "비건 메뉴"
+msgstr "Vegan menu"
+
+msgid "디카페인"
+msgstr "Decaf"
+
+msgid "주차 가능"
+msgstr "Parking available"
+
+msgid "테이크아웃"
+msgstr "Takeout"
+
+msgid "필터 적용"
+msgstr "Apply Filter"
+
+msgid "전체 초기화"
+msgstr "Reset All"
+
+msgid "지금 제일 인기 있는 말차 카페"
+msgstr "Most Popular Matcha Cafes Right Now"
+
+msgid "서울 전체"
+msgstr "All of Seoul"
+
+#, python-format
+msgid "%(counter)s개의 말차 카페"
+msgid_plural "%(counter)s개의 말차 카페"
+msgstr[0] "%(counter)s matcha cafe"
+msgstr[1] "%(counter)s matcha cafes"
+
+msgid "전체 보기"
+msgstr "View All"
+
+msgid "접기"
+msgstr "Collapse"
+
+msgid "대표 이미지 없음"
+msgstr "No photo available"
+
+msgid "가보고 싶어요"
+msgstr "Add to favorites"
+
+msgid "대표 메뉴"
+msgstr "Signature Menu"
+
+msgid "가격"
+msgstr "Price"
+
+#, python-format
+msgid "%(price)s원"
+msgstr "₩%(price)s"
+
+#, python-format
+msgid "진하기 %(value)s"
+msgstr "Strength %(value)s"
+
+#, python-format
+msgid "단맛 %(value)s"
+msgstr "Sweetness %(value)s"
+
+#, python-format
+msgid "말차 향 %(value)s"
+msgstr "Aroma %(value)s"
+
+msgid "맛 정보 준비 중"
+msgstr "Taste info coming soon"
+
+msgid "특징"
+msgstr "Features"
+
+msgid "#진한 말차"
+msgstr "#StrongMatcha"
+
+msgid "#깔끔한 단맛"
+msgstr "#CleanSweetness"
+
+msgid "#진한 향"
+msgstr "#RichAroma"
+
+msgid "비건"
+msgstr "Vegan"
+
+msgid "주차"
+msgstr "Parking"
+
+msgid "등록된 카페가 없습니다."
+msgstr "No cafes found."
+
+msgid "말차 취향 추천"
+msgstr "Matcha Taste Recommendation"
+
+msgid "취향 정보를 입력하면 딱 맞는 말차 카페를 찾아드려요."
+msgstr ""
+"Enter your taste preferences and we'll find the perfect matcha cafe for you."
+
+msgid "추천 받기"
+msgstr "Get Recommendation"
