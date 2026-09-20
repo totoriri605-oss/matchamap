@@ -13,7 +13,13 @@ from .forms import (
     CafeTasteFilterForm,
     ReviewForm,
 )
-from .models import Cafe, Review
+from .models import Cafe, Favorite, Review
+
+
+def _favorite_cafe_ids(user):
+    if not user.is_authenticated:
+        return []
+    return list(user.favorites.values_list('cafe_id', flat=True))
 
 
 def cafe_list(request):
@@ -75,7 +81,7 @@ def cafe_list(request):
         'taste_filter_form': taste_filter_form,
         'result_count': cafes.count(),
         'map_cafes': map_cafes,
-        'favorite_cafe_ids': request.session.get('favorite_cafe_ids', []),
+        'favorite_cafe_ids': _favorite_cafe_ids(request.user),
     }
     return render(request, 'cafeapp/cafe_list.html', context)
 
@@ -85,7 +91,7 @@ def cafe_detail(request, cafe_id):
         Cafe.objects.prefetch_related('reviews__author'),
         id=cafe_id,
     )
-    favorite_cafe_ids = request.session.get('favorite_cafe_ids', [])
+    favorite_cafe_ids = _favorite_cafe_ids(request.user)
     review_summary = cafe.reviews.aggregate(
         average_rating=Avg('rating'),
         review_count=Count('id'),
@@ -109,18 +115,17 @@ def cafe_detail(request, cafe_id):
     )
 
 
+@login_required
 def toggle_favorite(request, cafe_id):
     cafe = get_object_or_404(Cafe, id=cafe_id)
 
     if request.method == 'POST':
-        favorite_cafe_ids = request.session.get('favorite_cafe_ids', [])
-
-        if cafe.id in favorite_cafe_ids:
-            favorite_cafe_ids.remove(cafe.id)
-        else:
-            favorite_cafe_ids.append(cafe.id)
-
-        request.session['favorite_cafe_ids'] = favorite_cafe_ids
+        favorite, created = Favorite.objects.get_or_create(
+            user=request.user,
+            cafe=cafe,
+        )
+        if not created:
+            favorite.delete()
 
     next_url = request.POST.get('next', '')
     if not url_has_allowed_host_and_scheme(
@@ -133,8 +138,9 @@ def toggle_favorite(request, cafe_id):
     return redirect(next_url)
 
 
+@login_required
 def favorite_list(request):
-    favorite_cafe_ids = request.session.get('favorite_cafe_ids', [])
+    favorite_cafe_ids = _favorite_cafe_ids(request.user)
     cafes = Cafe.objects.filter(id__in=favorite_cafe_ids)
     return render(
         request,
@@ -234,7 +240,7 @@ def cafe_recommendations(request):
         {
             'form': form,
             'recommendations': recommendations,
-            'favorite_cafe_ids': request.session.get('favorite_cafe_ids', []),
+            'favorite_cafe_ids': _favorite_cafe_ids(request.user),
         },
     )
 
@@ -259,7 +265,7 @@ def review_create(request, cafe_id):
         messages.success(request, '리뷰가 등록되었습니다.')
         return redirect('cafe_detail', cafe_id=cafe.id)
 
-    favorite_cafe_ids = request.session.get('favorite_cafe_ids', [])
+    favorite_cafe_ids = _favorite_cafe_ids(request.user)
     review_summary = cafe.reviews.aggregate(
         average_rating=Avg('rating'),
         review_count=Count('id'),

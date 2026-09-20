@@ -45,6 +45,31 @@ class Cafe(models.Model):
     has_takeout = models.BooleanField(default=False)
 
 
+class Favorite(models.Model):
+    cafe = models.ForeignKey(
+        Cafe,
+        on_delete=models.CASCADE,
+        related_name='favorited_by',
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='favorites',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=('cafe', 'user'),
+                name='unique_favorite_per_cafe_user',
+            ),
+        ]
+
+    def __str__(self):
+        return f'{self.user} - {self.cafe.name}'
+
+
 class CafeSuggestion(models.Model):
     class Status(models.TextChoices):
         PENDING = 'pending', '검토 대기'

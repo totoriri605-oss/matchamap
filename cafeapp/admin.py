@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cafe, CafeSuggestion, Review
+from .models import Cafe, CafeSuggestion, Favorite, Review
 
 
 @admin.register(Cafe)
@@ -114,3 +114,10 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ('rating', 'created_at')
     search_fields = ('cafe__name', 'author__username', 'comment')
     readonly_fields = ('created_at', 'updated_at')
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'cafe', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('user__username', 'cafe__name')

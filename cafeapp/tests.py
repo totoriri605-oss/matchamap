@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .forms import CafeTasteFilterForm
-from .models import Cafe, Review
+from .models import Cafe, Favorite, Review
 
 
 class ReviewFeatureTests(TestCase):
@@ -466,6 +466,13 @@ class FavoriteScrollPositionTests(TestCase):
             milkiness=2,
             matcha_aroma=5,
         )
+        cls.user = get_user_model().objects.create_user(
+            username='favorite-tester',
+            password='testpass123',
+        )
+
+    def setUp(self):
+        self.client.force_login(self.user)
 
     def test_list_favorite_redirect_keeps_query_and_card_anchor(self):
         next_url = f'/?area=성수&matcha_strength=4#cafe-{self.cafe.id}'
@@ -492,9 +499,7 @@ class FavoriteScrollPositionTests(TestCase):
         self.assertEqual(response.url, next_url)
 
     def test_favorite_list_removal_redirects_to_list_anchor(self):
-        session = self.client.session
-        session['favorite_cafe_ids'] = [self.cafe.id]
-        session.save()
+        Favorite.objects.create(user=self.user, cafe=self.cafe)
         next_url = f"{reverse('favorite_list')}#favorite-list"
         response = self.client.post(
             reverse('toggle_favorite', args=[self.cafe.id]),
