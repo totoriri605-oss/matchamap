@@ -1,9 +1,10 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>말차 카페 목록</title>
+    <title>{% trans "말차 카페 목록" %}</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
         * {
@@ -53,7 +54,7 @@
             gap: 28px;
             width: 100%;
             max-width: calc(var(--content-max-width) + 64px);
-            min-height: 68px;
+            min-height: 60px;
             margin: 0 auto;
             padding-right: var(--desktop-gutter);
             padding-left: var(--desktop-gutter);
@@ -91,8 +92,9 @@
         .site-nav__item,
         .site-login a {
             display: inline-block;
-            padding: 9px 12px;
-            border-radius: 999px;
+            position: relative;
+            padding: 9px 4px;
+            margin: 0 8px;
             color: #536257;
             font-size: 14px;
             text-decoration: none;
@@ -102,12 +104,71 @@
         .site-nav__item--active {
             color: var(--brand-dark);
             font-weight: 700;
-            background-color: #e7f0e3;
+        }
+
+        .site-nav__item--active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 4px;
+            right: 4px;
+            height: 2px;
+            border-radius: 999px;
+            background-color: var(--brand-strong);
         }
 
         .site-nav__item--disabled {
             color: #aab5ac;
             cursor: default;
+        }
+
+        .site-header__right {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .site-header__icon-btn {
+            display: flex;
+            width: 34px;
+            height: 34px;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 50%;
+            color: #536257;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .site-header__icon-btn:hover {
+            background-color: var(--panel-soft);
+        }
+
+        .lang-switch {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px;
+            border-radius: 999px;
+            background-color: var(--panel-soft);
+        }
+
+        .lang-switch__button {
+            padding: 6px 12px;
+            border: 0;
+            border-radius: 999px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .lang-switch__button.is-active {
+            color: #ffffff;
+            background-color: var(--brand-strong);
         }
 
         .site-login {
@@ -145,103 +206,39 @@
 
         /* ---------- Hero ---------- */
         .hero {
-            margin-bottom: var(--section-gap);
-            padding: 40px;
-            border-radius: 16px;
-            background-color: #e8f1e4;
+            margin-bottom: 20px;
+            padding: 28px 0 4px;
         }
 
         .hero__grid {
             display: grid;
-            grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-            gap: 40px;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+            gap: 32px;
             align-items: center;
+        }
+
+        .hero__eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0 0 8px;
+            color: var(--brand-strong);
+            font-size: 13px;
+            font-style: italic;
+            font-weight: 700;
         }
 
         .hero__title {
             margin: 0;
             color: var(--brand-dark);
-            font-size: clamp(32px, 4vw, 48px);
-            line-height: 1.15;
+            font-size: clamp(26px, 3.4vw, 38px);
+            line-height: 1.25;
         }
 
         .hero__description {
-            margin: 16px 0 24px;
+            margin: 10px 0 0;
             color: #526558;
-            font-size: 17px;
-        }
-
-        .hero__search {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 14px;
-        }
-
-        .hero__search-field {
-            position: relative;
-            display: flex;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .hero__search-field .icon {
-            position: absolute;
-            top: 50%;
-            left: 15px;
-            width: 16px;
-            height: 16px;
-            color: #7c8c7c;
-            transform: translateY(-50%);
-            pointer-events: none;
-        }
-
-        .hero__search input[type="text"] {
-            min-width: 0;
-            flex: 1;
-            padding: 13px 15px 13px 40px;
-            border: 1px solid #bdcdb8;
-            border-radius: 999px;
-            background-color: #ffffff;
             font-size: 15px;
-        }
-
-        .hero__search button,
-        .taste-filter__actions button {
-            padding: 11px 20px;
-            border: 1px solid var(--brand-strong);
-            border-radius: 999px;
-            color: #ffffff;
-            background-color: var(--brand-strong);
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .hero__filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .hero__filters button {
-            padding: 9px 16px;
-            border: 1px solid #c7d6c2;
-            border-radius: 999px;
-            color: #3b5741;
-            background-color: #ffffff;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .hero__filters button[name="area"] {
-            border-color: #c7d6c2;
-        }
-
-        .hero__filters button.is-active {
-            border-color: var(--brand-strong);
-            color: #ffffff;
-            font-weight: 700;
-            background-color: var(--brand-strong);
         }
 
         .hero__visual {
@@ -252,41 +249,148 @@
         .hero__visual-card {
             display: flex;
             width: 100%;
-            max-width: 320px;
-            aspect-ratio: 4 / 3;
+            aspect-ratio: 16 / 8;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            border-radius: 20px;
+            gap: 8px;
+            border-radius: 18px;
             background: linear-gradient(155deg, #cfe3c4 0%, #9dc48c 100%);
             box-shadow: 0 12px 28px rgba(39, 70, 46, 0.18);
         }
 
-        .hero__visual-emoji { width: 56px; height: 56px; color: #1f3d26; }
+        .hero__visual-emoji { width: 40px; height: 40px; color: #1f3d26; }
 
         .hero__visual-quote {
             margin: 0;
             color: #1f3d26;
-            font-size: 15px;
+            font-size: 13px;
             font-style: italic;
             text-align: center;
+        }
+
+        /* ---------- Search bar + area chips ---------- */
+        .search-bar {
+            margin-bottom: var(--section-gap);
+        }
+
+        .search-bar__form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .search-bar__field {
+            position: relative;
+            display: flex;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .search-bar__field .icon {
+            position: absolute;
+            top: 50%;
+            left: 18px;
+            width: 16px;
+            height: 16px;
+            color: #7c8c7c;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .search-bar__field input[type="text"] {
+            width: 100%;
+            padding: 15px 20px 15px 46px;
+            border: 1px solid #d7e2d2;
+            border-radius: 999px;
+            background-color: #ffffff;
+            font-size: 15px;
+            box-shadow: 0 2px 10px rgba(39, 70, 46, 0.04);
+        }
+
+        .search-bar__field input[type="text"]:focus {
+            outline: none;
+            border-color: var(--brand-strong);
+        }
+
+        .search-bar__button,
+        .taste-filter__actions button {
+            padding: 13px 26px;
+            border: 1px solid var(--brand-strong);
+            border-radius: 999px;
+            color: #ffffff;
+            background-color: var(--brand-strong);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .area-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .area-chip {
+            padding: 9px 18px;
+            border: 1px solid #d7e2d2;
+            border-radius: 999px;
+            color: #3b5741;
+            background-color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .area-chip.is-active {
+            border-color: var(--brand-strong);
+            color: #ffffff;
+            font-weight: 700;
+            background-color: var(--brand-strong);
         }
 
         /* ---------- Explore row: map + taste filter ---------- */
         .explore-grid {
             display: grid;
-            grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr);
             gap: 24px;
             margin-bottom: var(--section-gap);
         }
 
         .map-panel {
+            position: relative;
             overflow: hidden;
             border: 1px solid var(--line);
             border-radius: 16px;
             background-color: var(--panel);
             box-shadow: 0 8px 24px rgba(39, 70, 46, 0.06);
+        }
+
+        .map-panel__view-toggle {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 500;
+            display: flex;
+            padding: 3px;
+            border-radius: 999px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 14px rgba(39, 70, 46, 0.18);
+        }
+
+        .map-panel__view-toggle a {
+            padding: 7px 14px;
+            border-radius: 999px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .map-panel__view-toggle a.is-active {
+            color: #ffffff;
+            background-color: var(--brand-strong);
         }
 
         .map-panel__header {
@@ -327,7 +431,7 @@
 
         #map {
             width: 100%;
-            height: 420px;
+            height: 480px;
             background-color: #edf3e9;
         }
 
@@ -684,8 +788,16 @@
             padding: 16px;
         }
 
-        .cafe-card__name {
+        .cafe-card__name-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
             margin: 0 0 6px;
+        }
+
+        .cafe-card__name {
+            margin: 0;
             font-size: 17px;
         }
 
@@ -696,6 +808,25 @@
 
         .cafe-card__name a:hover {
             text-decoration: underline;
+        }
+
+        .cafe-card__rating {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            color: #8a6d1d;
+            font-size: 12px;
+            font-weight: 700;
+            background-color: #fdf3d9;
+        }
+
+        .cafe-card__rating .icon {
+            width: 12px;
+            height: 12px;
+            color: #d3a325;
         }
 
         .cafe-card__area {
@@ -848,14 +979,14 @@
             }
 
             .hero {
-                padding: 26px 20px;
+                padding: 20px 0 4px;
             }
 
             .page-content {
                 padding: 24px 16px 40px;
             }
 
-            .hero__search {
+            .search-bar__form {
                 flex-direction: column;
             }
 
@@ -888,28 +1019,44 @@
                 <svg class="icon site-brand__emoji" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
                 <span>
                     말차지도
-                    <span class="site-brand__tagline">좋은 말차가 좋은 하루를 만든다.</span>
+                    <span class="site-brand__tagline">{% trans "좋은 말차가 좋은 하루를 만든다." %}</span>
                 </span>
             </a>
 
-            <nav class="site-nav" aria-label="주요 메뉴">
-                <a class="site-nav__item site-nav__item--active" href="{% url 'cafe_list' %}" aria-current="page">지도</a>
-                <a class="site-nav__item" href="#cafe-list">카페 목록</a>
-                <a class="site-nav__item" href="{% url 'favorite_list' %}">즐겨찾기</a>
-                <a class="site-nav__item" href="{% url 'cafe_suggestion' %}">카페 제보</a>
-                <a class="site-nav__item" href="{% url 'cafe_recommendations' %}">말차 취향 찾기</a>
-                <span class="site-nav__item site-nav__item--disabled">리뷰</span>
-                <span class="site-nav__item site-nav__item--disabled">이벤트</span>
+            <nav class="site-nav" aria-label="{% trans "주요 메뉴" %}">
+                <a class="site-nav__item site-nav__item--active" href="{% url 'cafe_list' %}" aria-current="page">{% trans "지도" %}</a>
+                <a class="site-nav__item" href="#cafe-list">{% trans "카페 목록" %}</a>
+                <a class="site-nav__item" href="{% url 'favorite_list' %}">{% trans "즐겨찾기" %}</a>
+                <a class="site-nav__item" href="{% url 'cafe_suggestion' %}">{% trans "카페 제보" %}</a>
+                <a class="site-nav__item" href="{% url 'cafe_recommendations' %}">{% trans "말차 취향 찾기" %}</a>
+                <span class="site-nav__item site-nav__item--disabled">{% trans "리뷰" %}</span>
+                <span class="site-nav__item site-nav__item--disabled">{% trans "이벤트" %}</span>
             </nav>
 
-            <div class="site-login">
-                {% if user.is_authenticated %}
-                    <span>{{ user.username }}님</span>
-                    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">로그아웃</button></form>
-                {% else %}
-                    <a href="{% url 'login' %}">로그인</a>
-                    <a class="site-login__signup" href="{% url 'signup' %}">회원가입</a>
-                {% endif %}
+            <div class="site-header__right">
+                <button type="button" class="site-header__icon-btn" id="header-search-btn" aria-label="{% trans "검색" %}">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+                <a class="site-header__icon-btn" href="{% url 'favorite_list' %}" aria-label="{% trans "즐겨찾기" %}">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
+                </a>
+
+                <form class="lang-switch" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" name="language" value="ko" class="lang-switch__button{% if LANGUAGE_CODE == 'ko' %} is-active{% endif %}">한국어</button>
+                    <button type="submit" name="language" value="en" class="lang-switch__button{% if LANGUAGE_CODE == 'en' %} is-active{% endif %}">English</button>
+                </form>
+
+                <div class="site-login">
+                    {% if user.is_authenticated %}
+                        <span>{% blocktrans with username=user.username %}{{ username }}님{% endblocktrans %}</span>
+                        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">{% trans "로그아웃" %}</button></form>
+                    {% else %}
+                        <a href="{% url 'login' %}">{% trans "로그인" %}</a>
+                        <a class="site-login__signup" href="{% url 'signup' %}">{% trans "회원가입" %}</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </header>
@@ -918,116 +1065,123 @@
         <section class="hero">
             <div class="hero__grid">
                 <div class="hero__content">
-                    <h1 class="hero__title">오늘,<br>어디서 말차 마실까?</h1>
-                    <p class="hero__description">
-                        말차러버를 위한 진짜 말차 카페 지도
+                    <p class="hero__eyebrow">
+                        Find your perfect matcha
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20C4 13 7 5 19 4c2 11-5 17-13 16z"></path><path d="M8 18C10 14 12 10 16 6"></path></svg>
                     </p>
-
-                    <form class="hero__search" method="get">
-                        {% if selected_area in areas %}
-                            <input type="hidden" name="area" value="{{ selected_area }}">
-                        {% endif %}
-                        {% for key, value in request.GET.items %}
-                            {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
-                        {% endfor %}
-                        <span class="hero__search-field">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                            <input type="text" name="q" value="{{ query }}" placeholder="지역, 카페 이름 검색">
-                        </span>
-                        <button type="submit">검색</button>
-                    </form>
-
-                    <form class="hero__filters" method="get">
-                        {% if query %}
-                            <input type="hidden" name="q" value="{{ query }}">
-                        {% endif %}
-                        {% for key, value in request.GET.items %}
-                            {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
-                        {% endfor %}
-                        <button type="submit" class="{% if not selected_area %}is-active{% endif %}">서울 전체</button>
-                        {% for area in areas %}
-                            <button type="submit" name="area" value="{{ area }}" class="{% if selected_area == area %}is-active{% endif %}">{{ area }}</button>
-                        {% endfor %}
-                    </form>
+                    <h1 class="hero__title">{% trans "오늘, 어디서 말차 마실까?" %}</h1>
+                    <p class="hero__description">{% trans "나만의 취향에 맞는 말차 카페를 찾아보세요." %}</p>
                 </div>
 
                 <div class="hero__visual" aria-hidden="true">
                     <div class="hero__visual-card">
                         <svg class="icon hero__visual-emoji" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
-                        <p class="hero__visual-quote">Good Matcha,<br>Better Day</p>
+                        <p class="hero__visual-quote">Good Matcha, Better Day</p>
                     </div>
                 </div>
             </div>
+        </section>
+
+        <section class="search-bar">
+            <form class="search-bar__form" method="get">
+                {% if selected_area in areas %}
+                    <input type="hidden" name="area" value="{{ selected_area }}">
+                {% endif %}
+                {% for key, value in request.GET.items %}
+                    {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
+                {% endfor %}
+                <span class="search-bar__field">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" name="q" id="search-input" value="{{ query }}" placeholder="{% trans "카페 이름, 지역을 검색해보세요" %}">
+                </span>
+                <button type="submit" class="search-bar__button">{% trans "검색" %}</button>
+            </form>
+
+            <form class="area-chips" method="get">
+                {% if query %}
+                    <input type="hidden" name="q" value="{{ query }}">
+                {% endif %}
+                {% for key, value in request.GET.items %}
+                    {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
+                {% endfor %}
+                <button type="submit" class="area-chip{% if not selected_area %} is-active{% endif %}">{% trans "전체" %}</button>
+                {% for area in areas %}
+                    <button type="submit" name="area" value="{{ area }}" class="area-chip{% if selected_area == area %} is-active{% endif %}">{{ area }}</button>
+                {% endfor %}
+            </form>
         </section>
 
         <section class="explore-grid">
             <div class="map-panel">
                 <div class="map-panel__header">
                     <div>
-                        <h2 class="map-panel__title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.58-7-12a7 7 0 0 1 14 0c0 4.42-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg> 서울 지도</h2>
-                        <p class="map-panel__subtitle">지도의 마커를 클릭하면 카페 정보를 볼 수 있어요.</p>
+                        <h2 class="map-panel__title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.58-7-12a7 7 0 0 1 14 0c0 4.42-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg> {% trans "서울 지도" %}</h2>
+                        <p class="map-panel__subtitle">{% trans "지도의 마커를 클릭하면 카페 정보를 볼 수 있어요." %}</p>
                     </div>
-                    <button type="button" class="map-panel__expand" id="map-expand-toggle" aria-label="지도 크게 보기" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button>
+                    <button type="button" class="map-panel__expand" id="map-expand-toggle" aria-label="{% trans "지도 크게 보기" %}" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button>
+                </div>
+                <div class="map-panel__view-toggle">
+                    <a href="#map" class="is-active">{% trans "지도" %}</a>
+                    <a href="#cafe-list">{% trans "목록" %}</a>
                 </div>
                 <div id="map"></div>
-                <div class="map-panel__legend"><span class="map-panel__legend-dot"></span> 말차 카페</div>
+                <div class="map-panel__legend"><span class="map-panel__legend-dot"></span> {% trans "말차 카페" %}</div>
             </div>
 
             <form class="taste-filter" method="get">
-                <h2 class="taste-filter__title">내 취향으로 찾기</h2>
-                <p class="taste-filter__subtitle">나만의 말차 취향으로, 딱 맞는 카페를 찾아보세요.</p>
+                <h2 class="taste-filter__title">{% trans "내 취향으로 찾기" %}</h2>
+                <p class="taste-filter__subtitle">{% trans "나만의 말차 취향으로, 딱 맞는 카페를 찾아보세요." %}</p>
                 {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
                 {% if selected_area in areas %}<input type="hidden" name="area" value="{{ selected_area }}">{% endif %}
-                {% if taste_filter_form.errors %}<p class="filter-errors">필터 값을 다시 확인해주세요.</p>{% endif %}
+                {% if taste_filter_form.errors %}<p class="filter-errors">{% trans "필터 값을 다시 확인해주세요." %}</p>{% endif %}
                 <div class="taste-filter__fields">
                     <div class="taste-filter__field">
-                        {{ taste_filter_form.matcha_strength.label_tag }}
+                        <label for="{{ taste_filter_form.matcha_strength.id_for_label }}">{% trans "진하기(이상)" %}</label>
                         <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.matcha_strength.id_for_label }}"></span>
                         {{ taste_filter_form.matcha_strength }}
                     </div>
                     <div class="taste-filter__field">
-                        {{ taste_filter_form.bitterness.label_tag }}
+                        <label for="{{ taste_filter_form.bitterness.id_for_label }}">{% trans "쌉싸름함(이상)" %}</label>
                         <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.bitterness.id_for_label }}"></span>
                         {{ taste_filter_form.bitterness }}
                     </div>
                     <div class="taste-filter__field">
-                        {{ taste_filter_form.sweetness.label_tag }}
+                        <label for="{{ taste_filter_form.sweetness.id_for_label }}">{% trans "단맛(이하)" %}</label>
                         <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.sweetness.id_for_label }}"></span>
                         {{ taste_filter_form.sweetness }}
                     </div>
                     <div class="taste-filter__field">
-                        {{ taste_filter_form.milkiness.label_tag }}
+                        <label for="{{ taste_filter_form.milkiness.id_for_label }}">{% trans "우유맛(이하)" %}</label>
                         <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.milkiness.id_for_label }}"></span>
                         {{ taste_filter_form.milkiness }}
                     </div>
                     <div class="taste-filter__field">
-                        {{ taste_filter_form.matcha_aroma.label_tag }}
+                        <label for="{{ taste_filter_form.matcha_aroma.id_for_label }}">{% trans "말차 향(이상)" %}</label>
                         <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.matcha_aroma.id_for_label }}"></span>
                         {{ taste_filter_form.matcha_aroma }}
                     </div>
                 </div>
                 <div class="taste-filter__options">
-                    <label>{{ taste_filter_form.is_vegan }} {{ taste_filter_form.is_vegan.label }}</label>
-                    <label>{{ taste_filter_form.is_decaf }} {{ taste_filter_form.is_decaf.label }}</label>
-                    <label>{{ taste_filter_form.has_parking }} {{ taste_filter_form.has_parking.label }}</label>
-                    <label>{{ taste_filter_form.has_takeout }} {{ taste_filter_form.has_takeout.label }}</label>
+                    <label>{{ taste_filter_form.is_vegan }} {% trans "비건 메뉴" %}</label>
+                    <label>{{ taste_filter_form.is_decaf }} {% trans "디카페인" %}</label>
+                    <label>{{ taste_filter_form.has_parking }} {% trans "주차 가능" %}</label>
+                    <label>{{ taste_filter_form.has_takeout }} {% trans "테이크아웃" %}</label>
                 </div>
                 <div class="taste-filter__actions">
-                    <button type="submit"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> 필터 적용</button>
-                    <a class="taste-filter__reset" href="{% url 'cafe_list' %}">전체 초기화</a>
+                    <button type="submit"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> {% trans "필터 적용" %}</button>
+                    <a class="taste-filter__reset" href="{% url 'cafe_list' %}">{% trans "전체 초기화" %}</a>
                 </div>
             </form>
         </section>
 
         <section class="cafe-section" id="cafe-list">
             <div class="cafe-section__header">
-                <h2 class="cafe-section__title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4z"></path><path d="M8 5H5a3 3 0 0 0 3 5"></path><path d="M16 5h3a3 3 0 0 1-3 5"></path><path d="M10 14v3M14 14v3"></path><path d="M8 20h8"></path></svg> 지금 제일 인기 있는 말차 카페</h2>
+                <h2 class="cafe-section__title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4z"></path><path d="M8 5H5a3 3 0 0 0 3 5"></path><path d="M16 5h3a3 3 0 0 1-3 5"></path><path d="M10 14v3M14 14v3"></path><path d="M8 20h8"></path></svg> {% trans "지금 제일 인기 있는 말차 카페" %}</h2>
                 <div class="cafe-section__meta">
-                    <p class="cafe-section__count">조건에 맞는 카페 {{ result_count }}곳</p>
+                    <p class="cafe-section__count">{% if selected_area %}{{ selected_area }}{% else %}{% trans "서울 전체" %}{% endif %} · {% blocktrans count counter=result_count %}{{ counter }}개의 말차 카페{% plural %}{{ counter }}개의 말차 카페{% endblocktrans %}</p>
                     {% if result_count > 3 %}
-                        <button type="button" class="cafe-section__toggle" id="cafe-list-toggle" aria-expanded="false" aria-controls="cafe-list-items">
-                            전체 보기
+                        <button type="button" class="cafe-section__toggle" id="cafe-list-toggle" aria-expanded="false" aria-controls="cafe-list-items" data-label-expand="{% trans "전체 보기" %}" data-label-collapse="{% trans "접기" %}">
+                            {% trans "전체 보기" %}
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </button>
                     {% endif %}
@@ -1041,12 +1195,12 @@
                             {% if cafe.image %}
                                 <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
                             {% else %}
-                                <div class="cafe-card__image-placeholder" aria-label="대표 이미지 없음"></div>
+                                <div class="cafe-card__image-placeholder" aria-label="{% trans "대표 이미지 없음" %}"></div>
                             {% endif %}
                             <form class="favorite-form favorite-form--floating" method="post" action="{% url 'toggle_favorite' cafe.id %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="next" value="{{ request.get_full_path }}#cafe-{{ cafe.id }}">
-                                <button class="favorite-button" type="submit" aria-label="가보고 싶어요">
+                                <button class="favorite-button" type="submit" aria-label="{% trans "가보고 싶어요" %}">
                                     {% if cafe.id in favorite_cafe_ids %}
                                         <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
                                     {% else %}
@@ -1056,42 +1210,50 @@
                             </form>
                         </div>
                         <div class="cafe-card__body">
-                            <h3 class="cafe-card__name">
-                                <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
-                            </h3>
+                            <div class="cafe-card__name-row">
+                                <h3 class="cafe-card__name">
+                                    <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
+                                </h3>
+                                {% if cafe.average_rating %}
+                                    <span class="cafe-card__rating">
+                                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l2.9 6.5 7.1.7-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7-5.4-4.7 7.1-.7z"></path></svg>
+                                        {{ cafe.average_rating|floatformat:1 }}
+                                    </span>
+                                {% endif %}
+                            </div>
                             <p class="cafe-card__area"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.58-7-12a7 7 0 0 1 14 0c0 4.42-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg> {{ cafe.area }}</p>
                             <dl class="cafe-card__stats">
                                 <div>
-                                    <dt>대표 메뉴</dt>
+                                    <dt>{% trans "대표 메뉴" %}</dt>
                                     <dd>{{ cafe.menu_name }}</dd>
                                 </div>
                                 <div>
-                                    <dt>가격</dt>
-                                    <dd>{{ cafe.price }}원</dd>
+                                    <dt>{% trans "가격" %}</dt>
+                                    <dd>{% blocktrans with price=cafe.price %}{{ price }}원{% endblocktrans %}</dd>
                                 </div>
                             </dl>
                             {% if cafe.matcha_strength or cafe.bitterness or cafe.sweetness or cafe.milkiness or cafe.matcha_aroma %}
                                 <p class="cafe-card__taste">
-                                    {% if cafe.matcha_strength %}진하기 {{ cafe.matcha_strength }}{% endif %}
-                                    {% if cafe.sweetness %} · 단맛 {{ cafe.sweetness }}{% endif %}
-                                    {% if cafe.matcha_aroma %} · 말차 향 {{ cafe.matcha_aroma }}{% endif %}
+                                    {% if cafe.matcha_strength %}{% blocktrans with value=cafe.matcha_strength %}진하기 {{ value }}{% endblocktrans %}{% endif %}
+                                    {% if cafe.sweetness %} · {% blocktrans with value=cafe.sweetness %}단맛 {{ value }}{% endblocktrans %}{% endif %}
+                                    {% if cafe.matcha_aroma %} · {% blocktrans with value=cafe.matcha_aroma %}말차 향 {{ value }}{% endblocktrans %}{% endif %}
                                 </p>
                             {% else %}
-                                <p class="cafe-card__taste">맛 정보 준비 중</p>
+                                <p class="cafe-card__taste">{% trans "맛 정보 준비 중" %}</p>
                             {% endif %}
-                            <div class="cafe-card__tags" aria-label="특징">
-                                {% if cafe.matcha_strength >= 4 %}<span class="cafe-card__tag">#진한 말차</span>{% endif %}
-                                {% if cafe.sweetness and cafe.sweetness <= 2 %}<span class="cafe-card__tag">#깔끔한 단맛</span>{% endif %}
-                                {% if cafe.matcha_aroma >= 4 %}<span class="cafe-card__tag">#진한 향</span>{% endif %}
-                                {% if cafe.is_decaf %}<span class="cafe-card__tag">디카페인</span>{% endif %}
-                                {% if cafe.is_vegan %}<span class="cafe-card__tag">비건</span>{% endif %}
-                                {% if cafe.has_parking %}<span class="cafe-card__tag">주차</span>{% endif %}
-                                {% if cafe.has_takeout %}<span class="cafe-card__tag">테이크아웃</span>{% endif %}
+                            <div class="cafe-card__tags" aria-label="{% trans "특징" %}">
+                                {% if cafe.matcha_strength >= 4 %}<span class="cafe-card__tag">{% trans "#진한 말차" %}</span>{% endif %}
+                                {% if cafe.sweetness and cafe.sweetness <= 2 %}<span class="cafe-card__tag">{% trans "#깔끔한 단맛" %}</span>{% endif %}
+                                {% if cafe.matcha_aroma >= 4 %}<span class="cafe-card__tag">{% trans "#진한 향" %}</span>{% endif %}
+                                {% if cafe.is_decaf %}<span class="cafe-card__tag">{% trans "디카페인" %}</span>{% endif %}
+                                {% if cafe.is_vegan %}<span class="cafe-card__tag">{% trans "비건" %}</span>{% endif %}
+                                {% if cafe.has_parking %}<span class="cafe-card__tag">{% trans "주차" %}</span>{% endif %}
+                                {% if cafe.has_takeout %}<span class="cafe-card__tag">{% trans "테이크아웃" %}</span>{% endif %}
                             </div>
                         </div>
                     </li>
                 {% empty %}
-                    <li class="cafe-list__empty">등록된 카페가 없습니다.</li>
+                    <li class="cafe-list__empty">{% trans "등록된 카페가 없습니다." %}</li>
                 {% endfor %}
             </ul>
         </section>
@@ -1099,10 +1261,10 @@
         <section class="ai-cta">
             <div class="ai-cta__icon"><svg class="icon" style="width:22px;height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="9" width="14" height="10" rx="2"></rect><path d="M12 9V5"></path><circle cx="12" cy="3.5" r="1"></circle><circle cx="9" cy="14" r="1"></circle><circle cx="15" cy="14" r="1"></circle><path d="M2 12h3M19 12h3"></path></svg></div>
             <div class="ai-cta__text">
-                <strong>말차 취향 추천</strong>
-                <p>취향 정보를 입력하면 딱 맞는 말차 카페를 찾아드려요.</p>
+                <strong>{% trans "말차 취향 추천" %}</strong>
+                <p>{% trans "취향 정보를 입력하면 딱 맞는 말차 카페를 찾아드려요." %}</p>
             </div>
-            <a class="ai-cta__button" href="{% url 'cafe_recommendations' %}">추천 받기 <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"></path></svg></a>
+            <a class="ai-cta__button" href="{% url 'cafe_recommendations' %}">{% trans "추천 받기" %} <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"></path></svg></a>
         </section>
     </main>
 
@@ -1168,6 +1330,8 @@
 
         const cafeListEl = document.getElementById('cafe-list-items');
         const cafeListToggle = document.getElementById('cafe-list-toggle');
+        const chevronDownIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+        const chevronUpIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>';
 
         function expandCafeList() {
             if (!cafeListEl || !cafeListToggle) {
@@ -1175,7 +1339,7 @@
             }
             cafeListEl.classList.remove('cafe-list--collapsed');
             cafeListToggle.setAttribute('aria-expanded', 'true');
-            cafeListToggle.innerHTML = '접기 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+            cafeListToggle.innerHTML = `${cafeListToggle.dataset.labelCollapse} ${chevronUpIcon}`;
         }
 
         if (cafeListEl && cafeListToggle) {
@@ -1186,7 +1350,7 @@
                 } else {
                     cafeListEl.classList.add('cafe-list--collapsed');
                     cafeListToggle.setAttribute('aria-expanded', 'false');
-                    cafeListToggle.innerHTML = '전체 보기 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                    cafeListToggle.innerHTML = `${cafeListToggle.dataset.labelExpand} ${chevronDownIcon}`;
                 }
             });
 
@@ -1231,6 +1395,16 @@
 
             syncFromSelect();
         });
+
+        const headerSearchBtn = document.getElementById('header-search-btn');
+        const searchInput = document.getElementById('search-input');
+
+        if (headerSearchBtn && searchInput) {
+            headerSearchBtn.addEventListener('click', () => {
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                searchInput.focus();
+            });
+        }
     </script>
 </body>
 </html>

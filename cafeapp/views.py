@@ -60,6 +60,8 @@ def cafe_list(request):
 
         cafes = cafes.filter(**taste_filters)
 
+    cafes = cafes.annotate(average_rating=Avg('reviews__rating'))
+
     map_cafes = [
         {
             'name': cafe.name,
