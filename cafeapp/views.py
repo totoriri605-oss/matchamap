@@ -13,7 +13,7 @@ from .forms import (
     CafeTasteFilterForm,
     ReviewForm,
 )
-from .models import Cafe, Favorite, Review
+from .models import Cafe, Favorite, Review, HeroBanner
 
 
 def _favorite_cafe_ids(user):
@@ -77,6 +77,7 @@ def cafe_list(request):
 
     context = {
         'cafes': cafes,
+        'hero_banner': HeroBanner.objects.first(),
         'areas': areas,
         'selected_area': selected_area,
         'query': query,

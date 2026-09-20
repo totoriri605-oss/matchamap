@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ cafe.name }} | 말차지도</title>
+    <title>{{ cafe.name }} | 말차요정지도</title>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; color: #26352a; font-family: Arial, sans-serif; background: #fafcf9; }
@@ -40,7 +40,7 @@
     </style>
 </head>
 <body>
-    <header><a href="{% url 'cafe_list' %}">🍵 말차지도</a></header>
+    <header><a href="{% url 'cafe_list' %}">🍵 말차요정지도</a></header>
     <main>
         {% if messages %}<ul class="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
         <section class="cafe">

@@ -522,3 +522,108 @@ class FavoriteScrollPositionTests(TestCase):
             response.url,
             reverse('cafe_detail', args=[self.cafe.id]),
         )
+
+
+class CafeAdminImageTests(TestCase):
+    def setUp(self):
+        import tempfile
+        from django.test import override_settings
+
+        self.media = tempfile.TemporaryDirectory()
+        self.addCleanup(self.media.cleanup)
+        settings_override = override_settings(MEDIA_ROOT=self.media.name)
+        settings_override.enable()
+        self.addCleanup(settings_override.disable)
+        self.admin_user = get_user_model().objects.create_superuser(
+            username='photo_admin', password='test-password', email='admin@example.com',
+        )
+        self.cafe = Cafe.objects.create(
+            name='사진 카페', area='성수', address='서울', menu_name='말차',
+            price=6000, description='사진 테스트',
+        )
+        self.url = reverse('admin:cafeapp_cafe_change', args=[self.cafe.pk])
+        self.data = {
+            'name': self.cafe.name, 'area': '성수', 'address': '서울',
+            'menu_name': '말차', 'price': 6000, 'description': '사진 테스트',
+            '_save': '저장',
+        }
+
+    def photo(self, name):
+        from io import BytesIO
+        from PIL import Image
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        data = BytesIO()
+        Image.new('RGB', (16, 16), 'green').save(data, format='PNG')
+        return SimpleUploadedFile(name, data.getvalue(), content_type='image/png')
+
+    def test_admin_upload_replace_and_clear_photo(self):
+        self.client.force_login(self.admin_user)
+        self.assertContains(self.client.get(self.url), '대표 사진')
+        for name in ('first.png', 'replacement.png'):
+            response = self.client.post(self.url, {**self.data, 'image': self.photo(name)})
+            self.assertEqual(response.status_code, 302)
+            self.cafe.refresh_from_db()
+            self.assertTrue(self.cafe.image.name.endswith(name))
+            self.assertTrue(self.cafe.image.storage.exists(self.cafe.image.name))
+            self.assertContains(self.client.get(reverse('cafe_list')), self.cafe.image.url)
+            self.assertContains(self.client.get(self.url), self.cafe.image.url)
+        self.assertEqual(self.client.post(self.url, {**self.data, 'image-clear': 'on'}).status_code, 302)
+        self.cafe.refresh_from_db()
+        self.assertFalse(self.cafe.image)
+
+    def test_photo_edit_link_and_admin_access_require_permission(self):
+        self.assertNotContains(self.client.get(reverse('cafe_list')), '사진 편집')
+        self.assertEqual(self.client.get(self.url).status_code, 302)
+        staff = get_user_model().objects.create_user(username='no_photo_permission', is_staff=True)
+        self.client.force_login(staff)
+        self.assertNotContains(self.client.get(reverse('cafe_list')), '사진 편집')
+        self.assertEqual(self.client.post(self.url, self.data).status_code, 403)
+        self.client.force_login(self.admin_user)
+        self.assertContains(self.client.get(reverse('cafe_list')), '사진 편집')
+
+
+class HeroBannerTests(TestCase):
+    setUp = CafeAdminImageTests.setUp
+    photo = CafeAdminImageTests.photo
+
+    def test_banner_lifecycle_and_fallback(self):
+        from .models import HeroBanner
+
+        self.assertContains(self.client.get(reverse('cafe_list')), 'class="matcha-art"')
+        self.client.force_login(self.admin_user)
+        add_url = reverse('admin:cafeapp_herobanner_add')
+        response = self.client.post(add_url, {'image': self.photo('hero.png'), 'position': 'left', '_save': 'Save'})
+        self.assertEqual(response.status_code, 302)
+        banner = HeroBanner.objects.get()
+        url = reverse('admin:cafeapp_herobanner_change', args=[banner.pk])
+        home = self.client.get(reverse('cafe_list'))
+        self.assertContains(home, banner.image.url)
+        self.assertContains(home, 'hero__image--left')
+        self.assertNotContains(home, 'class="matcha-art"')
+        self.assertContains(self.client.get(url), banner.image.url)
+        self.assertEqual(self.client.get(add_url).status_code, 403)
+        response = self.client.post(url, {'image': self.photo('hero-new.png'), 'position': 'right', '_save': 'Save'})
+        self.assertEqual(response.status_code, 302)
+        banner.refresh_from_db()
+        self.assertTrue(banner.image.name.endswith('hero-new.png'))
+        self.assertContains(self.client.get(reverse('cafe_list')), 'hero__image--right')
+        self.cafe.refresh_from_db()
+        self.assertFalse(self.cafe.image)
+        self.assertEqual(self.client.post(url, {'image-clear': 'on', 'position': 'center', '_save': 'Save'}).status_code, 302)
+        self.assertContains(self.client.get(reverse('cafe_list')), 'class="matcha-art"')
+
+    def test_banner_rejects_invalid_image_and_unauthorized_changes(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from .models import HeroBanner
+
+        url = reverse('admin:cafeapp_herobanner_add')
+        self.assertEqual(self.client.post(url, {'position': 'center'}).status_code, 302)
+        staff = get_user_model().objects.create_user(username='banner_staff', is_staff=True)
+        self.client.force_login(staff)
+        self.assertEqual(self.client.post(url, {'position': 'center'}).status_code, 403)
+        self.client.force_login(self.admin_user)
+        response = self.client.post(url, {'image': SimpleUploadedFile('bad.png', b'not an image'), 'position': 'center'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['adminform'].form.errors.get('image'))
+        self.assertFalse(HeroBanner.objects.exists())

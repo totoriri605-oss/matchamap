@@ -119,3 +119,23 @@ class Review(models.Model):
 
     def __str__(self):
         return f'{self.cafe.name} - {self.author} ({self.rating})'
+
+
+class HeroBanner(models.Model):
+    class Position(models.TextChoices):
+        CENTER = 'center', '가운데'
+        LEFT = 'left', '왼쪽'
+        RIGHT = 'right', '오른쪽'
+
+    id = models.PositiveSmallIntegerField(primary_key=True, default=1, editable=False)
+    image = models.ImageField('Hero 대표 이미지', upload_to='hero/', blank=True,
+        help_text='가로형 이미지(권장 1600×1000)를 사용하세요. 비어 있으면 기존 일러스트가 표시됩니다.')
+    position = models.CharField('이미지 위치', max_length=6, choices=Position.choices, default=Position.CENTER)
+
+    class Meta:
+        verbose_name = '메인 Hero 배너'
+        verbose_name_plural = '메인 Hero 배너'
+        constraints = [models.CheckConstraint(condition=models.Q(id=1), name='single_hero_banner')]
+
+    def __str__(self):
+        return '메인 Hero 배너'

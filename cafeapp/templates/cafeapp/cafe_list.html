@@ -1,10 +1,10 @@
-{% load i18n %}
+{% load i18n static %}
 <!DOCTYPE html>
 <html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "말차 카페 목록" %}</title>
+    <title>말차요정지도 | 내 취향의 말차를 찾아서</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
         * {
@@ -1011,6 +1011,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{% static 'cafeapp/home.css' %}">
 </head>
 <body>
     <header class="site-header">
@@ -1018,7 +1019,7 @@
             <a class="site-brand" href="{% url 'cafe_list' %}">
                 <svg class="icon site-brand__emoji" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
                 <span>
-                    말차지도
+                    말차요정지도
                     <span class="site-brand__tagline">{% trans "좋은 말차가 좋은 하루를 만든다." %}</span>
                 </span>
             </a>
@@ -1029,8 +1030,6 @@
                 <a class="site-nav__item" href="{% url 'favorite_list' %}">{% trans "즐겨찾기" %}</a>
                 <a class="site-nav__item" href="{% url 'cafe_suggestion' %}">{% trans "카페 제보" %}</a>
                 <a class="site-nav__item" href="{% url 'cafe_recommendations' %}">{% trans "말차 취향 찾기" %}</a>
-                <span class="site-nav__item site-nav__item--disabled">{% trans "리뷰" %}</span>
-                <span class="site-nav__item site-nav__item--disabled">{% trans "이벤트" %}</span>
             </nav>
 
             <div class="site-header__right">
@@ -1066,23 +1065,12 @@
             <div class="hero__grid">
                 <div class="hero__content">
                     <p class="hero__eyebrow">
-                        Find your perfect matcha
+                        A LITTLE MATCHA, A LITTLE MAGIC
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20C4 13 7 5 19 4c2 11-5 17-13 16z"></path><path d="M8 18C10 14 12 10 16 6"></path></svg>
                     </p>
-                    <h1 class="hero__title">{% trans "오늘, 어디서 말차 마실까?" %}</h1>
+                    <h1 class="hero__title">오늘은 어디서<br>말차 한 잔 할까요?</h1>
                     <p class="hero__description">{% trans "나만의 취향에 맞는 말차 카페를 찾아보세요." %}</p>
-                </div>
-
-                <div class="hero__visual" aria-hidden="true">
-                    <div class="hero__visual-card">
-                        <svg class="icon hero__visual-emoji" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
-                        <p class="hero__visual-quote">Good Matcha, Better Day</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="search-bar">
+<section class="search-bar" aria-label="카페 검색">
             <form class="search-bar__form" method="get">
                 {% if selected_area in areas %}
                     <input type="hidden" name="area" value="{{ selected_area }}">
@@ -1092,7 +1080,7 @@
                 {% endfor %}
                 <span class="search-bar__field">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" name="q" id="search-input" value="{{ query }}" placeholder="{% trans "카페 이름, 지역을 검색해보세요" %}">
+                    <input type="text" name="q" aria-label="카페 이름 검색" id="search-input" value="{{ query }}" placeholder="{% trans "카페 이름을 검색해보세요" %}">
                 </span>
                 <button type="submit" class="search-bar__button">{% trans "검색" %}</button>
             </form>
@@ -1110,6 +1098,35 @@
                 {% endfor %}
             </form>
         </section>
+                </div>
+
+                <div class="hero__visual" aria-hidden="true">
+                    {% if hero_banner.image %}
+                    <img class="hero__image hero__image--{{ hero_banner.position }}" src="{{ hero_banner.image.url }}" alt="" fetchpriority="high">
+                    {% else %}
+                    <svg class="matcha-art" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="tea" x2="0" y2="1"><stop stop-color="#73934a"/><stop offset="1" stop-color="#3c602d"/></linearGradient>
+                            <linearGradient id="milk" x2="0" y2="1"><stop stop-color="#f8f3dc"/><stop offset="1" stop-color="#d6d9b2"/></linearGradient>
+                        </defs>
+                        <ellipse cx="268" cy="263" rx="139" ry="19" fill="#456038" opacity=".12"/>
+                        <path d="M351 221Q380 106 425 89Q432 164 351 221" fill="#879c6c"/>
+                        <path d="M355 211Q323 138 337 111Q377 143 355 211" fill="#b3bf8f"/>
+                        <ellipse cx="240" cy="251" rx="92" ry="17" fill="#ac9570"/>
+                        <path d="M168 80L182 233Q239 262 297 233L313 80Z" fill="url(#milk)" stroke="#fffdf1" stroke-width="5"/>
+                        <path d="M171 98L177 159Q206 137 231 162T306 147L311 96Z" fill="url(#tea)"/>
+                        <ellipse cx="240" cy="81" rx="73" ry="23" fill="#4b712e" stroke="#fffdf1" stroke-width="5"/>
+                        <ellipse cx="240" cy="81" rx="62" ry="16" fill="#87a556"/>
+                        <g fill="#e5edc9" opacity=".65" stroke="#fff" stroke-width="2"><rect x="201" y="65" width="28" height="23" rx="6" transform="rotate(15 215 77)"/><rect x="247" y="72" width="32" height="22" rx="6" transform="rotate(-18 263 83)"/></g>
+                        <path d="M189 111L199 222" stroke="#fff" stroke-width="5" opacity=".5" stroke-linecap="round"/>
+                        <g fill="#73894e"><path d="M134 43l4 12 12 4-12 4-4 12-4-12-12-4 12-4Z"/><path d="M347 54l3 9 9 3-9 3-3 9-3-9-9-3 9-3Z"/><circle cx="126" cy="181" r="3"/></g>
+                        <text x="28" y="127" fill="#6e8256" font-family="Georgia, serif" font-size="20" font-style="italic" transform="rotate(-12 28 127)">a sip of magic</text>
+                    </svg>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
 
         <section class="explore-grid">
             <div class="map-panel">
@@ -1176,7 +1193,7 @@
 
         <section class="cafe-section" id="cafe-list">
             <div class="cafe-section__header">
-                <h2 class="cafe-section__title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4z"></path><path d="M8 5H5a3 3 0 0 0 3 5"></path><path d="M16 5h3a3 3 0 0 1-3 5"></path><path d="M10 14v3M14 14v3"></path><path d="M8 20h8"></path></svg> {% trans "지금 제일 인기 있는 말차 카페" %}</h2>
+                <h2 class="cafe-section__title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4z"></path><path d="M8 5H5a3 3 0 0 0 3 5"></path><path d="M16 5h3a3 3 0 0 1-3 5"></path><path d="M10 14v3M14 14v3"></path><path d="M8 20h8"></path></svg> {% trans "오늘 발견할 말차 카페" %}</h2>
                 <div class="cafe-section__meta">
                     <p class="cafe-section__count">{% if selected_area %}{{ selected_area }}{% else %}{% trans "서울 전체" %}{% endif %} · {% blocktrans count counter=result_count %}{{ counter }}개의 말차 카페{% plural %}{{ counter }}개의 말차 카페{% endblocktrans %}</p>
                     {% if result_count > 3 %}
@@ -1210,6 +1227,9 @@
                             </form>
                         </div>
                         <div class="cafe-card__body">
+                            {% if user.is_staff and perms.cafeapp.change_cafe %}
+                                <a class="cafe-card__edit" href="{% url 'admin:cafeapp_cafe_change' cafe.id %}">사진 편집</a>
+                            {% endif %}
                             <div class="cafe-card__name-row">
                                 <h3 class="cafe-card__name">
                                     <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
@@ -1253,7 +1273,7 @@
                         </div>
                     </li>
                 {% empty %}
-                    <li class="cafe-list__empty">{% trans "등록된 카페가 없습니다." %}</li>
+                    <li class="cafe-list__empty">{% trans "조건에 맞는 카페가 없어요. 검색어나 필터를 바꿔보세요." %}</li>
                 {% endfor %}
             </ul>
         </section>
@@ -1267,6 +1287,7 @@
             <a class="ai-cta__button" href="{% url 'cafe_recommendations' %}">{% trans "추천 받기" %} <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"></path></svg></a>
         </section>
     </main>
+    <footer class="site-footer"><strong>말차요정지도</strong><span>작은 한 잔이 만드는, 조금 더 좋은 하루.</span></footer>
 
     {{ map_cafes|json_script:"map-cafes-data" }}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
