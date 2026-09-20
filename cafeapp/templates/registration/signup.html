@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 | 말차지도</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --brand-dark: #234b2d;
+            --brand-strong: #2f6b3c;
+            --ink: #26352a;
+            --muted: #667468;
+            --line: #dce7d8;
+            --panel: #ffffff;
+            --panel-soft: #f1f6ee;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            overflow-x: hidden;
+            color: var(--ink);
+            font-family: Arial, sans-serif;
+            background-color: #fafcf9;
+        }
+
+        a { color: inherit; }
+
+        .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            vertical-align: -3px;
+        }
+
+        .decor-leaf {
+            position: fixed;
+            color: var(--brand-strong);
+            opacity: 0.12;
+            pointer-events: none;
+        }
+
+        .decor-leaf--tl { top: 84px; left: 24px; width: 120px; height: 120px; }
+        .decor-leaf--br { right: 24px; bottom: 24px; width: 140px; height: 140px; transform: rotate(180deg); }
+
+        @media (max-width: 1000px) {
+            .decor-leaf { display: none; }
+        }
+
+        .site-header {
+            position: relative;
+            z-index: 1;
+            border-bottom: 1px solid var(--line);
+            background-color: var(--panel);
+        }
+
+        .site-header__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            min-height: 64px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .site-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--brand-dark);
+            font-size: 19px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .site-brand .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .site-brand__tagline {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .site-header__back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .signup-layout {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr minmax(360px, 440px) 1fr;
+            align-items: center;
+            gap: 32px;
+            max-width: 1200px;
+            min-height: calc(100vh - 65px);
+            margin: 0 auto;
+            padding: 48px 32px 72px;
+        }
+
+        .signup-side__desc,
+        .signup-side__caption {
+            color: var(--muted);
+        }
+
+        .signup-side--left h2 {
+            margin: 0 0 16px;
+            color: var(--brand-dark);
+            font-size: 30px;
+            line-height: 1.3;
+        }
+
+        .signup-side__desc {
+            margin: 0 0 48px;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .signup-side__caption {
+            font-size: 12px;
+            line-height: 1.8;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .signup-side--right {
+            text-align: right;
+        }
+
+        .signup-side__visual {
+            display: flex;
+            width: 100%;
+            max-width: 260px;
+            aspect-ratio: 3 / 4;
+            margin-left: auto;
+            margin-bottom: 22px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            background: linear-gradient(160deg, #cfe3c4 0%, #8fbd7d 100%);
+            box-shadow: 0 20px 40px rgba(39, 70, 46, 0.22);
+        }
+
+        .signup-side__visual .icon {
+            width: 64px;
+            height: 64px;
+            color: #1f3d26;
+        }
+
+        .signup-side__quote {
+            margin: 0 0 10px;
+            color: var(--brand-dark);
+            font-size: 16px;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .signup-card-wrap {
+            display: flex;
+            justify-content: center;
+        }
+
+        .signup-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 36px;
+            border-radius: 20px;
+            background-color: var(--panel);
+            box-shadow: 0 20px 44px rgba(39, 70, 46, 0.12);
+        }
+
+        .signup-card__brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .signup-card__brand-icon {
+            display: flex;
+            width: 56px;
+            height: 56px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            border-radius: 16px;
+            color: var(--brand-strong);
+            background-color: var(--panel-soft);
+        }
+
+        .signup-card__brand-icon .icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        .signup-card__brand-name {
+            margin: 0;
+            color: var(--brand-dark);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .signup-card__brand-tagline {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            letter-spacing: 0.12em;
+        }
+
+        .signup-card__title {
+            margin: 0 0 6px;
+            color: var(--brand-dark);
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .signup-card__subtitle {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .signup-card__error {
+            margin: 0 0 16px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #a12626;
+            font-size: 13px;
+            text-align: center;
+            background-color: #fbeaea;
+        }
+
+        .form-field {
+            margin-bottom: 16px;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 6px;
+            color: #33452f;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrap > .icon {
+            position: absolute;
+            left: 14px;
+            color: #8a958c;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 46px;
+            padding: 0 40px;
+            border: 1px solid #c7d6c2;
+            border-radius: 10px;
+            background-color: #fbfdfa;
+            color: var(--ink);
+            font-size: 14px;
+        }
+
+        .input-wrap input:focus {
+            outline: none;
+            border-color: var(--brand-strong);
+            box-shadow: 0 0 0 3px rgba(47, 107, 60, 0.15);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            display: flex;
+            width: 28px;
+            height: 28px;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            color: #8a958c;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .field-hint {
+            margin: 6px 0 0;
+            color: #8a958c;
+            font-size: 12px;
+        }
+
+        .errorlist {
+            margin: 6px 0 0;
+            padding: 0;
+            color: #c23a3a;
+            font-size: 12px;
+            list-style: none;
+        }
+
+        .btn {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 20px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn--primary {
+            margin-top: 8px;
+            color: #ffffff;
+            background-color: var(--brand-strong);
+        }
+
+        .btn--secondary {
+            margin-top: 10px;
+            color: #3b5741;
+            background-color: var(--panel-soft);
+        }
+
+        .signup-card__divider {
+            height: 1px;
+            margin: 22px 0 16px;
+            background-color: var(--line);
+        }
+
+        .signup-card__login {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .signup-card__login a {
+            color: var(--brand-strong);
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1000px) {
+            .signup-layout {
+                grid-template-columns: 1fr;
+                padding: 36px 20px 56px;
+            }
+
+            .signup-side {
+                display: none;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .site-header__inner {
+                padding: 0 16px;
+            }
+
+            .signup-card {
+                padding: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <svg class="decor-leaf decor-leaf--tl" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M6 20C4 13 7 5 19 4c2 11-5 17-13 16z"></path></svg>
+    <svg class="decor-leaf decor-leaf--br" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M6 20C4 13 7 5 19 4c2 11-5 17-13 16z"></path></svg>
+
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="site-brand" href="{% url 'cafe_list' %}">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
+                <span>
+                    말차지도
+                    <span class="site-brand__tagline">좋은 말차, 더 가까이</span>
+                </span>
+            </a>
+            <a class="site-header__back" href="{% url 'cafe_list' %}">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg>
+                홈으로 돌아가기
+            </a>
+        </div>
+    </header>
+
+    <main class="signup-layout">
+        <div class="signup-side signup-side--left">
+            <h2>좋은 말차가<br>좋은 하루를 만듭니다.</h2>
+            <p class="signup-side__desc">말차지도에 가입하고 나만의 취향에 맞는<br>말차 카페를 기록하고 즐겨찾기해보세요.</p>
+            <p class="signup-side__caption">MATCHA MAP<br>카페가 있는, 더 맛있는 일상</p>
+        </div>
+
+        <div class="signup-card-wrap">
+            <div class="signup-card">
+                <div class="signup-card__brand">
+                    <span class="signup-card__brand-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
+                    </span>
+                    <p class="signup-card__brand-name">말차지도</p>
+                    <p class="signup-card__brand-tagline">MATCHA MAP</p>
+                </div>
+
+                <h1 class="signup-card__title">회원가입</h1>
+                <p class="signup-card__subtitle">말차지도에서 나만의 카페를 기록해보세요.</p>
+
+                {% if form.non_field_errors %}
+                    <p class="signup-card__error">{{ form.non_field_errors|join:" " }}</p>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-field">
+                        <label for="{{ form.username.id_for_label }}">아이디</label>
+                        <span class="input-wrap">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path></svg>
+                            {{ form.username }}
+                        </span>
+                        <p class="field-hint">영문, 숫자, @/./+/-/_ 만 사용할 수 있어요.</p>
+                        {{ form.username.errors }}
+                    </div>
+
+                    <div class="form-field">
+                        <label for="{{ form.password1.id_for_label }}">비밀번호</label>
+                        <span class="input-wrap">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+                            {{ form.password1 }}
+                            <button type="button" class="password-toggle" data-target="{{ form.password1.id_for_label }}" aria-label="비밀번호 표시">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </span>
+                        <p class="field-hint">8자 이상, 너무 흔하거나 숫자로만 이루어진 비밀번호는 피해주세요.</p>
+                        {{ form.password1.errors }}
+                    </div>
+
+                    <div class="form-field">
+                        <label for="{{ form.password2.id_for_label }}">비밀번호 확인</label>
+                        <span class="input-wrap">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+                            {{ form.password2 }}
+                            <button type="button" class="password-toggle" data-target="{{ form.password2.id_for_label }}" aria-label="비밀번호 표시">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </span>
+                        {{ form.password2.errors }}
+                    </div>
+
+                    <button type="submit" class="btn btn--primary">
+                        회원가입
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </form>
+
+                <div class="signup-card__divider"></div>
+
+                <p class="signup-card__login">이미 계정이 있나요? <a href="{% url 'login' %}">로그인</a></p>
+                <a class="btn btn--secondary" href="{% url 'cafe_list' %}">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="20" y2="6"></line><line x1="8" y1="12" x2="20" y2="12"></line><line x1="8" y1="18" x2="20" y2="18"></line><line x1="4" y1="6" x2="4.01" y2="6"></line><line x1="4" y1="12" x2="4.01" y2="12"></line><line x1="4" y1="18" x2="4.01" y2="18"></line></svg>
+                    카페 목록으로 돌아가기
+                </a>
+            </div>
+        </div>
+
+        <div class="signup-side signup-side--right">
+            <div class="signup-side__visual">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
+            </div>
+            <p class="signup-side__quote">"좋은 카페는<br>언제나 여기 있어요."</p>
+            <p class="signup-side__caption">좋은 공간이,<br>좋은 하루를 만든다.</p>
+        </div>
+    </main>
+
+    <script>
+        const eyeIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        const eyeOffIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 10.6a3 3 0 0 0 4.24 4.24"></path><path d="M6.6 6.6C4 8.3 2 12 2 12s4 7 10 7c1.6 0 3-.4 4.2-1M17.9 17.9C20.4 16 22 12 22 12s-1.2-2.1-3.2-3.9"></path></svg>';
+
+        document.querySelectorAll('.password-toggle').forEach((toggle) => {
+            toggle.addEventListener('click', () => {
+                const input = document.getElementById(toggle.dataset.target);
+                if (!input) {
+                    return;
+                }
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                toggle.innerHTML = isPassword ? eyeOffIcon : eyeIcon;
+                toggle.setAttribute('aria-label', isPassword ? '비밀번호 숨기기' : '비밀번호 표시');
+            });
+        });
+    </script>
+</body>
+</html>
