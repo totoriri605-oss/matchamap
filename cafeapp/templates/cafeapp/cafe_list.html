@@ -1034,10 +1034,10 @@
 
             <div class="site-header__right">
                 <button type="button" class="site-header__icon-btn" id="header-search-btn" aria-label="{% trans "검색" %}">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
                 </button>
                 <a class="site-header__icon-btn" href="{% url 'favorite_list' %}" aria-label="{% trans "즐겨찾기" %}">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
                 </a>
 
                 <form class="lang-switch" action="{% url 'set_language' %}" method="post">
@@ -1079,8 +1079,8 @@
                     {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
                 {% endfor %}
                 <span class="search-bar__field">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" name="q" aria-label="카페 이름 검색" id="search-input" value="{{ query }}" placeholder="{% trans "카페 이름을 검색해보세요" %}">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                    <input type="text" name="q" aria-label="카페 이름 또는 지역 검색" id="search-input" value="{{ query }}" placeholder="{% trans "카페 이름 또는 지역 검색" %}">
                 </span>
                 <button type="submit" class="search-bar__button">{% trans "검색" %}</button>
             </form>
@@ -1185,7 +1185,7 @@
                     <label>{{ taste_filter_form.has_takeout }} {% trans "테이크아웃" %}</label>
                 </div>
                 <div class="taste-filter__actions">
-                    <button type="submit"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> {% trans "필터 적용" %}</button>
+                    <button type="submit"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg> {% trans "필터 적용" %}</button>
                     <a class="taste-filter__reset" href="{% url 'cafe_list' %}">{% trans "전체 초기화" %}</a>
                 </div>
             </form>
@@ -1219,9 +1219,9 @@
                                 <input type="hidden" name="next" value="{{ request.get_full_path }}#cafe-{{ cafe.id }}">
                                 <button class="favorite-button" type="submit" aria-label="{% trans "가보고 싶어요" %}">
                                     {% if cafe.id in favorite_cafe_ids %}
-                                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
+                                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
                                     {% else %}
-                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
                                     {% endif %}
                                 </button>
                             </form>
@@ -1296,10 +1296,9 @@
 
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19,
-            subdomains: 'abcd',
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, USGS, Intermap, INCREMENT P, NRCan, Esri Japan, METI, Esri China (Hong Kong), Esri Korea, Esri (Thailand), NGCC, (c) OpenStreetMap contributors, and the GIS User Community'
         }).addTo(map);
 
         const cafeIcon = L.divIcon({
@@ -1316,18 +1315,42 @@
             const cafeLatitude = Number(cafe.latitude);
             const cafeLongitude = Number(cafe.longitude);
             const popupContent = document.createElement('div');
-            const cafeName = document.createElement('strong');
-            const detailLink = document.createElement('a');
-
-            cafeName.textContent = cafe.name;
-            detailLink.textContent = '상세보기';
+            popupContent.className = 'cafe-popup';
+            const addText = (tag, className, text) => {
+                const element = document.createElement(tag);
+                element.className = className;
+                element.textContent = text;
+                popupContent.append(element);
+                return element;
+            };
+            const placeholder = document.createElement('div');
+            placeholder.className = 'cafe-popup__placeholder';
+            placeholder.textContent = '사진 준비 중';
+            if (cafe.image_url) {
+                const photo = document.createElement('img');
+                photo.className = 'cafe-popup__image';
+                photo.src = cafe.image_url;
+                photo.alt = cafe.name;
+                photo.addEventListener('error', () => photo.replaceWith(placeholder), { once: true });
+                popupContent.append(photo);
+            } else {
+                popupContent.append(placeholder);
+            }
+            addText('strong', 'cafe-popup__name', cafe.name);
+            addText('p', 'cafe-popup__area', cafe.area);
+            addText('p', 'cafe-popup__menu', cafe.menu_name);
+            addText('p', 'cafe-popup__price', Number(cafe.price).toLocaleString('ko-KR') + '원');
+            addText('p', 'cafe-popup__rating', cafe.review_count > 0
+                ? '★ ' + Number(cafe.average_rating).toFixed(1) + ' · 리뷰 ' + cafe.review_count + '개'
+                : '아직 리뷰가 없어요');
+            const detailLink = addText('a', 'cafe-popup__link', '상세보기 →');
             detailLink.href = cafe.detail_url;
-
-            popupContent.append(cafeName, document.createElement('br'), detailLink);
+            const tooltip = document.createElement('span');
+            tooltip.textContent = cafe.name;
 
             L.marker([cafeLatitude, cafeLongitude], { icon: cafeIcon })
-                .bindPopup(popupContent)
-                .bindTooltip(cafe.name, {
+                .bindPopup(popupContent, { maxWidth: 260, minWidth: 180, maxHeight: 350 })
+                .bindTooltip(tooltip, {
                     permanent: true,
                     direction: 'top',
                     offset: [0, -26],

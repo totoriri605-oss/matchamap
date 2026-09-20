@@ -627,3 +627,48 @@ class HeroBannerTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['adminform'].form.errors.get('image'))
         self.assertFalse(HeroBanner.objects.exists())
+
+
+class CafeSearchPopupTests(TestCase):
+    def setUp(self):
+        base = dict(address='서울', menu_name='말차 라테', price=6500,
+                    description='테스트', latitude='37.540000', longitude='127.040000',
+                    sweetness=2, is_vegan=True)
+        self.local = Cafe.objects.create(name='초록 카페', area='성수', image='cafes/example.png', **base)
+        self.named = Cafe.objects.create(name='성수 말차', area='연남', **base)
+        self.no_coords = Cafe.objects.create(name='성수 작은집', area='성수', menu_name='말차', price=5000, description='좌표 없음', address='서울')
+        Cafe.objects.create(name='다른 카페', area='삼성', **base)
+
+    def test_name_or_area_search_intersects_existing_filters(self):
+        response = self.client.get(reverse('cafe_list'), {'q': ' 성수 '})
+        self.assertEqual({c.pk for c in response.context['cafes']}, {self.local.pk, self.named.pk, self.no_coords.pk})
+        self.assertEqual(response.context['result_count'], 3)
+        self.assertEqual(len(response.context['map_cafes']), 2)
+        response = self.client.get(reverse('cafe_list'), {'q': '성수', 'area': '성수', 'sweetness': 2, 'is_vegan': 'on'})
+        self.assertEqual(list(response.context['cafes']), [self.local])
+        self.assertEqual([c['name'] for c in response.context['map_cafes']], [self.local.name])
+        self.assertEqual(self.client.get(reverse('cafe_list'), {'q': '없는검색어'}).context['result_count'], 0)
+
+    def test_popup_aggregates_reviews_and_handles_missing_image(self):
+        for index, rating in enumerate((3, 5)):
+            user = get_user_model().objects.create_user(username=f'popup{index}')
+            Review.objects.create(cafe=self.local, author=user, rating=rating, comment='좋아요')
+        response = self.client.get(reverse('cafe_list'), {'q': '성수'})
+        data = {item['name']: item for item in response.context['map_cafes']}
+        popup = data[self.local.name]
+        self.assertEqual(popup['average_rating'], 4)
+        self.assertEqual(popup['review_count'], 2)
+        self.assertEqual(popup['image_url'], self.local.image.url)
+        self.assertEqual(popup['menu_name'], '말차 라테')
+        self.assertEqual(popup['price'], 6500)
+        self.assertEqual(popup['detail_url'], reverse('cafe_detail', args=[self.local.pk]))
+        self.assertIsNone(data[self.named.name]['image_url'])
+        self.assertIsNone(data[self.named.name]['average_rating'])
+        self.assertEqual(data[self.named.name]['review_count'], 0)
+
+    def test_popup_data_escapes_script_markup(self):
+        self.local.name = '</script><script>alert(1)</script>'
+        self.local.save()
+        response = self.client.get(reverse('cafe_list'))
+        self.assertNotContains(response, self.local.name)
+        self.assertContains(response, r'\u003C/script\u003E')

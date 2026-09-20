@@ -88,3 +88,12 @@ a, button, input, select { -webkit-tap-highlight-color: transparent; }
     .hero .search-bar__button { padding: 10px 16px; }
     .hero .area-chip { padding: 8px 11px; }
 }
+
+.cafe-popup { width: min(240px, 55vw); overflow-wrap: anywhere; color: var(--ink); }
+.cafe-popup__image, .cafe-popup__placeholder { display: block; width: 100%; height: 125px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; }
+.cafe-popup__placeholder { display: grid; place-items: center; background: #eef0e1; color: #697361; }
+.cafe-popup__name { display: block; font-size: 16px; }
+.cafe-popup p { margin: 6px 0; line-height: 1.5; }
+.cafe-popup__area { color: var(--muted); }
+.cafe-popup__price, .cafe-popup__rating { font-weight: 600; }
+.cafe-popup .cafe-popup__link { display: block; margin-top: 12px; padding: 10px; background: var(--brand-strong); color: white; text-align: center; border-radius: 8px; text-decoration: none; }

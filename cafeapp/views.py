@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -33,7 +33,7 @@ def cafe_list(request):
         cafes = cafes.filter(area=selected_area)
 
     if query:
-        cafes = cafes.filter(name__icontains=query)
+        cafes = cafes.filter(Q(name__icontains=query) | Q(area__icontains=query))
 
     if taste_filter_form.is_valid():
         taste_filters = {}
@@ -60,11 +60,17 @@ def cafe_list(request):
 
         cafes = cafes.filter(**taste_filters)
 
-    cafes = cafes.annotate(average_rating=Avg('reviews__rating'))
+    cafes = cafes.annotate(average_rating=Avg('reviews__rating'), review_count=Count('reviews'))
 
     map_cafes = [
         {
             'name': cafe.name,
+            'area': cafe.area,
+            'menu_name': cafe.menu_name,
+            'price': cafe.price,
+            'image_url': cafe.image.url if cafe.image else None,
+            'average_rating': cafe.average_rating,
+            'review_count': cafe.review_count,
             'latitude': cafe.latitude,
             'longitude': cafe.longitude,
             'detail_url': reverse('cafe_detail', args=[cafe.id]),
