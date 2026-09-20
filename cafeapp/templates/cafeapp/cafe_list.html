@@ -33,6 +33,14 @@
 
         a { color: inherit; }
 
+        .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            vertical-align: -3px;
+        }
+
         /* ---------- Header ---------- */
         .site-header {
             border-bottom: 1px solid var(--line);
@@ -62,7 +70,7 @@
             text-decoration: none;
         }
 
-        .site-brand__emoji { font-size: 22px; }
+        .site-brand__emoji { width: 22px; height: 22px; color: var(--brand-dark); }
 
         .site-brand__tagline {
             display: block;
@@ -164,19 +172,27 @@
         }
 
         .hero__search {
-            position: relative;
             display: flex;
             gap: 8px;
             margin-bottom: 14px;
         }
 
-        .hero__search::before {
-            content: '🔍';
+        .hero__search-field {
+            position: relative;
+            display: flex;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .hero__search-field .icon {
             position: absolute;
             top: 50%;
             left: 15px;
-            font-size: 15px;
+            width: 16px;
+            height: 16px;
+            color: #7c8c7c;
             transform: translateY(-50%);
+            pointer-events: none;
         }
 
         .hero__search input[type="text"] {
@@ -247,7 +263,7 @@
             box-shadow: 0 12px 28px rgba(39, 70, 46, 0.18);
         }
 
-        .hero__visual-emoji { font-size: 56px; }
+        .hero__visual-emoji { width: 56px; height: 56px; color: #1f3d26; }
 
         .hero__visual-quote {
             margin: 0;
@@ -365,7 +381,9 @@
         }
 
         .cafe-marker-pin__icon {
-            font-size: 13px;
+            width: 14px;
+            height: 14px;
+            color: #ffffff;
             transform: rotate(45deg);
         }
 
@@ -500,6 +518,35 @@
             font-size: 14px;
         }
 
+        .cafe-section__meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .cafe-section__toggle {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0;
+            border: 0;
+            color: var(--brand-strong);
+            background: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .cafe-section__toggle .icon {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s ease;
+        }
+
+        .cafe-section__toggle[aria-expanded="true"] .icon {
+            transform: rotate(90deg);
+        }
+
         .cafe-list {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -507,6 +554,14 @@
             margin: 0;
             padding: 0;
             list-style: none;
+        }
+
+        .cafe-list--collapsed {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .cafe-list--collapsed .cafe-card:nth-child(n+4) {
+            display: none;
         }
 
         .cafe-card {
@@ -659,7 +714,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            font-size: 20px;
+            color: var(--brand-strong);
             background-color: var(--panel-soft);
         }
 
@@ -705,7 +760,8 @@
                 grid-template-columns: 1fr;
             }
 
-            .cafe-list {
+            .cafe-list,
+            .cafe-list--collapsed {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
@@ -737,15 +793,12 @@
                 flex-direction: column;
             }
 
-            .hero__search::before {
-                top: 22px;
-            }
-
             #map {
                 height: 320px;
             }
 
-            .cafe-list {
+            .cafe-list,
+            .cafe-list--collapsed {
                 grid-template-columns: 1fr;
             }
 
@@ -766,7 +819,7 @@
     <header class="site-header">
         <div class="site-header__inner">
             <a class="site-brand" href="{% url 'cafe_list' %}">
-                <span class="site-brand__emoji">🍵</span>
+                <svg class="icon site-brand__emoji" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
                 <span>
                     말차지도
                     <span class="site-brand__tagline">좋은 말차가 좋은 하루를 만든다.</span>
@@ -800,7 +853,10 @@
             <div class="hero__grid">
                 <div class="hero__content">
                     <h1 class="hero__title">오늘,<br>어디서 말차 마실까?</h1>
-                    <p class="hero__description">말차러버를 위한 진짜 말차 카페 지도 🌿</p>
+                    <p class="hero__description">
+                        말차러버를 위한 진짜 말차 카페 지도
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20C4 13 7 5 19 4c2 11-5 17-13 16z"></path><path d="M8 18C10 14 12 10 16 6"></path></svg>
+                    </p>
 
                     <form class="hero__search" method="get">
                         {% if selected_area in areas %}
@@ -809,7 +865,10 @@
                         {% for key, value in request.GET.items %}
                             {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
                         {% endfor %}
-                        <input type="text" name="q" value="{{ query }}" placeholder="지역, 카페 이름 검색">
+                        <span class="hero__search-field">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" name="q" value="{{ query }}" placeholder="지역, 카페 이름 검색">
+                        </span>
                         <button type="submit">검색</button>
                     </form>
 
@@ -829,7 +888,7 @@
 
                 <div class="hero__visual" aria-hidden="true">
                     <div class="hero__visual-card">
-                        <span class="hero__visual-emoji">🍵</span>
+                        <svg class="icon hero__visual-emoji" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
                         <p class="hero__visual-quote">Good Matcha,<br>Better Day</p>
                     </div>
                 </div>
@@ -840,10 +899,10 @@
             <div class="map-panel">
                 <div class="map-panel__header">
                     <div>
-                        <h2 class="map-panel__title">📍 서울 지도</h2>
+                        <h2 class="map-panel__title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.58-7-12a7 7 0 0 1 14 0c0 4.42-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg> 서울 지도</h2>
                         <p class="map-panel__subtitle">지도의 마커를 클릭하면 카페 정보를 볼 수 있어요.</p>
                     </div>
-                    <button type="button" class="map-panel__expand" id="map-expand-toggle" aria-label="지도 크게 보기" aria-pressed="false">⤢</button>
+                    <button type="button" class="map-panel__expand" id="map-expand-toggle" aria-label="지도 크게 보기" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button>
                 </div>
                 <div id="map"></div>
                 <div class="map-panel__legend"><span class="map-panel__legend-dot"></span> 말차 카페</div>
@@ -869,7 +928,7 @@
                     <label>{{ taste_filter_form.has_takeout }} {{ taste_filter_form.has_takeout.label }}</label>
                 </div>
                 <div class="taste-filter__actions">
-                    <button type="submit">🔍 필터 적용</button>
+                    <button type="submit"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> 필터 적용</button>
                     <a class="taste-filter__reset" href="{% url 'cafe_list' %}">전체 초기화</a>
                 </div>
             </form>
@@ -877,11 +936,19 @@
 
         <section class="cafe-section" id="cafe-list">
             <div class="cafe-section__header">
-                <h2 class="cafe-section__title">🏆 지금 제일 인기 있는 말차 카페</h2>
-                <p class="cafe-section__count">조건에 맞는 카페 {{ result_count }}곳</p>
+                <h2 class="cafe-section__title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4z"></path><path d="M8 5H5a3 3 0 0 0 3 5"></path><path d="M16 5h3a3 3 0 0 1-3 5"></path><path d="M10 14v3M14 14v3"></path><path d="M8 20h8"></path></svg> 지금 제일 인기 있는 말차 카페</h2>
+                <div class="cafe-section__meta">
+                    <p class="cafe-section__count">조건에 맞는 카페 {{ result_count }}곳</p>
+                    {% if result_count > 3 %}
+                        <button type="button" class="cafe-section__toggle" id="cafe-list-toggle" aria-expanded="false" aria-controls="cafe-list-items">
+                            전체 보기
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    {% endif %}
+                </div>
             </div>
 
-            <ul class="cafe-list">
+            <ul class="cafe-list{% if result_count > 3 %} cafe-list--collapsed{% endif %}" id="cafe-list-items">
                 {% for cafe in cafes %}
                     <li class="cafe-card" id="cafe-{{ cafe.id }}">
                         <div class="cafe-card__media">
@@ -894,7 +961,11 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="next" value="{{ request.get_full_path }}#cafe-{{ cafe.id }}">
                                 <button class="favorite-button" type="submit" aria-label="가보고 싶어요">
-                                    {% if cafe.id in favorite_cafe_ids %}♥{% else %}♡{% endif %}
+                                    {% if cafe.id in favorite_cafe_ids %}
+                                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
+                                    {% else %}
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
+                                    {% endif %}
                                 </button>
                             </form>
                         </div>
@@ -902,7 +973,7 @@
                             <h3 class="cafe-card__name">
                                 <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
                             </h3>
-                            <p class="cafe-card__area">📍 {{ cafe.area }}</p>
+                            <p class="cafe-card__area"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.58-7-12a7 7 0 0 1 14 0c0 4.42-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg> {{ cafe.area }}</p>
                             <dl class="cafe-card__stats">
                                 <div>
                                     <dt>대표 메뉴</dt>
@@ -940,12 +1011,12 @@
         </section>
 
         <section class="ai-cta">
-            <div class="ai-cta__icon">🤖</div>
+            <div class="ai-cta__icon"><svg class="icon" style="width:22px;height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="9" width="14" height="10" rx="2"></rect><path d="M12 9V5"></path><circle cx="12" cy="3.5" r="1"></circle><circle cx="9" cy="14" r="1"></circle><circle cx="15" cy="14" r="1"></circle><path d="M2 12h3M19 12h3"></path></svg></div>
             <div class="ai-cta__text">
                 <strong>말차 취향 추천</strong>
                 <p>취향 정보를 입력하면 딱 맞는 말차 카페를 찾아드려요.</p>
             </div>
-            <a class="ai-cta__button" href="{% url 'cafe_recommendations' %}">추천 받기 ✨</a>
+            <a class="ai-cta__button" href="{% url 'cafe_recommendations' %}">추천 받기 <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"></path></svg></a>
         </section>
     </main>
 
@@ -964,7 +1035,7 @@
 
         const cafeIcon = L.divIcon({
             className: 'cafe-marker-pin-wrapper',
-            html: '<span class="cafe-marker-pin"><span class="cafe-marker-pin__icon">🍵</span></span>',
+            html: '<span class="cafe-marker-pin"><svg class="cafe-marker-pin__icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M6 20C4 13 7 5 19 4c2 11-5 17-13 16z"></path></svg></span>',
             iconSize: [30, 30],
             iconAnchor: [15, 30],
             popupAnchor: [0, -28],
@@ -998,14 +1069,49 @@
 
         const mapPanel = document.querySelector('.map-panel');
         const expandToggle = document.getElementById('map-expand-toggle');
+        const expandIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>';
+        const collapseIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="10" y1="14" x2="3" y2="21"></line></svg>';
 
         expandToggle.addEventListener('click', () => {
             const isExpanded = mapPanel.classList.toggle('map-panel--expanded');
             document.body.classList.toggle('map-expanded-active', isExpanded);
             expandToggle.setAttribute('aria-pressed', String(isExpanded));
-            expandToggle.textContent = isExpanded ? '⤡' : '⤢';
+            expandToggle.innerHTML = isExpanded ? collapseIcon : expandIcon;
             setTimeout(() => map.invalidateSize(), 300);
         });
+
+        const cafeListEl = document.getElementById('cafe-list-items');
+        const cafeListToggle = document.getElementById('cafe-list-toggle');
+
+        function expandCafeList() {
+            if (!cafeListEl || !cafeListToggle) {
+                return;
+            }
+            cafeListEl.classList.remove('cafe-list--collapsed');
+            cafeListToggle.setAttribute('aria-expanded', 'true');
+            cafeListToggle.innerHTML = '접기 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+        }
+
+        if (cafeListEl && cafeListToggle) {
+            cafeListToggle.addEventListener('click', () => {
+                const isCollapsed = cafeListEl.classList.contains('cafe-list--collapsed');
+                if (isCollapsed) {
+                    expandCafeList();
+                } else {
+                    cafeListEl.classList.add('cafe-list--collapsed');
+                    cafeListToggle.setAttribute('aria-expanded', 'false');
+                    cafeListToggle.innerHTML = '전체 보기 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                }
+            });
+
+            if (window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if (target && target.closest('.cafe-list--collapsed')) {
+                    expandCafeList();
+                    target.scrollIntoView();
+                }
+            }
+        }
     </script>
 </body>
 </html>
