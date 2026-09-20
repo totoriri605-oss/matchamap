@@ -9,38 +9,114 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --brand-dark: #234b2d;
+            --brand-strong: #2f6b3c;
+            --ink: #26352a;
+            --muted: #667468;
+            --line: #dce7d8;
+            --panel: #ffffff;
+            --panel-soft: #f1f6ee;
+        }
+
         body {
             margin: 0;
-            color: #26352a;
+            color: var(--ink);
             font-family: Arial, sans-serif;
             background-color: #fafcf9;
         }
 
-        .page-content {
-            width: min(1180px, calc(100% - 48px));
-            margin: 0 auto;
-            padding: 48px 0;
+        a { color: inherit; }
+
+        .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            vertical-align: -3px;
         }
 
-        .page-link {
-            color: #315c3b;
+        .site-header {
+            border-bottom: 1px solid var(--line);
+            background-color: var(--panel);
+        }
+
+        .site-header__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1180px;
+            min-height: 64px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .site-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--brand-dark);
+            font-size: 19px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .site-brand .icon {
+            width: 22px;
+            height: 22px;
+        }
+
+        .site-header__back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .page-content {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 36px 24px 64px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 6px;
+            color: var(--brand-dark);
+            font-size: 26px;
+        }
+
+        .page-subtitle {
+            margin: 0 0 28px;
+            color: var(--muted);
+            font-size: 14px;
         }
 
         .cafe-list {
-            scroll-margin-top: 20px;
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 24px;
-            margin: 32px 0 0;
+            margin: 0;
             padding: 0;
             list-style: none;
         }
 
         .cafe-card {
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
-            border: 1px solid #dce5d7;
-            border-radius: 12px;
-            background-color: #ffffff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background-color: var(--panel);
+            box-shadow: 0 5px 16px rgba(39, 70, 46, 0.06);
+        }
+
+        .cafe-card__media {
+            position: relative;
         }
 
         .cafe-card__image,
@@ -55,15 +131,39 @@
         }
 
         .cafe-card__placeholder {
-            background-color: #edf3e9;
+            background-color: var(--panel-soft);
+        }
+
+        .favorite-form {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            margin: 0;
+        }
+
+        .favorite-button {
+            display: flex;
+            width: 32px;
+            height: 32px;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 1px solid #91a78d;
+            border-radius: 50%;
+            color: #c23a3a;
+            background-color: #ffffff;
+            box-shadow: 0 2px 6px rgba(39, 70, 46, 0.18);
+            cursor: pointer;
         }
 
         .cafe-card__body {
+            flex: 1;
             padding: 16px;
         }
 
         .cafe-card__name {
-            margin: 0 0 12px;
+            margin: 0 0 6px;
+            font-size: 17px;
         }
 
         .cafe-card__name a {
@@ -71,18 +171,70 @@
             text-decoration: none;
         }
 
-        .cafe-card__info {
-            margin: 6px 0;
+        .cafe-card__name a:hover {
+            text-decoration: underline;
         }
 
-        .favorite-button {
-            margin-top: 10px;
-            padding: 8px 11px;
-            border: 1px solid #91a78d;
-            border-radius: 7px;
-            color: #315c3b;
-            background-color: #ffffff;
-            cursor: pointer;
+        .cafe-card__area {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .cafe-card__area .icon {
+            color: var(--brand-strong);
+        }
+
+        .cafe-card__stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .cafe-card__stats dt {
+            margin: 0;
+            color: #8a958c;
+            font-size: 11px;
+        }
+
+        .cafe-card__stats dd {
+            margin: 2px 0 0;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 64px 24px;
+            border: 1px dashed var(--line);
+            border-radius: 16px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .empty-state .icon {
+            width: 32px;
+            height: 32px;
+            color: #b9c6b4;
+        }
+
+        .empty-state a {
+            padding: 10px 18px;
+            border-radius: 999px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            background-color: var(--brand-strong);
         }
 
         @media (max-width: 900px) {
@@ -92,9 +244,12 @@
         }
 
         @media (max-width: 520px) {
+            .site-header__inner {
+                padding: 0 16px;
+            }
+
             .page-content {
-                width: min(100% - 32px, 1180px);
-                padding: 32px 0;
+                padding: 28px 16px 48px;
             }
 
             .cafe-list {
@@ -104,36 +259,69 @@
     </style>
 </head>
 <body>
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="site-brand" href="{% url 'cafe_list' %}">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
+                <span>말차지도</span>
+            </a>
+            <a class="site-header__back" href="{% url 'cafe_list' %}">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg>
+                홈으로 돌아가기
+            </a>
+        </div>
+    </header>
+
     <main class="page-content">
-        <p><a class="page-link" href="{% url 'cafe_list' %}">← 말차지도로 돌아가기</a></p>
-        <h1>가보고 싶은 말차 카페</h1>
+        <h1 class="page-title">
+            <svg class="icon" style="width:22px;height:22px;color:var(--brand-strong);" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
+            가보고 싶은 말차 카페
+        </h1>
+        <p class="page-subtitle">내가 즐겨찾기한 카페 {{ cafes|length }}곳</p>
 
         <ul class="cafe-list" id="favorite-list">
             {% for cafe in cafes %}
                 <li class="cafe-card">
-                    {% if cafe.image %}
-                        <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
-                    {% else %}
-                        <div class="cafe-card__placeholder" aria-label="대표 이미지 없음"></div>
-                    {% endif %}
-
+                    <div class="cafe-card__media">
+                        {% if cafe.image %}
+                            <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
+                        {% else %}
+                            <div class="cafe-card__placeholder" aria-label="대표 이미지 없음"></div>
+                        {% endif %}
+                        <form class="favorite-form" method="post" action="{% url 'toggle_favorite' cafe.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'favorite_list' %}#favorite-list">
+                            <button class="favorite-button" type="submit" aria-label="즐겨찾기 해제">
+                                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
+                            </button>
+                        </form>
+                    </div>
                     <div class="cafe-card__body">
                         <h2 class="cafe-card__name">
                             <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
                         </h2>
-                        <p class="cafe-card__info">지역: {{ cafe.area }}</p>
-                        <p class="cafe-card__info">대표 메뉴: {{ cafe.menu_name }}</p>
-                        <p class="cafe-card__info">가격: {{ cafe.price }}원</p>
-
-                        <form method="post" action="{% url 'toggle_favorite' cafe.id %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="next" value="{% url 'favorite_list' %}#favorite-list">
-                            <button class="favorite-button" type="submit">♥ 즐겨찾기 해제</button>
-                        </form>
+                        <p class="cafe-card__area">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.58-7-12a7 7 0 0 1 14 0c0 4.42-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
+                            {{ cafe.area }}
+                        </p>
+                        <dl class="cafe-card__stats">
+                            <div>
+                                <dt>대표 메뉴</dt>
+                                <dd>{{ cafe.menu_name }}</dd>
+                            </div>
+                            <div>
+                                <dt>가격</dt>
+                                <dd>{{ cafe.price }}원</dd>
+                            </div>
+                        </dl>
                     </div>
                 </li>
             {% empty %}
-                <li>즐겨찾기한 카페가 없습니다.</li>
+                <li class="empty-state">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
+                    <p>아직 즐겨찾기한 카페가 없습니다.</p>
+                    <a href="{% url 'cafe_list' %}">말차 카페 둘러보기</a>
+                </li>
             {% endfor %}
         </ul>
     </main>
