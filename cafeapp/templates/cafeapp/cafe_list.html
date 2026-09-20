@@ -13,19 +13,30 @@
         :root {
             --content-max-width: 1180px;
             --desktop-gutter: 32px;
-            --section-gap: 36px;
+            --section-gap: 28px;
+            --brand-dark: #234b2d;
+            --brand: #52735a;
+            --brand-strong: #2f6b3c;
+            --ink: #26352a;
+            --muted: #667468;
+            --line: #dce7d8;
+            --panel: #ffffff;
+            --panel-soft: #f1f6ee;
         }
 
         body {
             margin: 0;
-            color: #26352a;
+            color: var(--ink);
             font-family: Arial, sans-serif;
             background-color: #fafcf9;
         }
 
+        a { color: inherit; }
+
+        /* ---------- Header ---------- */
         .site-header {
-            border-bottom: 1px solid #dce7d8;
-            background-color: #ffffff;
+            border-bottom: 1px solid var(--line);
+            background-color: var(--panel);
         }
 
         .site-header__inner {
@@ -41,24 +52,39 @@
         }
 
         .site-brand {
+            display: flex;
             flex-shrink: 0;
-            color: #244b2d;
-            font-size: 21px;
+            align-items: center;
+            gap: 8px;
+            color: var(--brand-dark);
+            font-size: 20px;
             font-weight: 700;
             text-decoration: none;
         }
 
+        .site-brand__emoji { font-size: 22px; }
+
+        .site-brand__tagline {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1.3;
+        }
+
         .site-nav {
             display: flex;
+            flex: 1;
             align-items: center;
+            justify-content: center;
             gap: 6px;
         }
 
         .site-nav__item,
-        .site-login {
+        .site-login a {
             display: inline-block;
-            padding: 9px 11px;
-            border-radius: 7px;
+            padding: 9px 12px;
+            border-radius: 999px;
             color: #536257;
             font-size: 14px;
             text-decoration: none;
@@ -66,79 +92,112 @@
         }
 
         .site-nav__item--active {
-            color: #244b2d;
+            color: var(--brand-dark);
             font-weight: 700;
             background-color: #e7f0e3;
         }
 
-        .site-nav__item--disabled,
-        .site-login {
-            color: #7e8a81;
+        .site-nav__item--disabled {
+            color: #aab5ac;
             cursor: default;
         }
 
         .site-login {
-            margin-left: auto;
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 6px;
         }
 
         .site-login form { display: inline; }
-        .site-login button { border: 0; color: #536257; background: transparent; cursor: pointer; }
+        .site-login button {
+            padding: 9px 12px;
+            border: 0;
+            border-radius: 999px;
+            color: #536257;
+            background: transparent;
+            font-size: 14px;
+            cursor: pointer;
+        }
 
+        .site-login__signup {
+            padding: 9px 16px !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            background-color: var(--brand-strong);
+        }
+
+        /* ---------- Layout ---------- */
         .page-content {
             width: 100%;
             max-width: calc(var(--content-max-width) + 64px);
             margin: 0 auto;
-            padding: 36px var(--desktop-gutter) 56px;
+            padding: 32px var(--desktop-gutter) 56px;
         }
 
+        /* ---------- Hero ---------- */
         .hero {
             margin-bottom: var(--section-gap);
-            padding: 48px;
+            padding: 40px;
             border-radius: 16px;
             background-color: #e8f1e4;
         }
 
-        .hero__content {
-            max-width: 650px;
+        .hero__grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+            gap: 40px;
+            align-items: center;
         }
 
         .hero__title {
             margin: 0;
-            color: #234b2d;
-            font-size: clamp(36px, 5vw, 58px);
+            color: var(--brand-dark);
+            font-size: clamp(32px, 4vw, 48px);
             line-height: 1.15;
         }
 
         .hero__description {
-            margin: 18px 0 28px;
+            margin: 16px 0 24px;
             color: #526558;
-            font-size: 18px;
+            font-size: 17px;
         }
 
         .hero__search {
+            position: relative;
             display: flex;
             gap: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
+        }
+
+        .hero__search::before {
+            content: '🔍';
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            font-size: 15px;
+            transform: translateY(-50%);
         }
 
         .hero__search input[type="text"] {
             min-width: 0;
             flex: 1;
-            padding: 13px 15px;
+            padding: 13px 15px 13px 40px;
             border: 1px solid #bdcdb8;
-            border-radius: 8px;
+            border-radius: 999px;
             background-color: #ffffff;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .hero__search button,
-        .hero__filters button,
         .taste-filter__actions button {
-            padding: 11px 16px;
-            border: 1px solid #52735a;
-            border-radius: 8px;
+            padding: 11px 20px;
+            border: 1px solid var(--brand-strong);
+            border-radius: 999px;
             color: #ffffff;
-            background-color: #52735a;
+            background-color: var(--brand-strong);
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
         }
 
@@ -148,101 +207,297 @@
             gap: 8px;
         }
 
+        .hero__filters button {
+            padding: 9px 16px;
+            border: 1px solid #c7d6c2;
+            border-radius: 999px;
+            color: #3b5741;
+            background-color: #ffffff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .hero__filters button[name="area"] {
+            border-color: #c7d6c2;
+        }
+
+        .hero__filters button.is-active {
+            border-color: var(--brand-strong);
+            color: #ffffff;
+            font-weight: 700;
+            background-color: var(--brand-strong);
+        }
+
+        .hero__visual {
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero__visual-card {
+            display: flex;
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 4 / 3;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: 20px;
+            background: linear-gradient(155deg, #cfe3c4 0%, #9dc48c 100%);
+            box-shadow: 0 12px 28px rgba(39, 70, 46, 0.18);
+        }
+
+        .hero__visual-emoji { font-size: 56px; }
+
+        .hero__visual-quote {
+            margin: 0;
+            color: #1f3d26;
+            font-size: 15px;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* ---------- Explore row: map + taste filter ---------- */
+        .explore-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+            gap: 24px;
+            margin-bottom: var(--section-gap);
+        }
+
+        .map-panel {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background-color: var(--panel);
+            box-shadow: 0 8px 24px rgba(39, 70, 46, 0.06);
+        }
+
+        .map-panel__header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .map-panel__title {
+            margin: 0 0 4px;
+            color: var(--brand-dark);
+            font-size: 17px;
+        }
+
+        .map-panel__subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .map-panel__expand {
+            display: flex;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            color: var(--brand-dark);
+            background-color: #ffffff;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        #map {
+            width: 100%;
+            height: 420px;
+            background-color: #edf3e9;
+        }
+
+        .map-panel--expanded {
+            position: fixed;
+            inset: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 48px rgba(20, 40, 25, 0.35);
+        }
+
+        .map-panel--expanded #map {
+            flex: 1;
+            height: auto;
+        }
+
+        body.map-expanded-active {
+            overflow: hidden;
+        }
+
+        .map-panel__legend {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 20px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .map-panel__legend-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--brand-strong);
+        }
+
+        /* Leaflet marker/tooltip overrides */
+        .cafe-marker-pin {
+            display: flex;
+            width: 30px;
+            height: 30px;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffffff;
+            border-radius: 50% 50% 50% 0;
+            background-color: var(--brand-strong);
+            box-shadow: 0 3px 8px rgba(39, 70, 46, 0.35);
+            transform: rotate(-45deg);
+        }
+
+        .cafe-marker-pin__icon {
+            font-size: 13px;
+            transform: rotate(45deg);
+        }
+
+        .cafe-marker-label {
+            padding: 3px 9px !important;
+            border: none !important;
+            border-radius: 999px !important;
+            box-shadow: 0 2px 6px rgba(39, 70, 46, 0.18) !important;
+            color: var(--brand-dark) !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            background-color: #ffffff !important;
+        }
+
+        .cafe-marker-label::before {
+            display: none !important;
+        }
+
         .taste-filter {
-            margin-top: 24px;
             padding: 20px;
-            border: 1px solid #cddbc8;
-            border-radius: 12px;
-            background-color: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background-color: var(--panel);
+            box-shadow: 0 8px 24px rgba(39, 70, 46, 0.06);
         }
 
         .taste-filter__title {
+            margin: 0 0 4px;
+            color: var(--brand-dark);
+            font-size: 17px;
+        }
+
+        .taste-filter__subtitle {
             margin: 0 0 16px;
-            color: #294f32;
-            font-size: 19px;
+            color: var(--muted);
+            font-size: 13px;
         }
 
         .taste-filter__fields {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .taste-filter__field {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
         }
 
         .taste-filter__field label {
-            display: block;
-            margin-bottom: 6px;
+            flex-shrink: 0;
             color: #465247;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
         }
 
         .taste-filter__field select {
-            width: 100%;
-            padding: 9px;
+            padding: 8px 10px;
             border: 1px solid #bdcdb8;
-            border-radius: 7px;
-            background: #ffffff;
+            border-radius: 999px;
+            background: #fbfdfa;
+            font-size: 13px;
         }
 
         .taste-filter__options {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px 20px;
-            margin-top: 16px;
+            gap: 10px 16px;
+            margin: 16px 0;
+            padding-top: 14px;
+            border-top: 1px solid var(--line);
         }
 
         .taste-filter__options label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #465247;
+            font-size: 13px;
             cursor: pointer;
         }
 
         .taste-filter__actions {
             display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 10px;
-            margin-top: 18px;
+        }
+
+        .taste-filter__actions button {
+            width: 100%;
         }
 
         .taste-filter__reset {
-            padding: 10px 14px;
-            color: #526558;
+            color: var(--muted);
+            font-size: 13px;
             text-decoration: none;
         }
 
         .filter-errors {
             margin: 0 0 12px;
             color: #a12626;
+            font-size: 13px;
         }
 
-        .hero__filters button {
-            padding: 8px 13px;
-            color: #36533d;
-            background-color: #ffffff;
-        }
-
-        #map {
-            width: 100%;
-            height: 520px;
-            margin-bottom: var(--section-gap);
-            overflow: hidden;
-            border: 1px solid #d5e0d1;
-            border-radius: 16px;
-            background-color: #edf3e9;
-            box-shadow: 0 8px 24px rgba(39, 70, 46, 0.08);
-        }
-
+        /* ---------- Cafe cards ---------- */
         .cafe-section {
             scroll-margin-top: 20px;
+            margin-bottom: var(--section-gap);
+        }
+
+        .cafe-section__header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 18px;
         }
 
         .cafe-section__title {
-            margin: 0 0 20px;
-            color: #294f32;
-            font-size: 28px;
+            margin: 0;
+            color: var(--brand-dark);
+            font-size: 24px;
         }
 
         .cafe-section__count {
-            margin: -10px 0 20px;
-            color: #68766b;
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
         }
 
         .cafe-list {
@@ -259,10 +514,14 @@
             flex-direction: column;
             scroll-margin-top: 20px;
             overflow: hidden;
-            border: 1px solid #dce5d7;
-            border-radius: 12px;
-            background-color: #ffffff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background-color: var(--panel);
             box-shadow: 0 5px 16px rgba(39, 70, 46, 0.06);
+        }
+
+        .cafe-card__media {
+            position: relative;
         }
 
         .cafe-card__image,
@@ -277,7 +536,26 @@
         }
 
         .cafe-card__image-placeholder {
-            background-color: #edf3e9;
+            background-color: var(--panel-soft);
+        }
+
+        .favorite-form--floating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            margin: 0;
+        }
+
+        .favorite-form--floating .favorite-button {
+            display: flex;
+            width: 32px;
+            height: 32px;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 15px;
+            box-shadow: 0 2px 6px rgba(39, 70, 46, 0.18);
         }
 
         .cafe-card__body {
@@ -286,8 +564,8 @@
         }
 
         .cafe-card__name {
-            margin: 0 0 12px;
-            font-size: 18px;
+            margin: 0 0 6px;
+            font-size: 17px;
         }
 
         .cafe-card__name a {
@@ -299,13 +577,34 @@
             text-decoration: underline;
         }
 
-        .cafe-card__info {
-            margin: 6px 0;
-            color: #465247;
+        .cafe-card__area {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .cafe-card__stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 0 0 10px;
+        }
+
+        .cafe-card__stats dt {
+            margin: 0;
+            color: #8a958c;
+            font-size: 11px;
+        }
+
+        .cafe-card__stats dd {
+            margin: 2px 0 0;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 700;
         }
 
         .cafe-card__taste {
-            margin: 12px 0 0;
+            margin: 0 0 10px;
             color: #526558;
             font-size: 13px;
             line-height: 1.6;
@@ -315,19 +614,14 @@
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-top: 10px;
         }
 
         .cafe-card__tag {
-            padding: 4px 7px;
+            padding: 4px 8px;
             border-radius: 999px;
             color: #315c3b;
             font-size: 12px;
-            background: #e8f1e4;
-        }
-
-        .favorite-form {
-            margin-top: 14px;
+            background: var(--panel-soft);
         }
 
         .favorite-button {
@@ -341,11 +635,74 @@
 
         .cafe-list__empty {
             grid-column: 1 / -1;
+            color: var(--muted);
+        }
+
+        /* ---------- AI recommendation CTA ---------- */
+        .ai-cta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            padding: 22px 26px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background-color: var(--panel);
+            box-shadow: 0 8px 24px rgba(39, 70, 46, 0.06);
+        }
+
+        .ai-cta__icon {
+            display: flex;
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 20px;
+            background-color: var(--panel-soft);
+        }
+
+        .ai-cta__text {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .ai-cta__text strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--brand-dark);
+            font-size: 16px;
+        }
+
+        .ai-cta__text p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .ai-cta__button {
+            padding: 12px 22px;
+            border-radius: 999px;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            background-color: var(--brand-strong);
+            white-space: nowrap;
         }
 
         @media (max-width: 900px) {
-            .taste-filter__fields {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+            .hero__grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero__visual {
+                display: none;
+            }
+
+            .explore-grid {
+                grid-template-columns: 1fr;
             }
 
             .cafe-list {
@@ -365,10 +722,11 @@
                 order: 3;
                 flex-basis: 100%;
                 flex-wrap: wrap;
+                justify-content: flex-start;
             }
 
             .hero {
-                padding: 30px 22px;
+                padding: 26px 20px;
             }
 
             .page-content {
@@ -379,17 +737,27 @@
                 flex-direction: column;
             }
 
-            .taste-filter__fields {
-                grid-template-columns: 1fr;
+            .hero__search::before {
+                top: 22px;
             }
 
             #map {
-                height: 360px;
-                border-radius: 12px;
+                height: 320px;
             }
 
             .cafe-list {
                 grid-template-columns: 1fr;
+            }
+
+            .ai-cta {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            .ai-cta__button {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>
@@ -397,7 +765,13 @@
 <body>
     <header class="site-header">
         <div class="site-header__inner">
-            <a class="site-brand" href="{% url 'cafe_list' %}">🍵 말차지도</a>
+            <a class="site-brand" href="{% url 'cafe_list' %}">
+                <span class="site-brand__emoji">🍵</span>
+                <span>
+                    말차지도
+                    <span class="site-brand__tagline">좋은 말차가 좋은 하루를 만든다.</span>
+                </span>
+            </a>
 
             <nav class="site-nav" aria-label="주요 메뉴">
                 <a class="site-nav__item site-nav__item--active" href="{% url 'cafe_list' %}" aria-current="page">지도</a>
@@ -414,7 +788,8 @@
                     <span>{{ user.username }}님</span>
                     <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">로그아웃</button></form>
                 {% else %}
-                    <a href="{% url 'login' %}">로그인</a> · <a href="{% url 'signup' %}">회원가입</a>
+                    <a href="{% url 'login' %}">로그인</a>
+                    <a class="site-login__signup" href="{% url 'signup' %}">회원가입</a>
                 {% endif %}
             </div>
         </div>
@@ -422,81 +797,122 @@
 
     <main class="page-content">
         <section class="hero">
-            <div class="hero__content">
-                <h1 class="hero__title">오늘,<br>어디서 말차 마실까?</h1>
-                <p class="hero__description">말차러버를 위한 진짜 말차 카페 지도 🌿</p>
+            <div class="hero__grid">
+                <div class="hero__content">
+                    <h1 class="hero__title">오늘,<br>어디서 말차 마실까?</h1>
+                    <p class="hero__description">말차러버를 위한 진짜 말차 카페 지도 🌿</p>
 
-                <form class="hero__search" method="get">
-                    {% if selected_area in areas %}
-                        <input type="hidden" name="area" value="{{ selected_area }}">
-                    {% endif %}
-                    {% for key, value in request.GET.items %}
-                        {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
-                    {% endfor %}
-                    <input type="text" name="q" value="{{ query }}" placeholder="카페 이름 검색">
-                    <button type="submit">검색</button>
-                </form>
+                    <form class="hero__search" method="get">
+                        {% if selected_area in areas %}
+                            <input type="hidden" name="area" value="{{ selected_area }}">
+                        {% endif %}
+                        {% for key, value in request.GET.items %}
+                            {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
+                        {% endfor %}
+                        <input type="text" name="q" value="{{ query }}" placeholder="지역, 카페 이름 검색">
+                        <button type="submit">검색</button>
+                    </form>
 
-                <form class="hero__filters" method="get">
-                    {% if query %}
-                        <input type="hidden" name="q" value="{{ query }}">
-                    {% endif %}
-                    {% for key, value in request.GET.items %}
-                        {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
-                    {% endfor %}
-                    <button type="submit">서울 전체</button>
-                    {% for area in areas %}
-                        <button type="submit" name="area" value="{{ area }}">{{ area }}</button>
-                    {% endfor %}
-                </form>
+                    <form class="hero__filters" method="get">
+                        {% if query %}
+                            <input type="hidden" name="q" value="{{ query }}">
+                        {% endif %}
+                        {% for key, value in request.GET.items %}
+                            {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
+                        {% endfor %}
+                        <button type="submit" class="{% if not selected_area %}is-active{% endif %}">서울 전체</button>
+                        {% for area in areas %}
+                            <button type="submit" name="area" value="{{ area }}" class="{% if selected_area == area %}is-active{% endif %}">{{ area }}</button>
+                        {% endfor %}
+                    </form>
+                </div>
 
-                <form class="taste-filter" method="get">
-                    <h2 class="taste-filter__title">내 취향에 맞는 말차 찾기</h2>
-                    {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
-                    {% if selected_area in areas %}<input type="hidden" name="area" value="{{ selected_area }}">{% endif %}
-                    {% if taste_filter_form.errors %}<p class="filter-errors">필터 값을 다시 확인해주세요.</p>{% endif %}
-                    <div class="taste-filter__fields">
-                        <div class="taste-filter__field">{{ taste_filter_form.matcha_strength.label_tag }}{{ taste_filter_form.matcha_strength }}</div>
-                        <div class="taste-filter__field">{{ taste_filter_form.bitterness.label_tag }}{{ taste_filter_form.bitterness }}</div>
-                        <div class="taste-filter__field">{{ taste_filter_form.sweetness.label_tag }}{{ taste_filter_form.sweetness }}</div>
-                        <div class="taste-filter__field">{{ taste_filter_form.milkiness.label_tag }}{{ taste_filter_form.milkiness }}</div>
-                        <div class="taste-filter__field">{{ taste_filter_form.matcha_aroma.label_tag }}{{ taste_filter_form.matcha_aroma }}</div>
+                <div class="hero__visual" aria-hidden="true">
+                    <div class="hero__visual-card">
+                        <span class="hero__visual-emoji">🍵</span>
+                        <p class="hero__visual-quote">Good Matcha,<br>Better Day</p>
                     </div>
-                    <div class="taste-filter__options">
-                        <label>{{ taste_filter_form.is_decaf }} {{ taste_filter_form.is_decaf.label }}</label>
-                        <label>{{ taste_filter_form.is_vegan }} {{ taste_filter_form.is_vegan.label }}</label>
-                        <label>{{ taste_filter_form.has_parking }} {{ taste_filter_form.has_parking.label }}</label>
-                        <label>{{ taste_filter_form.has_takeout }} {{ taste_filter_form.has_takeout.label }}</label>
-                    </div>
-                    <div class="taste-filter__actions">
-                        <button type="submit">취향 필터 적용</button>
-                        <a class="taste-filter__reset" href="{% url 'cafe_list' %}">전체 초기화</a>
-                    </div>
-                </form>
+                </div>
             </div>
         </section>
 
-        <div id="map"></div>
+        <section class="explore-grid">
+            <div class="map-panel">
+                <div class="map-panel__header">
+                    <div>
+                        <h2 class="map-panel__title">📍 서울 지도</h2>
+                        <p class="map-panel__subtitle">지도의 마커를 클릭하면 카페 정보를 볼 수 있어요.</p>
+                    </div>
+                    <button type="button" class="map-panel__expand" id="map-expand-toggle" aria-label="지도 크게 보기" aria-pressed="false">⤢</button>
+                </div>
+                <div id="map"></div>
+                <div class="map-panel__legend"><span class="map-panel__legend-dot"></span> 말차 카페</div>
+            </div>
+
+            <form class="taste-filter" method="get">
+                <h2 class="taste-filter__title">내 취향으로 찾기</h2>
+                <p class="taste-filter__subtitle">나만의 말차 취향으로, 딱 맞는 카페를 찾아보세요.</p>
+                {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                {% if selected_area in areas %}<input type="hidden" name="area" value="{{ selected_area }}">{% endif %}
+                {% if taste_filter_form.errors %}<p class="filter-errors">필터 값을 다시 확인해주세요.</p>{% endif %}
+                <div class="taste-filter__fields">
+                    <div class="taste-filter__field">{{ taste_filter_form.matcha_strength.label_tag }}{{ taste_filter_form.matcha_strength }}</div>
+                    <div class="taste-filter__field">{{ taste_filter_form.bitterness.label_tag }}{{ taste_filter_form.bitterness }}</div>
+                    <div class="taste-filter__field">{{ taste_filter_form.sweetness.label_tag }}{{ taste_filter_form.sweetness }}</div>
+                    <div class="taste-filter__field">{{ taste_filter_form.milkiness.label_tag }}{{ taste_filter_form.milkiness }}</div>
+                    <div class="taste-filter__field">{{ taste_filter_form.matcha_aroma.label_tag }}{{ taste_filter_form.matcha_aroma }}</div>
+                </div>
+                <div class="taste-filter__options">
+                    <label>{{ taste_filter_form.is_vegan }} {{ taste_filter_form.is_vegan.label }}</label>
+                    <label>{{ taste_filter_form.is_decaf }} {{ taste_filter_form.is_decaf.label }}</label>
+                    <label>{{ taste_filter_form.has_parking }} {{ taste_filter_form.has_parking.label }}</label>
+                    <label>{{ taste_filter_form.has_takeout }} {{ taste_filter_form.has_takeout.label }}</label>
+                </div>
+                <div class="taste-filter__actions">
+                    <button type="submit">🔍 필터 적용</button>
+                    <a class="taste-filter__reset" href="{% url 'cafe_list' %}">전체 초기화</a>
+                </div>
+            </form>
+        </section>
 
         <section class="cafe-section" id="cafe-list">
-            <h2 class="cafe-section__title">지금 제일 인기 있는 말차 카페 🌿</h2>
-            <p class="cafe-section__count">조건에 맞는 카페 {{ result_count }}곳</p>
+            <div class="cafe-section__header">
+                <h2 class="cafe-section__title">🏆 지금 제일 인기 있는 말차 카페</h2>
+                <p class="cafe-section__count">조건에 맞는 카페 {{ result_count }}곳</p>
+            </div>
 
             <ul class="cafe-list">
                 {% for cafe in cafes %}
                     <li class="cafe-card" id="cafe-{{ cafe.id }}">
-                        {% if cafe.image %}
-                            <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
-                        {% else %}
-                            <div class="cafe-card__image-placeholder" aria-label="대표 이미지 없음"></div>
-                        {% endif %}
+                        <div class="cafe-card__media">
+                            {% if cafe.image %}
+                                <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
+                            {% else %}
+                                <div class="cafe-card__image-placeholder" aria-label="대표 이미지 없음"></div>
+                            {% endif %}
+                            <form class="favorite-form favorite-form--floating" method="post" action="{% url 'toggle_favorite' cafe.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}#cafe-{{ cafe.id }}">
+                                <button class="favorite-button" type="submit" aria-label="가보고 싶어요">
+                                    {% if cafe.id in favorite_cafe_ids %}♥{% else %}♡{% endif %}
+                                </button>
+                            </form>
+                        </div>
                         <div class="cafe-card__body">
                             <h3 class="cafe-card__name">
                                 <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
                             </h3>
-                            <p class="cafe-card__info">지역: {{ cafe.area }}</p>
-                            <p class="cafe-card__info">대표 메뉴: {{ cafe.menu_name }}</p>
-                            <p class="cafe-card__info">가격: {{ cafe.price }}원</p>
+                            <p class="cafe-card__area">📍 {{ cafe.area }}</p>
+                            <dl class="cafe-card__stats">
+                                <div>
+                                    <dt>대표 메뉴</dt>
+                                    <dd>{{ cafe.menu_name }}</dd>
+                                </div>
+                                <div>
+                                    <dt>가격</dt>
+                                    <dd>{{ cafe.price }}원</dd>
+                                </div>
+                            </dl>
                             {% if cafe.matcha_strength or cafe.bitterness or cafe.sweetness or cafe.milkiness or cafe.matcha_aroma %}
                                 <p class="cafe-card__taste">
                                     {% if cafe.matcha_strength %}진하기 {{ cafe.matcha_strength }}{% endif %}
@@ -506,21 +922,15 @@
                             {% else %}
                                 <p class="cafe-card__taste">맛 정보 준비 중</p>
                             {% endif %}
-                            {% if cafe.is_decaf or cafe.is_vegan or cafe.has_parking or cafe.has_takeout %}
-                                <div class="cafe-card__tags" aria-label="편의 정보">
-                                    {% if cafe.is_decaf %}<span class="cafe-card__tag">디카페인</span>{% endif %}
-                                    {% if cafe.is_vegan %}<span class="cafe-card__tag">비건</span>{% endif %}
-                                    {% if cafe.has_parking %}<span class="cafe-card__tag">주차</span>{% endif %}
-                                    {% if cafe.has_takeout %}<span class="cafe-card__tag">테이크아웃</span>{% endif %}
-                                </div>
-                            {% endif %}
-                            <form class="favorite-form" method="post" action="{% url 'toggle_favorite' cafe.id %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="{{ request.get_full_path }}#cafe-{{ cafe.id }}">
-                                <button class="favorite-button" type="submit">
-                                    {% if cafe.id in favorite_cafe_ids %}♥ 가보고 싶어요{% else %}♡ 가보고 싶어요{% endif %}
-                                </button>
-                            </form>
+                            <div class="cafe-card__tags" aria-label="특징">
+                                {% if cafe.matcha_strength >= 4 %}<span class="cafe-card__tag">#진한 말차</span>{% endif %}
+                                {% if cafe.sweetness and cafe.sweetness <= 2 %}<span class="cafe-card__tag">#깔끔한 단맛</span>{% endif %}
+                                {% if cafe.matcha_aroma >= 4 %}<span class="cafe-card__tag">#진한 향</span>{% endif %}
+                                {% if cafe.is_decaf %}<span class="cafe-card__tag">디카페인</span>{% endif %}
+                                {% if cafe.is_vegan %}<span class="cafe-card__tag">비건</span>{% endif %}
+                                {% if cafe.has_parking %}<span class="cafe-card__tag">주차</span>{% endif %}
+                                {% if cafe.has_takeout %}<span class="cafe-card__tag">테이크아웃</span>{% endif %}
+                            </div>
                         </div>
                     </li>
                 {% empty %}
@@ -528,17 +938,37 @@
                 {% endfor %}
             </ul>
         </section>
+
+        <section class="ai-cta">
+            <div class="ai-cta__icon">🤖</div>
+            <div class="ai-cta__text">
+                <strong>말차 취향 추천</strong>
+                <p>취향 정보를 입력하면 딱 맞는 말차 카페를 찾아드려요.</p>
+            </div>
+            <a class="ai-cta__button" href="{% url 'cafe_recommendations' %}">추천 받기 ✨</a>
+        </section>
     </main>
 
     {{ map_cafes|json_script:"map-cafes-data" }}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map').setView([37.5665, 126.9780], 11);
+        const map = L.map('map', { zoomControl: false }).setView([37.5665, 126.9780], 11);
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            subdomains: 'abcd',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         }).addTo(map);
+
+        const cafeIcon = L.divIcon({
+            className: 'cafe-marker-pin-wrapper',
+            html: '<span class="cafe-marker-pin"><span class="cafe-marker-pin__icon">🍵</span></span>',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -28],
+        });
 
         const mapCafes = JSON.parse(document.getElementById('map-cafes-data').textContent);
 
@@ -555,9 +985,26 @@
 
             popupContent.append(cafeName, document.createElement('br'), detailLink);
 
-            L.marker([cafeLatitude, cafeLongitude])
+            L.marker([cafeLatitude, cafeLongitude], { icon: cafeIcon })
                 .bindPopup(popupContent)
+                .bindTooltip(cafe.name, {
+                    permanent: true,
+                    direction: 'top',
+                    offset: [0, -26],
+                    className: 'cafe-marker-label',
+                })
                 .addTo(map);
+        });
+
+        const mapPanel = document.querySelector('.map-panel');
+        const expandToggle = document.getElementById('map-expand-toggle');
+
+        expandToggle.addEventListener('click', () => {
+            const isExpanded = mapPanel.classList.toggle('map-panel--expanded');
+            document.body.classList.toggle('map-expanded-active', isExpanded);
+            expandToggle.setAttribute('aria-pressed', String(isExpanded));
+            expandToggle.textContent = isExpanded ? '⤡' : '⤢';
+            setTimeout(() => map.invalidateSize(), 300);
         });
     </script>
 </body>
