@@ -135,3 +135,16 @@ class ReviewForm(forms.ModelForm):
         if not comment:
             raise forms.ValidationError('한줄평을 입력해주세요.')
         return comment
+
+
+class CafeImportForm(forms.Form):
+    csv_file = forms.FileField(
+        label='CSV 파일',
+        help_text='아래 형식에 맞춰 작성한 .csv 파일을 선택해주세요.',
+    )
+
+    def clean_csv_file(self):
+        csv_file = self.cleaned_data['csv_file']
+        if not csv_file.name.lower().endswith('.csv'):
+            raise forms.ValidationError('.csv 파일만 업로드할 수 있습니다.')
+        return csv_file

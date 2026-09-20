@@ -1,0 +1,40 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<h1>CSV로 카페 일괄 등록</h1>
+
+<p>아래 열(컬럼) 이름을 그대로 써서 CSV 파일을 만들어주세요. 첫 줄은 반드시 열 이름이어야 합니다.</p>
+<p><a href="{% static 'cafeapp/cafe_import_template.csv' %}">예시 CSV 파일 내려받기</a></p>
+
+<table style="margin: 16px 0; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="text-align:left; padding: 4px 12px 4px 0; border-bottom: 1px solid #ccc;">열 이름</th>
+            <th style="text-align:left; padding: 4px 12px 4px 0; border-bottom: 1px solid #ccc;">필수 여부</th>
+            <th style="text-align:left; padding: 4px 0; border-bottom: 1px solid #ccc;">설명</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td style="padding:4px 12px 4px 0;">name</td><td style="padding:4px 12px 4px 0;">필수</td><td>카페 이름</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;">area</td><td style="padding:4px 12px 4px 0;">필수</td><td>지역 (예: 성수, 연남 등)</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;">address</td><td style="padding:4px 12px 4px 0;">필수</td><td>주소</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;">menu_name</td><td style="padding:4px 12px 4px 0;">필수</td><td>대표 메뉴</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;">price</td><td style="padding:4px 12px 4px 0;">필수</td><td>가격 (숫자만)</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;">description</td><td style="padding:4px 12px 4px 0;">필수</td><td>카페 설명</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;">business_hours</td><td style="padding:4px 12px 4px 0;">선택</td><td>영업시간</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;">latitude / longitude</td><td style="padding:4px 12px 4px 0;">선택</td><td>위도 / 경도 (비워두면 지도에 안 뜸)</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;">matcha_strength / bitterness / sweetness / milkiness / matcha_aroma</td><td style="padding:4px 12px 4px 0;">선택</td><td>1~5 점수, 비워두면 미입력 처리</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;">is_decaf / is_vegan / has_parking / has_takeout</td><td style="padding:4px 12px 4px 0;">선택</td><td>1 또는 0 (참/거짓)</td></tr>
+    </tbody>
+</table>
+
+<p>같은 이름 + 같은 지역의 카페가 이미 있으면 내용을 덮어쓰고, 없으면 새로 만듭니다. <strong>사진(이미지)은 CSV로 넣을 수 없어서</strong>, 업로드 후 각 카페 편집 화면에서 따로 추가해주세요.</p>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="업로드" class="default">
+    <a href="{% url 'admin:cafeapp_cafe_changelist' %}" style="margin-left: 12px;">취소하고 목록으로</a>
+</form>
+{% endblock %}
