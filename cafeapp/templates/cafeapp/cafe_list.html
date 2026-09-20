@@ -431,23 +431,89 @@
         .taste-filter__field {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            gap: 14px;
         }
 
         .taste-filter__field label {
             flex-shrink: 0;
+            width: 92px;
             color: #465247;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
         }
 
         .taste-filter__field select {
+            flex-shrink: 0;
+            width: 92px;
             padding: 8px 10px;
             border: 1px solid #bdcdb8;
             border-radius: 999px;
             background: #fbfdfa;
             font-size: 13px;
+        }
+
+        .taste-slider {
+            position: relative;
+            display: flex;
+            flex: 1;
+            align-items: center;
+            min-width: 0;
+        }
+
+        .taste-slider__range {
+            width: 100%;
+            height: 20px;
+            margin: 0;
+            background: transparent;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .taste-slider__range:focus-visible {
+            outline: 2px solid var(--brand-strong);
+            outline-offset: 4px;
+        }
+
+        .taste-slider__range::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 999px;
+            background: transparent;
+        }
+
+        .taste-slider__range::-webkit-slider-thumb {
+            width: 18px;
+            height: 18px;
+            margin-top: -6px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            background: var(--brand-strong);
+            box-shadow: 0 1px 3px rgba(39, 70, 46, 0.4);
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .taste-slider__range::-moz-range-track {
+            height: 6px;
+            border-radius: 999px;
+            background: #dfe6dc;
+        }
+
+        .taste-slider__range::-moz-range-progress {
+            height: 6px;
+            border-radius: 999px;
+            background: var(--brand-strong);
+        }
+
+        .taste-slider__range::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            background: var(--brand-strong);
+            box-shadow: 0 1px 3px rgba(39, 70, 46, 0.4);
+            cursor: pointer;
         }
 
         .taste-filter__options {
@@ -915,11 +981,31 @@
                 {% if selected_area in areas %}<input type="hidden" name="area" value="{{ selected_area }}">{% endif %}
                 {% if taste_filter_form.errors %}<p class="filter-errors">필터 값을 다시 확인해주세요.</p>{% endif %}
                 <div class="taste-filter__fields">
-                    <div class="taste-filter__field">{{ taste_filter_form.matcha_strength.label_tag }}{{ taste_filter_form.matcha_strength }}</div>
-                    <div class="taste-filter__field">{{ taste_filter_form.bitterness.label_tag }}{{ taste_filter_form.bitterness }}</div>
-                    <div class="taste-filter__field">{{ taste_filter_form.sweetness.label_tag }}{{ taste_filter_form.sweetness }}</div>
-                    <div class="taste-filter__field">{{ taste_filter_form.milkiness.label_tag }}{{ taste_filter_form.milkiness }}</div>
-                    <div class="taste-filter__field">{{ taste_filter_form.matcha_aroma.label_tag }}{{ taste_filter_form.matcha_aroma }}</div>
+                    <div class="taste-filter__field">
+                        {{ taste_filter_form.matcha_strength.label_tag }}
+                        <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.matcha_strength.id_for_label }}"></span>
+                        {{ taste_filter_form.matcha_strength }}
+                    </div>
+                    <div class="taste-filter__field">
+                        {{ taste_filter_form.bitterness.label_tag }}
+                        <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.bitterness.id_for_label }}"></span>
+                        {{ taste_filter_form.bitterness }}
+                    </div>
+                    <div class="taste-filter__field">
+                        {{ taste_filter_form.sweetness.label_tag }}
+                        <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.sweetness.id_for_label }}"></span>
+                        {{ taste_filter_form.sweetness }}
+                    </div>
+                    <div class="taste-filter__field">
+                        {{ taste_filter_form.milkiness.label_tag }}
+                        <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.milkiness.id_for_label }}"></span>
+                        {{ taste_filter_form.milkiness }}
+                    </div>
+                    <div class="taste-filter__field">
+                        {{ taste_filter_form.matcha_aroma.label_tag }}
+                        <span class="taste-slider"><input type="range" class="taste-slider__range" min="0" max="5" step="1" aria-hidden="true" tabindex="-1" data-target="{{ taste_filter_form.matcha_aroma.id_for_label }}"></span>
+                        {{ taste_filter_form.matcha_aroma }}
+                    </div>
                 </div>
                 <div class="taste-filter__options">
                     <label>{{ taste_filter_form.is_vegan }} {{ taste_filter_form.is_vegan.label }}</label>
@@ -1112,6 +1198,39 @@
                 }
             }
         }
+
+        document.querySelectorAll('.taste-slider__range').forEach((range) => {
+            const select = document.getElementById(range.dataset.target);
+            if (!select) {
+                return;
+            }
+
+            function valueToStep(value) {
+                const step = parseInt(value, 10);
+                return Number.isInteger(step) && step >= 1 && step <= 5 ? step : 0;
+            }
+
+            function paint(step) {
+                const percent = (step / 5) * 100;
+                range.style.background = `linear-gradient(to right, var(--brand-strong) 0%, var(--brand-strong) ${percent}%, #dfe6dc ${percent}%, #dfe6dc 100%)`;
+            }
+
+            function syncFromSelect() {
+                const step = valueToStep(select.value);
+                range.value = String(step);
+                paint(step);
+            }
+
+            range.addEventListener('input', () => {
+                const step = parseInt(range.value, 10);
+                paint(step);
+                select.value = step === 0 ? '' : String(step);
+            });
+
+            select.addEventListener('change', syncFromSelect);
+
+            syncFromSelect();
+        });
     </script>
 </body>
 </html>
