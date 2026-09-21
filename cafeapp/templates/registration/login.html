@@ -343,6 +343,36 @@
             background-color: var(--line);
         }
 
+        .login-card__or {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0 14px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .login-card__or::before,
+        .login-card__or::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: var(--line);
+        }
+
+        .btn--google {
+            margin-top: 0;
+            color: #3c4043;
+            background-color: #ffffff;
+            border-color: #dadce0;
+        }
+
+        .btn--kakao {
+            margin-top: 10px;
+            color: #191600;
+            background-color: #fee500;
+        }
+
         .login-card__signup {
             margin: 0;
             color: var(--muted);
@@ -452,6 +482,24 @@
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </button>
                 </form>
+
+                <div class="login-card__or">또는</div>
+
+                <a class="btn btn--google" href="{% url 'google_login' %}">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.66-.22-2.45H12v4.63h6.47c-.28 1.49-1.13 2.76-2.41 3.6v3h3.9c2.28-2.1 3.56-5.2 3.56-8.78z"></path>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.93-2.9l-3.9-3c-1.08.73-2.46 1.16-4.03 1.16-3.1 0-5.72-2.09-6.66-4.9H1.3v3.09C3.27 21.3 7.31 24 12 24z"></path>
+                        <path fill="#FBBC05" d="M5.34 14.36A7.2 7.2 0 0 1 4.96 12c0-.82.14-1.62.38-2.36V6.55H1.3A11.98 11.98 0 0 0 0 12c0 1.93.46 3.76 1.3 5.45l4.04-3.09z"></path>
+                        <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.61 4.58 1.79l3.44-3.44C17.94 1.19 15.24 0 12 0 7.31 0 3.27 2.7 1.3 6.55l4.04 3.09C6.28 6.84 8.9 4.75 12 4.75z"></path>
+                    </svg>
+                    구글로 로그인
+                </a>
+                <a class="btn btn--kakao" href="{% url 'kakao_login' %}">
+                    <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 3C6.48 3 2 6.49 2 10.8c0 2.76 1.85 5.18 4.63 6.56-.2.73-.73 2.67-.84 3.08-.13.51.19.5.4.36.16-.11 2.62-1.78 3.68-2.5.68.1 1.39.15 2.13.15 5.52 0 10-3.49 10-7.8S17.52 3 12 3z"></path>
+                    </svg>
+                    카카오로 로그인
+                </a>
 
                 <div class="login-card__divider"></div>
 
