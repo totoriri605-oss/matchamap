@@ -1,2 +1,2 @@
-name,area,address,menu_name,price,description,business_hours,latitude,longitude,matcha_strength,bitterness,sweetness,milkiness,matcha_aroma,is_decaf,is_vegan,has_parking,has_takeout
-예시 말차카페,성수,서울시 성동구 성수동1가 123,말차 라떼,6000,진한 말차와 부드러운 우유의 조화가 좋은 카페,매일 10:00-21:00,37.5445,127.0559,4,3,2,3,4,0,0,1,1
+name,area,address,menu_name,price,description,business_hours,latitude,longitude,matcha_strength,bitterness,sweetness,milkiness,matcha_aroma,is_decaf,is_vegan,has_parking,has_takeout,is_matchayojung_pick
+예시 말차카페,성수,서울시 성동구 성수동1가 123,말차 라떼,6000,진한 말차와 부드러운 우유의 조화가 좋은 카페,매일 10:00-21:00,37.5445,127.0559,4,3,2,3,4,0,0,1,1,1

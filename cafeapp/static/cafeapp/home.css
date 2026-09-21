@@ -95,5 +95,7 @@ a, button, input, select { -webkit-tap-highlight-color: transparent; }
 .cafe-popup__name { display: block; font-size: 16px; }
 .cafe-popup p { margin: 6px 0; line-height: 1.5; }
 .cafe-popup__area { color: var(--muted); }
+.cafe-marker-pin--pick { background: #244b2d; border-color: #e4c76e; }
+.cafe-marker-pin--pick .cafe-marker-pin__icon { color: #ffe7a3; line-height: 14px; text-align: center; }
 .cafe-popup__price, .cafe-popup__rating { font-weight: 600; }
 .cafe-popup .cafe-popup__link { display: block; margin-top: 12px; padding: 10px; background: var(--brand-strong); color: white; text-align: center; border-radius: 8px; text-decoration: none; }

@@ -1,9 +1,19 @@
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.core.exceptions import ValidationError
+from .locations import COUNTRIES, CITIES
 
 
 class Cafe(models.Model):
+    country = models.CharField('국가', max_length=2, choices=list(COUNTRIES.items()), default='KR')
+    city = models.CharField('도시', max_length=30, choices=[(key, value['name']) for key, value in CITIES.items()], default='seoul')
+
+    def clean(self):
+        super().clean()
+        if self.city in CITIES and CITIES[self.city]['country'] != self.country:
+            raise ValidationError({'city': '선택한 국가에 속하는 도시를 선택해주세요.'})
+
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='cafes/', blank=True)
     area = models.CharField(max_length=100)
@@ -43,6 +53,13 @@ class Cafe(models.Model):
     is_vegan = models.BooleanField(default=False)
     has_parking = models.BooleanField(default=False)
     has_takeout = models.BooleanField(default=False)
+    is_matchayojung_pick = models.BooleanField('말차요정 PICK', default=False)
+    matchayojung_comment = models.TextField(
+        '말차요정 한줄평',
+        max_length=200,
+        blank=True,
+    )
+    blog_url = models.URLField('블로그 후기 URL', blank=True)
 
 
 class Favorite(models.Model):

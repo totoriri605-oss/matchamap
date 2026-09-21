@@ -165,6 +165,9 @@ class CafeTasteFilterTests(TestCase):
             matcha_aroma=5,
             is_vegan=True,
             has_takeout=True,
+            is_matchayojung_pick=True,
+            matchayojung_comment='진한 말차를 좋아한다면 추천해요.',
+            blog_url='https://blog.naver.com/matchayojung/1',
         )
         cls.sweet_cafe = Cafe.objects.create(
             name='달콤 말차 카페',
@@ -230,6 +233,23 @@ class CafeTasteFilterTests(TestCase):
         self.assertFalse(cafe.is_vegan)
         self.assertFalse(cafe.has_parking)
         self.assertFalse(cafe.has_takeout)
+        self.assertFalse(cafe.is_matchayojung_pick)
+        self.assertEqual(cafe.matchayojung_comment, '')
+        self.assertEqual(cafe.blog_url, '')
+
+    def test_matchayojung_comment_and_blog_url_are_validated(self):
+        cafe = Cafe(
+            name='검증 카페',
+            area='성수',
+            address='서울',
+            menu_name='말차',
+            price=5000,
+            description='검증',
+            matchayojung_comment='가' * 201,
+            blog_url='not-a-url',
+        )
+        with self.assertRaises(ValidationError):
+            cafe.full_clean()
 
     def test_filter_form_validates_and_converts_values(self):
         form = CafeTasteFilterForm(
@@ -296,6 +316,30 @@ class CafeTasteFilterTests(TestCase):
             {self.strong_cafe.name},
         )
 
+    def test_pick_filter_combines_with_search_area_and_taste_filters(self):
+        response = self.client.get(
+            reverse('cafe_list'),
+            {
+                'area': '성수',
+                'q': '진한',
+                'pick': '1',
+                'matcha_strength': 4,
+            },
+        )
+
+        self.assertTrue(response.context['is_pick_filter_active'])
+        self.assertEqual(self.cafe_names(response), {self.strong_cafe.name})
+        self.assertEqual(
+            {cafe['name'] for cafe in response.context['map_cafes']},
+            {self.strong_cafe.name},
+        )
+        self.assertContains(response, 'name="pick" value="1" checked')
+
+    def test_pick_filter_can_be_removed(self):
+        response = self.client.get(reverse('cafe_list'))
+        self.assertFalse(response.context['is_pick_filter_active'])
+        self.assertEqual(response.context['result_count'], 3)
+
     def test_unknown_taste_values_are_excluded_from_score_filters(self):
         response = self.client.get(
             reverse('cafe_list'),
@@ -325,6 +369,50 @@ class CafeTasteFilterTests(TestCase):
         self.assertContains(response, '단맛 1')
         self.assertContains(response, '비건')
         self.assertNotContains(response, self.sweet_cafe.name)
+
+    def test_taste_filter_uses_three_step_buttons_and_option_chips(self):
+        response = self.client.get(
+            reverse('cafe_list'),
+            {'matcha_strength': 4, 'sweetness': 2, 'is_decaf': 'on'},
+        )
+
+        self.assertContains(
+            response,
+            'type="radio" name="matcha_strength"',
+            count=3,
+        )
+        self.assertContains(
+            response,
+            'type="radio" name="sweetness"',
+            count=3,
+        )
+        self.assertNotContains(response, 'type="radio" name="milkiness"')
+        self.assertContains(
+            response,
+            'name="matcha_strength" value="4" checked',
+        )
+        self.assertContains(response, 'name="sweetness" value="2" checked')
+        self.assertContains(response, 'class="option-chip"', count=5)
+        self.assertNotContains(response, 'taste-slider')
+
+    def test_pick_badge_comment_and_blog_link_are_conditional(self):
+        list_response = self.client.get(reverse('cafe_list'))
+        self.assertContains(list_response, 'class="matchayojung-pick-badge"')
+
+        pick_response = self.client.get(
+            reverse('cafe_detail', args=[self.strong_cafe.id])
+        )
+        self.assertContains(pick_response, '🌿 말차요정 한줄평')
+        self.assertContains(pick_response, self.strong_cafe.matchayojung_comment)
+        self.assertContains(pick_response, self.strong_cafe.blog_url)
+        self.assertContains(pick_response, 'target="_blank"')
+        self.assertContains(pick_response, 'rel="noopener noreferrer"')
+
+        regular_response = self.client.get(
+            reverse('cafe_detail', args=[self.sweet_cafe.id])
+        )
+        self.assertNotContains(regular_response, '🌿 말차요정 한줄평')
+        self.assertNotContains(regular_response, '말차요정 후기 보러가기')
 
     def test_unknown_card_and_detail_taste_information_are_displayed(self):
         list_response = self.client.get(reverse('cafe_list'))
@@ -543,6 +631,7 @@ class CafeAdminImageTests(TestCase):
         )
         self.url = reverse('admin:cafeapp_cafe_change', args=[self.cafe.pk])
         self.data = {
+            'country': 'KR', 'city': 'seoul',
             'name': self.cafe.name, 'area': '성수', 'address': '서울',
             'menu_name': '말차', 'price': 6000, 'description': '사진 테스트',
             '_save': '저장',

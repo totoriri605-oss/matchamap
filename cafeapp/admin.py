@@ -24,6 +24,7 @@ CAFE_IMPORT_BOOLEAN_FIELDS = (
     'is_vegan',
     'has_parking',
     'has_takeout',
+    'is_matchayojung_pick',
 )
 CAFE_IMPORT_TRUE_VALUES = {'1', 'true', 'yes', 'y', 'o', '참'}
 
@@ -125,6 +126,10 @@ class CafeAdmin(admin.ModelAdmin):
                 defaults['longitude'] = Decimal(longitude) if longitude else None
 
                 cafe = Cafe(name=name, area=area, **defaults)
+                existing = Cafe.objects.filter(name=name, area=area).first()
+                for field in ('country', 'city'):
+                    defaults[field] = (row.get(field) or '').strip() or getattr(existing or Cafe(), field)
+                    setattr(cafe, field, defaults[field])
                 cafe.full_clean(exclude=['image'])
 
                 _, created = Cafe.objects.update_or_create(
@@ -157,8 +162,11 @@ class CafeAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
+        'country',
+        'city',
         'image_thumbnail',
         'area',
+        'is_matchayojung_pick',
         'matcha_strength',
         'sweetness',
         'is_decaf',
@@ -167,12 +175,16 @@ class CafeAdmin(admin.ModelAdmin):
         'has_takeout',
     )
     list_filter = (
+        'country',
+        'city',
         'area',
+        'is_matchayojung_pick',
         'is_decaf',
         'is_vegan',
         'has_parking',
         'has_takeout',
     )
+    list_editable = ('is_matchayojung_pick',)
     search_fields = ('name', 'area', 'address', 'menu_name')
     fieldsets = (
         ('대표 사진', {'fields': ('image_preview', 'image')}),
@@ -181,6 +193,8 @@ class CafeAdmin(admin.ModelAdmin):
             {
                 'fields': (
                     'name',
+                    'country',
+                    'city',
                     'area',
                     'address',
                     ('latitude', 'longitude'),
@@ -202,6 +216,17 @@ class CafeAdmin(admin.ModelAdmin):
                     'matcha_aroma',
                 ),
                 'description': '각 항목을 1점부터 5점 사이로 입력하세요.',
+            },
+        ),
+        (
+            '말차요정 추천',
+            {
+                'fields': (
+                    'is_matchayojung_pick',
+                    'matchayojung_comment',
+                    'blog_url',
+                ),
+                'description': '직접 방문해 추천하는 카페의 PICK 여부, 한줄평, 블로그 후기 링크를 관리합니다.',
             },
         ),
         (

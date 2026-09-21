@@ -14,6 +14,7 @@ from .forms import (
     ReviewForm,
 )
 from .models import Cafe, Favorite, Review, HeroBanner
+from .locations import COUNTRIES, CITIES
 
 
 def _favorite_cafe_ids(user):
@@ -23,10 +24,37 @@ def _favorite_cafe_ids(user):
 
 
 def cafe_list(request):
+    selected_country = request.GET.get('country', 'KR')
+    if selected_country not in COUNTRIES:
+        selected_country = 'KR'
+    selected_city = request.GET.get('city')
+    if selected_city not in CITIES or CITIES[selected_city]['country'] != selected_country:
+        selected_city = next(key for key, value in CITIES.items() if value['country'] == selected_country)
     areas = ['삼성', '성수', '명동', '연남', '서촌', '삼청']
     selected_area = request.GET.get('area')
     query = request.GET.get('q', '').strip()
-    cafes = Cafe.objects.all()
+    is_pick_filter_active = request.GET.get('pick') == '1'
+    cafes = Cafe.objects.filter(country=selected_country, city=selected_city)
+    if selected_city != 'seoul':
+        areas = list(cafes.order_by('area').values_list('area', flat=True).distinct())
+    if selected_area not in areas:
+        selected_area = None
+    def location_url(country, city):
+        params = request.GET.copy()
+        params.pop('area', None)
+        params['country'] = country
+        params['city'] = city
+        return '?' + params.urlencode()
+    city_grid_choices = [
+        {
+            'code': code,
+            'name': value['name'],
+            'name_en': value['name_en'],
+            'url': location_url(value['country'], code),
+            'image': f'cafeapp/cities/{code}.jpg',
+        }
+        for code, value in CITIES.items()
+    ]
     taste_filter_form = CafeTasteFilterForm(request.GET)
 
     if selected_area in areas:
@@ -34,6 +62,9 @@ def cafe_list(request):
 
     if query:
         cafes = cafes.filter(Q(name__icontains=query) | Q(area__icontains=query))
+
+    if is_pick_filter_active:
+        cafes = cafes.filter(is_matchayojung_pick=True)
 
     if taste_filter_form.is_valid():
         taste_filters = {}
@@ -65,6 +96,7 @@ def cafe_list(request):
     map_cafes = [
         {
             'name': cafe.name,
+            'is_pick': cafe.is_matchayojung_pick,
             'area': cafe.area,
             'menu_name': cafe.menu_name,
             'price': cafe.price,
@@ -83,10 +115,16 @@ def cafe_list(request):
 
     context = {
         'cafes': cafes,
+        'selected_country': selected_country,
+        'selected_city': selected_city,
+        'city_name': CITIES[selected_city]['name'],
+        'city_bounds': CITIES[selected_city]['bounds'],
+        'city_grid_choices': city_grid_choices,
         'hero_banner': HeroBanner.objects.first(),
         'areas': areas,
         'selected_area': selected_area,
         'query': query,
+        'is_pick_filter_active': is_pick_filter_active,
         'taste_filter_form': taste_filter_form,
         'result_count': cafes.count(),
         'map_cafes': map_cafes,

@@ -311,7 +311,7 @@
                             </div>
                             <div>
                                 <dt>가격</dt>
-                                <dd>{{ cafe.price }}원</dd>
+                                <dd>{% if cafe.price %}{{ cafe.price }}원{% else %}가격 정보 확인 중{% endif %}</dd>
                             </div>
                         </dl>
                     </div>

@@ -5,6 +5,8 @@
 
 ## 1. Cafe — 현재 모델
 
+2026-09-21 다도시 확장: `country`(KR/JP/US, 기본 KR), `city`(seoul/tokyo/osaka/new-york/san-francisco, 기본 seoul)를 추가했다. Admin 모델 검증에서 국가·도시 조합을 검사한다. 기존 `area`와 주소·이미지는 보존한다. migration 0012는 기존 주소/지역에서 확인되는 해외 도시를 분류한다. 도시 이름과 지도 기본 범위는 `cafeapp/locations.py`에서 관리한다.
+
 | 필드 | 형식 및 제약 |
 |---|---|
 | `name`, `area`, `menu_name` | 문자열, 최대 100자 |
@@ -16,9 +18,14 @@
 | `latitude`, `longitude` | 전체 9자리·소수 6자리 Decimal, 미입력 허용 |
 | `matcha_strength`, `bitterness`, `sweetness`, `milkiness`, `matcha_aroma` | 1~5 범위 검증기가 있는 정수, 미입력 허용 |
 | `is_decaf`, `is_vegan`, `has_parking`, `has_takeout` | Boolean, 기본값 False |
+| `is_matchayojung_pick` | 운영자가 직접 추천한 카페 여부, 기본값 False |
+| `matchayojung_comment` | 운영자 한줄평, 최대 200자, 빈 값 허용 |
+| `blog_url` | 운영자 블로그 후기 URL, 빈 값 허용 |
 
 맛 점수가 없다는 것은 0점이라는 뜻이 아니다. 범위 검증기는 모델 검증과 폼에서 사용하며, 모든 직접 DB 쓰기에 자동으로 적용되는 제약조건으로 가정하지 않는다.
 편의 옵션은 현재 True/False만 표현하며 미확인 상태를 별도로 구분하지 않는다.
+
+말차요정 PICK·한줄평·블로그 URL은 Cafe에 직접 저장한다. 한줄평과 URL이 비어 있으면 상세 페이지의 해당 영역을 표시하지 않는다.
 
 `aroma`, `decaf`, `vegan`, `parking`, `takeout`이라는 별도 필드는 없다.
 
