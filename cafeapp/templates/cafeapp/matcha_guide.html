@@ -1,0 +1,87 @@
+{% extends 'cafeapp/cafe_list.html' %}
+{% load static i18n %}
+{% block page_title %}말차 가이드 | 말차요정의 지도{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'cafeapp/guide.css' %}">{% endblock %}
+{% block main_content %}
+<div class="matcha-guide">
+    <section class="guide-hero" aria-labelledby="guide-title">
+        <div class="guide-hero__copy">
+            <p class="guide-eyebrow">A LITTLE GUIDE TO MATCHA</p>
+            <h1 id="guide-title">말차 가이드 <span aria-hidden="true">🌿</span></h1>
+            <p class="guide-hero__subtitle">말차를 더 쉽게 알고, 더 맛있게 즐기는 방법</p>
+            <p>한 잔의 말차가 더 특별해지는 순간,<br>지금 말차에 대해 조금 더 알아봐요.</p>
+            <a class="guide-text-link" href="#guide-articles">나의 첫 말차 이야기 읽기 <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="guide-hero__visual"><img src="{% static 'cafeapp/guide/ritual.png' %}" alt="말차 잔과 차선, 말차 가루를 표현한 이미지" width="1536" height="1024" fetchpriority="high"><span>Good matcha, brighter days.</span></div>
+    </section>
+
+    <nav class="guide-categories" aria-label="가이드 카테고리">
+        {% for article in guide_articles %}
+        <a href="#guide-{{ article.slug }}" class="guide-category">
+            <img src="{% static article.image %}" alt="" width="72" height="72" loading="lazy">
+            <span><strong>{{ article.category }}</strong><small>{{ article.category_description }}</small></span><span class="guide-arrow" aria-hidden="true">›</span>
+        </a>
+        {% endfor %}
+    </nav>
+
+    <section class="guide-section" id="guide-articles" aria-labelledby="guide-articles-title">
+        <div class="guide-section__heading"><h2 id="guide-articles-title"><span aria-hidden="true">🌿</span> 이런 글부터 읽어보세요</h2><p>말차가 더 맛있어지는 이야기를 모았어요.</p></div>
+        <div class="guide-articles">
+            {% for article in guide_articles %}
+            <details class="guide-article" id="guide-{{ article.slug }}">
+                <summary>
+                    <div class="guide-article__photo"><img src="{% static article.image %}" alt="" width="1536" height="1024" loading="lazy">{% if forloop.first %}<span class="guide-badge">초보자 추천</span>{% endif %}</div>
+                    <div class="guide-article__preview">
+                        <h3>{{ article.title }}</h3><p>{{ article.description }}</p>
+                        <div class="guide-tags">{% for tag in article.tags %}<span>#{{ tag }}</span>{% endfor %}</div>
+                        <span class="guide-article__read">짧은 가이드 <span class="guide-article__open">읽기 +</span><span class="guide-article__close">접기 −</span></span>
+                    </div>
+                </summary>
+                <div class="guide-article__body">
+                    {% for paragraph in article.paragraphs %}<p>{{ paragraph }}</p>{% endfor %}
+                    {% if article.source_url %}<a href="{{ article.source_url }}" target="_blank" rel="noopener noreferrer">참고: {{ article.source_label }} ↗</a>{% endif %}
+                    {% if article.extra_source_url %}<a href="{{ article.extra_source_url }}" target="_blank" rel="noopener noreferrer">{{ article.extra_source_label }} ↗</a>{% endif %}
+                </div>
+            </details>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="guide-section guide-taste-section" aria-labelledby="guide-taste-title">
+        <div class="guide-section__heading"><h2 id="guide-taste-title"><span aria-hidden="true">🌿</span> 내 취향 찾기</h2><p>어떤 말차를 좋아하시나요?</p></div>
+        <p class="guide-section__intro">취향에 맞는 맛의 특징을 알아보고, 나만의 말차 스타일을 찾아보세요.</p>
+        <div class="guide-tastes">
+            {% for taste in guide_tastes %}
+            <article class="guide-taste"><h3>{{ taste.name }}</h3><p>{{ taste.description }}</p>
+                <ol class="guide-levels" aria-label="{{ taste.name }} 1단계 {{ taste.low }}부터 5단계 {{ taste.high }}까지">
+                    {% for level in guide_levels %}<li><span class="guide-leaf guide-leaf--{{ level }}" aria-hidden="true"></span><span>{{ level }}</span></li>{% endfor %}
+                </ol>
+                <div class="guide-taste__ends"><span>{{ taste.low }}</span><span>{{ taste.high }}</span></div>
+            </article>
+            {% endfor %}
+        </div>
+        <div class="guide-taste__footer"><p>위 단계는 맛을 이해하기 위한 안내예요. 실제 취향 선택은 아래에서 시작해요.</p><a class="guide-button guide-button--soft" href="{% url 'cafe_recommendations' %}">내 취향으로 추천받기 <span aria-hidden="true">→</span></a></div>
+    </section>
+
+    <section class="guide-section" aria-labelledby="guide-regions-title">
+        <div class="guide-section__heading"><h2 id="guide-regions-title"><span aria-hidden="true">🌿</span> 지역별 말차 이야기</h2><p>차가 자라는 곳부터, 한 잔을 즐기는 도시까지.</p></div>
+        <div class="guide-regions">
+            {% for region in guide_regions %}
+            <a class="guide-region" {% if region.local %}href="{% url 'cafe_catalog' %}?country=KR&amp;city=seoul"{% else %}href="{{ region.url }}" target="_blank" rel="noopener noreferrer"{% endif %}>
+                <img src="{% static region.image %}" alt="" width="64" height="64" loading="lazy">
+                <div><small>{{ region.label }}</small><h3>{{ region.name }}{% if not region.local %}<span aria-label="외부 안내, 새 탭"> ↗</span>{% endif %}</h3><p>{{ region.description }}</p></div>
+            </a>
+            {% endfor %}
+        </div>
+        <p class="guide-note">일본 지역 카드는 외부 자료로 연결됩니다. 차밭 그림은 특정 산지의 실제 풍경이 아닌 공통 일러스트예요.</p>
+    </section>
+
+    <section class="guide-cta" aria-labelledby="guide-cta-title">
+        <img class="guide-cta__photo" src="{% static 'cafeapp/guide/latte.png' %}" alt="" width="240" height="160" loading="lazy">
+        <div><h2 id="guide-cta-title">가이드를 읽고, 내 취향 카페를 찾아보세요</h2><p>이제, 알고 즐기는 말차 한 잔의 특별함을 만나볼까요?</p></div>
+        <a class="guide-button" href="{% url 'cafe_catalog' %}">카페 목록 보러가기 <span aria-hidden="true">→</span></a>
+    </section>
+    <p class="guide-note guide-image-note">말차 사진과 차밭 일러스트는 AI로 제작한 이해를 돕기 위한 이미지입니다. 맛은 제품과 만드는 방법에 따라 달라질 수 있어요.</p>
+</div>
+{% endblock %}
+{% block page_scripts %}{% endblock %}

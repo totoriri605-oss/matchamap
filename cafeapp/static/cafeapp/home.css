@@ -6,10 +6,14 @@ a, button, input, select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid #7c955a; outline-offset: 4px; }
 .site-header { max-width: 1344px; margin: 0 auto; border-radius: 0 0 20px 20px; background: #fffefaed; box-shadow: 0 5px 22px #344b2510; }
 .site-header__inner { min-height: 82px; gap: 20px; flex-wrap: wrap; padding-top: 14px; padding-bottom: 14px; }
-.site-brand { font-size: 22px; letter-spacing: -.8px; }
-.site-brand__tagline { margin-top: 5px; letter-spacing: 0; }
+.site-brand { font-size: 22px; letter-spacing: -.8px; gap: 10px; }
+.site-brand__rabbit { width: 66px; height: 60px; object-fit: contain; flex-shrink: 0; align-self: center; }
+.site-brand__title { display: block; font-family: 'AppleMyungjo', 'Batang', '바탕', serif; font-size: 1.25em; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+.site-brand__tagline { margin-top: 4px; font-size: 11px; line-height: 1.4; letter-spacing: 0; }
 .site-nav { gap: 3px; }
-.site-header__right { flex-wrap: wrap; }
+.site-header__right { flex-wrap: wrap; align-items: center; gap: 8px; }
+.site-header__right .lang-switch { margin: 0; align-items: center; }
+.site-header__right .site-login { align-items: center; }
 .page-content { padding-top: 24px; }
 .hero { position: relative; padding: 30px 42px 22px; margin-bottom: 0; border-radius: 24px 24px 0 0; background: linear-gradient(110deg, #eef0e1 20%, #e1e6cf 100%); }
 .hero__grid { grid-template-columns: 1.2fr 1fr; gap: 10px; }

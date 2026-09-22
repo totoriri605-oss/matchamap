@@ -15,6 +15,17 @@ from .forms import (
 )
 from .models import Cafe, Favorite, Review, HeroBanner
 from .locations import COUNTRIES, CITIES
+from .guide_content import GUIDE_ARTICLES, GUIDE_REGIONS, GUIDE_TASTES
+
+
+def matcha_guide(request):
+    return render(request, 'cafeapp/matcha_guide.html', {
+        'is_guide': True,
+        'guide_articles': GUIDE_ARTICLES,
+        'guide_regions': GUIDE_REGIONS,
+        'guide_tastes': GUIDE_TASTES,
+        'guide_levels': range(1, 6),
+    })
 
 
 def _favorite_cafe_ids(user):
@@ -23,7 +34,7 @@ def _favorite_cafe_ids(user):
     return list(user.favorites.values_list('cafe_id', flat=True))
 
 
-def cafe_list(request):
+def cafe_list(request, catalog=False):
     selected_country = request.GET.get('country', 'KR')
     if selected_country not in COUNTRIES:
         selected_country = 'KR'
@@ -114,6 +125,7 @@ def cafe_list(request):
     ]
 
     context = {
+        'is_catalog': catalog,
         'cafes': cafes,
         'selected_country': selected_country,
         'selected_city': selected_city,
@@ -130,7 +142,8 @@ def cafe_list(request):
         'map_cafes': map_cafes,
         'favorite_cafe_ids': _favorite_cafe_ids(request.user),
     }
-    return render(request, 'cafeapp/cafe_list.html', context)
+    template = 'cafeapp/cafe_catalog.html' if catalog else 'cafeapp/cafe_list.html'
+    return render(request, template, context)
 
 
 def cafe_detail(request, cafe_id):

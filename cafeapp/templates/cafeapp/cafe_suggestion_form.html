@@ -1,9 +1,10 @@
+{% load static i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>카페 제보 | 말차요정지도</title>
+    <title>카페 제보 | 말차요정의 지도</title>
     <style>
         * {
             box-sizing: border-box;
@@ -65,20 +66,50 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
             max-width: 900px;
             min-height: 64px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 14px 24px;
         }
 
         .site-brand {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: var(--brand-dark);
-            font-size: 19px;
+            gap: 10px;
+            color: #253f2e;
+            font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            font-size: 22px;
             font-weight: 700;
+            letter-spacing: -.8px;
             text-decoration: none;
+        }
+
+        .site-brand__rabbit {
+            width: 66px;
+            height: 60px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .site-brand__title {
+            display: block;
+            font-family: 'AppleMyungjo', 'Batang', '바탕', serif;
+            font-size: 1.25em;
+            font-weight: 600;
+            line-height: 1.25;
+            letter-spacing: -.025em;
+        }
+
+        .site-brand__tagline {
+            display: block;
+            margin-top: 4px;
+            color: #697361;
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1.4;
+            letter-spacing: 0;
         }
 
         .site-header__back {
@@ -241,9 +272,13 @@
             line-height: 1.8;
         }
 
+        @media (max-width: 600px) {
+            .site-brand { font-size: 21px; }
+        }
+
         @media (max-width: 520px) {
             .site-header__inner {
-                padding: 0 16px;
+                padding: 14px 16px;
             }
 
             .page-content {
@@ -260,8 +295,11 @@
     <header class="site-header">
         <div class="site-header__inner">
             <a class="site-brand" href="{% url 'cafe_list' %}">
-                <svg class="icon icon--brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
-                <span>말차요정지도</span>
+                <img class="site-brand__rabbit" src="{% static 'cafeapp/matcha-rabbit-logo.png' %}" alt="" width="66" height="60">
+                <span>
+                    <span class="site-brand__title">말차요정의 지도</span>
+                    <span class="site-brand__tagline">{% trans "말차가 좋은 날, 꺼내보는 지도" %}</span>
+                </span>
             </a>
             <a class="site-header__back" href="{% url 'cafe_list' %}"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg> 카페 목록으로</a>
         </div>

@@ -1,0 +1,68 @@
+{% load i18n %}
+                    <li class="cafe-card" id="cafe-{{ cafe.id }}">
+                        <div class="cafe-card__media">
+                            {% if cafe.image %}
+                                <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
+                            {% else %}
+                                <div class="cafe-card__image-placeholder" aria-label="{% trans "대표 이미지 없음" %}"></div>
+                            {% endif %}
+                            <form class="favorite-form favorite-form--floating" method="post" action="{% url 'toggle_favorite' cafe.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}#cafe-{{ cafe.id }}">
+                                <button class="favorite-button" type="submit" aria-label="{% trans "가보고 싶어요" %}">
+                                    {% if cafe.id in favorite_cafe_ids %}
+                                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                                    {% else %}
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </div>
+                        <div class="cafe-card__body">
+                            {% if user.is_staff and perms.cafeapp.change_cafe %}
+                                <a class="cafe-card__edit" href="{% url 'admin:cafeapp_cafe_change' cafe.id %}">사진 편집</a>
+                            {% endif %}
+                            {% if cafe.is_matchayojung_pick %}<span class="matchayojung-pick-badge">{% trans "말차요정 PICK" %}</span>{% endif %}
+                            <div class="cafe-card__name-row">
+                                <h3 class="cafe-card__name">
+                                    <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
+                                </h3>
+                                {% if cafe.average_rating %}
+                                    <span class="cafe-card__rating">
+                                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l2.9 6.5 7.1.7-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7-5.4-4.7 7.1-.7z"></path></svg>
+                                        {{ cafe.average_rating|floatformat:1 }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <p class="cafe-card__area"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.58-7-12a7 7 0 0 1 14 0c0 4.42-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg> {{ cafe.area }}</p>
+                            {% if is_catalog %}<p class="catalog-card-description">{{ cafe.description|truncatechars:85 }}</p>{% endif %}
+                            <dl class="cafe-card__stats">
+                                <div>
+                                    <dt>{% trans "대표 메뉴" %}</dt>
+                                    <dd>{{ cafe.menu_name }}</dd>
+                                </div>
+                                <div>
+                                    <dt>{% trans "가격" %}</dt>
+                                    <dd>{% if cafe.price %}{% blocktrans with price=cafe.price %}{{ price }}원{% endblocktrans %}{% else %}{% trans "가격 정보 확인 중" %}{% endif %}</dd>
+                                </div>
+                            </dl>
+                            {% if cafe.matcha_strength or cafe.bitterness or cafe.sweetness or cafe.milkiness or cafe.matcha_aroma %}
+                                <p class="cafe-card__taste">
+                                    {% if cafe.matcha_strength %}{% blocktrans with value=cafe.matcha_strength %}진하기 {{ value }}{% endblocktrans %}{% endif %}
+                                    {% if cafe.sweetness %} · {% blocktrans with value=cafe.sweetness %}단맛 {{ value }}{% endblocktrans %}{% endif %}
+                                    {% if cafe.matcha_aroma %} · {% blocktrans with value=cafe.matcha_aroma %}말차 향 {{ value }}{% endblocktrans %}{% endif %}
+                                </p>
+                            {% else %}
+                                <p class="cafe-card__taste">{% trans "맛 정보 준비 중" %}</p>
+                            {% endif %}
+                            <div class="cafe-card__tags" aria-label="{% trans "특징" %}">
+                                {% if cafe.matcha_strength >= 4 %}<span class="cafe-card__tag">{% trans "#진한 말차" %}</span>{% endif %}
+                                {% if cafe.sweetness and cafe.sweetness <= 2 %}<span class="cafe-card__tag">{% trans "#깔끔한 단맛" %}</span>{% endif %}
+                                {% if cafe.matcha_aroma >= 4 %}<span class="cafe-card__tag">{% trans "#진한 향" %}</span>{% endif %}
+                                {% if cafe.is_decaf %}<span class="cafe-card__tag">{% trans "디카페인" %}</span>{% endif %}
+                                {% if cafe.is_vegan %}<span class="cafe-card__tag">{% trans "비건" %}</span>{% endif %}
+                                {% if cafe.has_parking %}<span class="cafe-card__tag">{% trans "주차" %}</span>{% endif %}
+                                {% if cafe.has_takeout %}<span class="cafe-card__tag">{% trans "테이크아웃" %}</span>{% endif %}
+                            </div>
+                        </div>
+                    </li>
