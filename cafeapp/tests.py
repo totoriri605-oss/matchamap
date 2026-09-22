@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .forms import CafeTasteFilterForm
-from .models import Cafe, Review
+from .models import Cafe, Favorite, Review
 
 
 class ReviewFeatureTests(TestCase):
@@ -165,6 +165,9 @@ class CafeTasteFilterTests(TestCase):
             matcha_aroma=5,
             is_vegan=True,
             has_takeout=True,
+            is_matchayojung_pick=True,
+            matchayojung_comment='진한 말차를 좋아한다면 추천해요.',
+            blog_url='https://blog.naver.com/matchayojung/1',
         )
         cls.sweet_cafe = Cafe.objects.create(
             name='달콤 말차 카페',
@@ -230,6 +233,23 @@ class CafeTasteFilterTests(TestCase):
         self.assertFalse(cafe.is_vegan)
         self.assertFalse(cafe.has_parking)
         self.assertFalse(cafe.has_takeout)
+        self.assertFalse(cafe.is_matchayojung_pick)
+        self.assertEqual(cafe.matchayojung_comment, '')
+        self.assertEqual(cafe.blog_url, '')
+
+    def test_matchayojung_comment_and_blog_url_are_validated(self):
+        cafe = Cafe(
+            name='검증 카페',
+            area='성수',
+            address='서울',
+            menu_name='말차',
+            price=5000,
+            description='검증',
+            matchayojung_comment='가' * 201,
+            blog_url='not-a-url',
+        )
+        with self.assertRaises(ValidationError):
+            cafe.full_clean()
 
     def test_filter_form_validates_and_converts_values(self):
         form = CafeTasteFilterForm(
@@ -296,6 +316,30 @@ class CafeTasteFilterTests(TestCase):
             {self.strong_cafe.name},
         )
 
+    def test_pick_filter_combines_with_search_area_and_taste_filters(self):
+        response = self.client.get(
+            reverse('cafe_list'),
+            {
+                'area': '성수',
+                'q': '진한',
+                'pick': '1',
+                'matcha_strength': 4,
+            },
+        )
+
+        self.assertTrue(response.context['is_pick_filter_active'])
+        self.assertEqual(self.cafe_names(response), {self.strong_cafe.name})
+        self.assertEqual(
+            {cafe['name'] for cafe in response.context['map_cafes']},
+            {self.strong_cafe.name},
+        )
+        self.assertContains(response, 'name="pick" value="1" checked')
+
+    def test_pick_filter_can_be_removed(self):
+        response = self.client.get(reverse('cafe_list'))
+        self.assertFalse(response.context['is_pick_filter_active'])
+        self.assertEqual(response.context['result_count'], 3)
+
     def test_unknown_taste_values_are_excluded_from_score_filters(self):
         response = self.client.get(
             reverse('cafe_list'),
@@ -325,6 +369,50 @@ class CafeTasteFilterTests(TestCase):
         self.assertContains(response, '단맛 1')
         self.assertContains(response, '비건')
         self.assertNotContains(response, self.sweet_cafe.name)
+
+    def test_taste_filter_uses_three_step_buttons_and_option_chips(self):
+        response = self.client.get(
+            reverse('cafe_list'),
+            {'matcha_strength': 4, 'sweetness': 2, 'is_decaf': 'on'},
+        )
+
+        self.assertContains(
+            response,
+            'type="radio" name="matcha_strength"',
+            count=3,
+        )
+        self.assertContains(
+            response,
+            'type="radio" name="sweetness"',
+            count=3,
+        )
+        self.assertNotContains(response, 'type="radio" name="milkiness"')
+        self.assertContains(
+            response,
+            'name="matcha_strength" value="4" checked',
+        )
+        self.assertContains(response, 'name="sweetness" value="2" checked')
+        self.assertContains(response, 'class="option-chip"', count=5)
+        self.assertNotContains(response, 'taste-slider')
+
+    def test_pick_badge_comment_and_blog_link_are_conditional(self):
+        list_response = self.client.get(reverse('cafe_list'))
+        self.assertContains(list_response, 'class="matchayojung-pick-badge"')
+
+        pick_response = self.client.get(
+            reverse('cafe_detail', args=[self.strong_cafe.id])
+        )
+        self.assertContains(pick_response, '🌿 말차요정 한줄평')
+        self.assertContains(pick_response, self.strong_cafe.matchayojung_comment)
+        self.assertContains(pick_response, self.strong_cafe.blog_url)
+        self.assertContains(pick_response, 'target="_blank"')
+        self.assertContains(pick_response, 'rel="noopener noreferrer"')
+
+        regular_response = self.client.get(
+            reverse('cafe_detail', args=[self.sweet_cafe.id])
+        )
+        self.assertNotContains(regular_response, '🌿 말차요정 한줄평')
+        self.assertNotContains(regular_response, '말차요정 후기 보러가기')
 
     def test_unknown_card_and_detail_taste_information_are_displayed(self):
         list_response = self.client.get(reverse('cafe_list'))
@@ -466,6 +554,13 @@ class FavoriteScrollPositionTests(TestCase):
             milkiness=2,
             matcha_aroma=5,
         )
+        cls.user = get_user_model().objects.create_user(
+            username='favorite-tester',
+            password='testpass123',
+        )
+
+    def setUp(self):
+        self.client.force_login(self.user)
 
     def test_list_favorite_redirect_keeps_query_and_card_anchor(self):
         next_url = f'/?area=성수&matcha_strength=4#cafe-{self.cafe.id}'
@@ -492,9 +587,7 @@ class FavoriteScrollPositionTests(TestCase):
         self.assertEqual(response.url, next_url)
 
     def test_favorite_list_removal_redirects_to_list_anchor(self):
-        session = self.client.session
-        session['favorite_cafe_ids'] = [self.cafe.id]
-        session.save()
+        Favorite.objects.create(user=self.user, cafe=self.cafe)
         next_url = f"{reverse('favorite_list')}#favorite-list"
         response = self.client.post(
             reverse('toggle_favorite', args=[self.cafe.id]),
@@ -517,3 +610,154 @@ class FavoriteScrollPositionTests(TestCase):
             response.url,
             reverse('cafe_detail', args=[self.cafe.id]),
         )
+
+
+class CafeAdminImageTests(TestCase):
+    def setUp(self):
+        import tempfile
+        from django.test import override_settings
+
+        self.media = tempfile.TemporaryDirectory()
+        self.addCleanup(self.media.cleanup)
+        settings_override = override_settings(MEDIA_ROOT=self.media.name)
+        settings_override.enable()
+        self.addCleanup(settings_override.disable)
+        self.admin_user = get_user_model().objects.create_superuser(
+            username='photo_admin', password='test-password', email='admin@example.com',
+        )
+        self.cafe = Cafe.objects.create(
+            name='사진 카페', area='성수', address='서울', menu_name='말차',
+            price=6000, description='사진 테스트',
+        )
+        self.url = reverse('admin:cafeapp_cafe_change', args=[self.cafe.pk])
+        self.data = {
+            'country': 'KR', 'city': 'seoul',
+            'name': self.cafe.name, 'area': '성수', 'address': '서울',
+            'menu_name': '말차', 'price': 6000, 'description': '사진 테스트',
+            '_save': '저장',
+        }
+
+    def photo(self, name):
+        from io import BytesIO
+        from PIL import Image
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        data = BytesIO()
+        Image.new('RGB', (16, 16), 'green').save(data, format='PNG')
+        return SimpleUploadedFile(name, data.getvalue(), content_type='image/png')
+
+    def test_admin_upload_replace_and_clear_photo(self):
+        self.client.force_login(self.admin_user)
+        self.assertContains(self.client.get(self.url), '대표 사진')
+        for name in ('first.png', 'replacement.png'):
+            response = self.client.post(self.url, {**self.data, 'image': self.photo(name)})
+            self.assertEqual(response.status_code, 302)
+            self.cafe.refresh_from_db()
+            self.assertTrue(self.cafe.image.name.endswith(name))
+            self.assertTrue(self.cafe.image.storage.exists(self.cafe.image.name))
+            self.assertContains(self.client.get(reverse('cafe_list')), self.cafe.image.url)
+            self.assertContains(self.client.get(self.url), self.cafe.image.url)
+        self.assertEqual(self.client.post(self.url, {**self.data, 'image-clear': 'on'}).status_code, 302)
+        self.cafe.refresh_from_db()
+        self.assertFalse(self.cafe.image)
+
+    def test_photo_edit_link_and_admin_access_require_permission(self):
+        self.assertNotContains(self.client.get(reverse('cafe_list')), '사진 편집')
+        self.assertEqual(self.client.get(self.url).status_code, 302)
+        staff = get_user_model().objects.create_user(username='no_photo_permission', is_staff=True)
+        self.client.force_login(staff)
+        self.assertNotContains(self.client.get(reverse('cafe_list')), '사진 편집')
+        self.assertEqual(self.client.post(self.url, self.data).status_code, 403)
+        self.client.force_login(self.admin_user)
+        self.assertContains(self.client.get(reverse('cafe_list')), '사진 편집')
+
+
+class HeroBannerTests(TestCase):
+    setUp = CafeAdminImageTests.setUp
+    photo = CafeAdminImageTests.photo
+
+    def test_banner_lifecycle_and_fallback(self):
+        from .models import HeroBanner
+
+        self.assertContains(self.client.get(reverse('cafe_list')), 'class="matcha-art"')
+        self.client.force_login(self.admin_user)
+        add_url = reverse('admin:cafeapp_herobanner_add')
+        response = self.client.post(add_url, {'image': self.photo('hero.png'), 'position': 'left', '_save': 'Save'})
+        self.assertEqual(response.status_code, 302)
+        banner = HeroBanner.objects.get()
+        url = reverse('admin:cafeapp_herobanner_change', args=[banner.pk])
+        home = self.client.get(reverse('cafe_list'))
+        self.assertContains(home, banner.image.url)
+        self.assertContains(home, 'hero__image--left')
+        self.assertNotContains(home, 'class="matcha-art"')
+        self.assertContains(self.client.get(url), banner.image.url)
+        self.assertEqual(self.client.get(add_url).status_code, 403)
+        response = self.client.post(url, {'image': self.photo('hero-new.png'), 'position': 'right', '_save': 'Save'})
+        self.assertEqual(response.status_code, 302)
+        banner.refresh_from_db()
+        self.assertTrue(banner.image.name.endswith('hero-new.png'))
+        self.assertContains(self.client.get(reverse('cafe_list')), 'hero__image--right')
+        self.cafe.refresh_from_db()
+        self.assertFalse(self.cafe.image)
+        self.assertEqual(self.client.post(url, {'image-clear': 'on', 'position': 'center', '_save': 'Save'}).status_code, 302)
+        self.assertContains(self.client.get(reverse('cafe_list')), 'class="matcha-art"')
+
+    def test_banner_rejects_invalid_image_and_unauthorized_changes(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from .models import HeroBanner
+
+        url = reverse('admin:cafeapp_herobanner_add')
+        self.assertEqual(self.client.post(url, {'position': 'center'}).status_code, 302)
+        staff = get_user_model().objects.create_user(username='banner_staff', is_staff=True)
+        self.client.force_login(staff)
+        self.assertEqual(self.client.post(url, {'position': 'center'}).status_code, 403)
+        self.client.force_login(self.admin_user)
+        response = self.client.post(url, {'image': SimpleUploadedFile('bad.png', b'not an image'), 'position': 'center'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['adminform'].form.errors.get('image'))
+        self.assertFalse(HeroBanner.objects.exists())
+
+
+class CafeSearchPopupTests(TestCase):
+    def setUp(self):
+        base = dict(address='서울', menu_name='말차 라테', price=6500,
+                    description='테스트', latitude='37.540000', longitude='127.040000',
+                    sweetness=2, is_vegan=True)
+        self.local = Cafe.objects.create(name='초록 카페', area='성수', image='cafes/example.png', **base)
+        self.named = Cafe.objects.create(name='성수 말차', area='연남', **base)
+        self.no_coords = Cafe.objects.create(name='성수 작은집', area='성수', menu_name='말차', price=5000, description='좌표 없음', address='서울')
+        Cafe.objects.create(name='다른 카페', area='삼성', **base)
+
+    def test_name_or_area_search_intersects_existing_filters(self):
+        response = self.client.get(reverse('cafe_list'), {'q': ' 성수 '})
+        self.assertEqual({c.pk for c in response.context['cafes']}, {self.local.pk, self.named.pk, self.no_coords.pk})
+        self.assertEqual(response.context['result_count'], 3)
+        self.assertEqual(len(response.context['map_cafes']), 2)
+        response = self.client.get(reverse('cafe_list'), {'q': '성수', 'area': '성수', 'sweetness': 2, 'is_vegan': 'on'})
+        self.assertEqual(list(response.context['cafes']), [self.local])
+        self.assertEqual([c['name'] for c in response.context['map_cafes']], [self.local.name])
+        self.assertEqual(self.client.get(reverse('cafe_list'), {'q': '없는검색어'}).context['result_count'], 0)
+
+    def test_popup_aggregates_reviews_and_handles_missing_image(self):
+        for index, rating in enumerate((3, 5)):
+            user = get_user_model().objects.create_user(username=f'popup{index}')
+            Review.objects.create(cafe=self.local, author=user, rating=rating, comment='좋아요')
+        response = self.client.get(reverse('cafe_list'), {'q': '성수'})
+        data = {item['name']: item for item in response.context['map_cafes']}
+        popup = data[self.local.name]
+        self.assertEqual(popup['average_rating'], 4)
+        self.assertEqual(popup['review_count'], 2)
+        self.assertEqual(popup['image_url'], self.local.image.url)
+        self.assertEqual(popup['menu_name'], '말차 라테')
+        self.assertEqual(popup['price'], 6500)
+        self.assertEqual(popup['detail_url'], reverse('cafe_detail', args=[self.local.pk]))
+        self.assertIsNone(data[self.named.name]['image_url'])
+        self.assertIsNone(data[self.named.name]['average_rating'])
+        self.assertEqual(data[self.named.name]['review_count'], 0)
+
+    def test_popup_data_escapes_script_markup(self):
+        self.local.name = '</script><script>alert(1)</script>'
+        self.local.save()
+        response = self.client.get(reverse('cafe_list'))
+        self.assertNotContains(response, self.local.name)
+        self.assertContains(response, r'\u003C/script\u003E')

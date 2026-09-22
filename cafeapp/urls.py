@@ -4,7 +4,9 @@ from . import views
 
 
 urlpatterns = [
+    path('guide/', views.matcha_guide, name='matcha_guide'),
     path('', views.cafe_list, name='cafe_list'),
+    path('cafes/', views.cafe_list, {'catalog': True}, name='cafe_catalog'),
     path(
         'recommendations/',
         views.cafe_recommendations,

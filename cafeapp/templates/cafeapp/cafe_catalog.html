@@ -1,0 +1,75 @@
+{% extends 'cafeapp/cafe_list.html' %}
+{% load static i18n %}
+{% block page_title %}카페 목록 | 말차요정의 지도{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'cafeapp/catalog.css' %}">{% endblock %}
+{% block main_content %}
+<div class="catalog">
+    <header class="catalog-heading">
+        <div><p class="catalog-eyebrow">A LITTLE MATCHA DISCOVERY</p><h1>카페 목록</h1><p>취향에 맞는 말차 카페를 한눈에 비교해보세요.</p></div>
+        <div class="catalog-count"><span>{{ city_name }}</span><strong>총 {{ result_count }}개의 말차 카페</strong><small>현재 검색 조건 기준</small></div>
+    </header>
+
+    <nav class="catalog-cities" aria-label="도시 선택">
+        {% for item in city_grid_choices %}<a href="{{ item.url }}"{% if item.code == selected_city %} class="is-active" aria-current="true"{% endif %}>{{ item.name }}</a>{% endfor %}
+    </nav>
+
+    <form class="catalog-filters" method="get" action="{% url 'cafe_catalog' %}">
+        <input type="hidden" name="country" value="{{ selected_country }}">
+        <input type="hidden" name="city" value="{{ selected_city }}">
+        {{ taste_filter_form.milkiness.as_hidden }}
+        <div class="catalog-search">
+            <label class="catalog-search-field"><span class="catalog-sr-only">카페 이름 또는 지역 검색</span><input id="search-input" type="search" name="q" value="{{ query }}" placeholder="카페 이름이나 지역을 검색해보세요. (예: 성수, 오설록)"></label>
+            <button type="submit" class="catalog-submit">검색</button>
+        </div>
+        <div class="catalog-filter-heading"><h2>오늘은 어떤 말차가 좋을까요?</h2><a href="{% url 'cafe_catalog' %}?country={{ selected_country }}&amp;city={{ selected_city }}">조건 초기화</a></div>
+        {% if taste_filter_form.errors %}<div class="filter-errors" role="alert">필터 값을 다시 확인해주세요. {{ taste_filter_form.errors }}</div>{% endif %}
+        <div class="catalog-selects">
+            <label>지역<select name="area"><option value="">{{ city_name }} 전체</option>{% for area in areas %}<option value="{{ area }}"{% if area == selected_area %} selected{% endif %}>{{ area }}</option>{% endfor %}</select></label>
+            <label for="{{ taste_filter_form.matcha_strength.id_for_label }}">말차 진하기 · 이상{{ taste_filter_form.matcha_strength }}</label>
+            <label for="{{ taste_filter_form.bitterness.id_for_label }}">쌉싸름함 · 이상{{ taste_filter_form.bitterness }}</label>
+            <label for="{{ taste_filter_form.sweetness.id_for_label }}">단맛 · 이하{{ taste_filter_form.sweetness }}</label>
+            <label for="{{ taste_filter_form.matcha_aroma.id_for_label }}">말차 향 · 이상{{ taste_filter_form.matcha_aroma }}</label>
+            <label>가격대<select disabled><option>준비 중</option></select></label>
+        </div>
+        <div class="catalog-options">
+            <label class="option-chip">{{ taste_filter_form.is_decaf }}<span class="option-chip__text">디카페인</span></label>
+            <label class="option-chip">{{ taste_filter_form.is_vegan }}<span class="option-chip__text">비건 메뉴</span></label>
+            <label class="option-chip">{{ taste_filter_form.has_parking }}<span class="option-chip__text">주차 가능</span></label>
+            <label class="option-chip">{{ taste_filter_form.has_takeout }}<span class="option-chip__text">테이크아웃</span></label>
+            <label class="option-chip"><input type="checkbox" name="pick" value="1"{% if is_pick_filter_active %} checked{% endif %}><span class="option-chip__text">🌿 말차요정 PICK</span></label>
+            <button class="catalog-submit catalog-apply" type="submit">필터 적용</button>
+        </div>
+    </form>
+
+    <div class="catalog-active" aria-label="현재 적용 조건">
+        <span>{{ city_name }}</span>
+        {% if query %}<span>검색: {{ query }}</span>{% endif %}
+        {% if selected_area %}<span>지역: {{ selected_area }}</span>{% endif %}
+        {% if is_pick_filter_active %}<span>말차요정 PICK</span>{% endif %}
+        {% for field in taste_filter_form %}{% if field.value %}<span>{{ field.label }}{% if field.field.choices %}: {{ field.value }}점{% endif %}</span>{% endif %}{% endfor %}
+    </div>
+    <section aria-labelledby="catalog-results-title">
+        <div class="catalog-results-heading">
+            <h2 id="catalog-results-title">나의 다음 말차 한 잔 <span>{{ result_count }}곳</span></h2>
+            <div class="catalog-sort" aria-label="정렬 기준">
+                <span class="is-active">기본순</span>
+                <button type="button" disabled>추천순 · 준비 중</button><button type="button" disabled>인기순 · 준비 중</button><button type="button" disabled>가격 낮은순 · 준비 중</button><button type="button" disabled>최신순 · 준비 중</button>
+            </div>
+        </div>
+        <ul class="cafe-list catalog-list" id="cafe-list-items">
+            {% for cafe in cafes %}{% include 'cafeapp/includes/cafe_card.html' %}
+            {% empty %}<li class="catalog-empty"><span aria-hidden="true">🍵</span><h3>잠깐, 취향의 폭을 넓혀볼까요?</h3><p>{{ city_name }}에서 조건에 맞는 카페를 찾지 못했어요.</p><a href="{% url 'cafe_catalog' %}?country={{ selected_country }}&amp;city={{ selected_city }}">조건 해제하고 {{ city_name }} 전체 보기 →</a></li>{% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}
+{% block page_scripts %}
+<script>
+    const headerSearch = document.getElementById('header-search-btn');
+    const catalogSearch = document.getElementById('search-input');
+    headerSearch.addEventListener('click', () => {
+        catalogSearch.scrollIntoView({behavior: 'auto', block: 'center'});
+        catalogSearch.focus({preventScroll: true});
+    });
+</script>
+{% endblock %}

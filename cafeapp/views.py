@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -13,21 +13,69 @@ from .forms import (
     CafeTasteFilterForm,
     ReviewForm,
 )
-from .models import Cafe, Review
+from .models import Cafe, Favorite, Review, HeroBanner
+from .locations import COUNTRIES, CITIES
+from .guide_content import GUIDE_ARTICLES, GUIDE_REGIONS, GUIDE_TASTES
 
 
-def cafe_list(request):
+def matcha_guide(request):
+    return render(request, 'cafeapp/matcha_guide.html', {
+        'is_guide': True,
+        'guide_articles': GUIDE_ARTICLES,
+        'guide_regions': GUIDE_REGIONS,
+        'guide_tastes': GUIDE_TASTES,
+        'guide_levels': range(1, 6),
+    })
+
+
+def _favorite_cafe_ids(user):
+    if not user.is_authenticated:
+        return []
+    return list(user.favorites.values_list('cafe_id', flat=True))
+
+
+def cafe_list(request, catalog=False):
+    selected_country = request.GET.get('country', 'KR')
+    if selected_country not in COUNTRIES:
+        selected_country = 'KR'
+    selected_city = request.GET.get('city')
+    if selected_city not in CITIES or CITIES[selected_city]['country'] != selected_country:
+        selected_city = next(key for key, value in CITIES.items() if value['country'] == selected_country)
     areas = ['삼성', '성수', '명동', '연남', '서촌', '삼청']
     selected_area = request.GET.get('area')
     query = request.GET.get('q', '').strip()
-    cafes = Cafe.objects.all()
+    is_pick_filter_active = request.GET.get('pick') == '1'
+    cafes = Cafe.objects.filter(country=selected_country, city=selected_city)
+    if selected_city != 'seoul':
+        areas = list(cafes.order_by('area').values_list('area', flat=True).distinct())
+    if selected_area not in areas:
+        selected_area = None
+    def location_url(country, city):
+        params = request.GET.copy()
+        params.pop('area', None)
+        params['country'] = country
+        params['city'] = city
+        return '?' + params.urlencode()
+    city_grid_choices = [
+        {
+            'code': code,
+            'name': value['name'],
+            'name_en': value['name_en'],
+            'url': location_url(value['country'], code),
+            'image': f'cafeapp/cities/{code}.jpg',
+        }
+        for code, value in CITIES.items()
+    ]
     taste_filter_form = CafeTasteFilterForm(request.GET)
 
     if selected_area in areas:
         cafes = cafes.filter(area=selected_area)
 
     if query:
-        cafes = cafes.filter(name__icontains=query)
+        cafes = cafes.filter(Q(name__icontains=query) | Q(area__icontains=query))
+
+    if is_pick_filter_active:
+        cafes = cafes.filter(is_matchayojung_pick=True)
 
     if taste_filter_form.is_valid():
         taste_filters = {}
@@ -54,9 +102,18 @@ def cafe_list(request):
 
         cafes = cafes.filter(**taste_filters)
 
+    cafes = cafes.annotate(average_rating=Avg('reviews__rating'), review_count=Count('reviews'))
+
     map_cafes = [
         {
             'name': cafe.name,
+            'is_pick': cafe.is_matchayojung_pick,
+            'area': cafe.area,
+            'menu_name': cafe.menu_name,
+            'price': cafe.price,
+            'image_url': cafe.image.url if cafe.image else None,
+            'average_rating': cafe.average_rating,
+            'review_count': cafe.review_count,
             'latitude': cafe.latitude,
             'longitude': cafe.longitude,
             'detail_url': reverse('cafe_detail', args=[cafe.id]),
@@ -68,16 +125,25 @@ def cafe_list(request):
     ]
 
     context = {
+        'is_catalog': catalog,
         'cafes': cafes,
+        'selected_country': selected_country,
+        'selected_city': selected_city,
+        'city_name': CITIES[selected_city]['name'],
+        'city_bounds': CITIES[selected_city]['bounds'],
+        'city_grid_choices': city_grid_choices,
+        'hero_banner': HeroBanner.objects.first(),
         'areas': areas,
         'selected_area': selected_area,
         'query': query,
+        'is_pick_filter_active': is_pick_filter_active,
         'taste_filter_form': taste_filter_form,
         'result_count': cafes.count(),
         'map_cafes': map_cafes,
-        'favorite_cafe_ids': request.session.get('favorite_cafe_ids', []),
+        'favorite_cafe_ids': _favorite_cafe_ids(request.user),
     }
-    return render(request, 'cafeapp/cafe_list.html', context)
+    template = 'cafeapp/cafe_catalog.html' if catalog else 'cafeapp/cafe_list.html'
+    return render(request, template, context)
 
 
 def cafe_detail(request, cafe_id):
@@ -85,7 +151,7 @@ def cafe_detail(request, cafe_id):
         Cafe.objects.prefetch_related('reviews__author'),
         id=cafe_id,
     )
-    favorite_cafe_ids = request.session.get('favorite_cafe_ids', [])
+    favorite_cafe_ids = _favorite_cafe_ids(request.user)
     review_summary = cafe.reviews.aggregate(
         average_rating=Avg('rating'),
         review_count=Count('id'),
@@ -109,18 +175,17 @@ def cafe_detail(request, cafe_id):
     )
 
 
+@login_required
 def toggle_favorite(request, cafe_id):
     cafe = get_object_or_404(Cafe, id=cafe_id)
 
     if request.method == 'POST':
-        favorite_cafe_ids = request.session.get('favorite_cafe_ids', [])
-
-        if cafe.id in favorite_cafe_ids:
-            favorite_cafe_ids.remove(cafe.id)
-        else:
-            favorite_cafe_ids.append(cafe.id)
-
-        request.session['favorite_cafe_ids'] = favorite_cafe_ids
+        favorite, created = Favorite.objects.get_or_create(
+            user=request.user,
+            cafe=cafe,
+        )
+        if not created:
+            favorite.delete()
 
     next_url = request.POST.get('next', '')
     if not url_has_allowed_host_and_scheme(
@@ -133,8 +198,9 @@ def toggle_favorite(request, cafe_id):
     return redirect(next_url)
 
 
+@login_required
 def favorite_list(request):
-    favorite_cafe_ids = request.session.get('favorite_cafe_ids', [])
+    favorite_cafe_ids = _favorite_cafe_ids(request.user)
     cafes = Cafe.objects.filter(id__in=favorite_cafe_ids)
     return render(
         request,
@@ -234,7 +300,7 @@ def cafe_recommendations(request):
         {
             'form': form,
             'recommendations': recommendations,
-            'favorite_cafe_ids': request.session.get('favorite_cafe_ids', []),
+            'favorite_cafe_ids': _favorite_cafe_ids(request.user),
         },
     )
 
@@ -259,7 +325,7 @@ def review_create(request, cafe_id):
         messages.success(request, '리뷰가 등록되었습니다.')
         return redirect('cafe_detail', cafe_id=cafe.id)
 
-    favorite_cafe_ids = request.session.get('favorite_cafe_ids', [])
+    favorite_cafe_ids = _favorite_cafe_ids(request.user)
     review_summary = cafe.reviews.aggregate(
         average_rating=Avg('rating'),
         review_count=Count('id'),

@@ -1,9 +1,10 @@
+{% load i18n static %}
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>말차 카페 목록</title>
+    <title>{% block page_title %}말차요정지도 | 내 취향의 말차를 찾아서{% endblock %}</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
         * {
@@ -13,19 +14,38 @@
         :root {
             --content-max-width: 1180px;
             --desktop-gutter: 32px;
-            --section-gap: 36px;
+            --section-gap: 28px;
+            --brand-dark: #234b2d;
+            --brand: #52735a;
+            --brand-strong: #2f6b3c;
+            --ink: #26352a;
+            --muted: #667468;
+            --line: #dce7d8;
+            --panel: #ffffff;
+            --panel-soft: #f1f6ee;
         }
 
         body {
             margin: 0;
-            color: #26352a;
+            color: var(--ink);
             font-family: Arial, sans-serif;
             background-color: #fafcf9;
         }
 
+        a { color: inherit; }
+
+        .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            vertical-align: -3px;
+        }
+
+        /* ---------- Header ---------- */
         .site-header {
-            border-bottom: 1px solid #dce7d8;
-            background-color: #ffffff;
+            border-bottom: 1px solid var(--line);
+            background-color: var(--panel);
         }
 
         .site-header__inner {
@@ -34,31 +54,47 @@
             gap: 28px;
             width: 100%;
             max-width: calc(var(--content-max-width) + 64px);
-            min-height: 68px;
+            min-height: 60px;
             margin: 0 auto;
             padding-right: var(--desktop-gutter);
             padding-left: var(--desktop-gutter);
         }
 
         .site-brand {
+            display: flex;
             flex-shrink: 0;
-            color: #244b2d;
-            font-size: 21px;
+            align-items: center;
+            gap: 8px;
+            color: var(--brand-dark);
+            font-size: 20px;
             font-weight: 700;
             text-decoration: none;
         }
 
+        .site-brand__emoji { width: 22px; height: 22px; color: var(--brand-dark); }
+
+        .site-brand__tagline {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1.3;
+        }
+
         .site-nav {
             display: flex;
+            flex: 1;
             align-items: center;
+            justify-content: center;
             gap: 6px;
         }
 
         .site-nav__item,
-        .site-login {
+        .site-login a {
             display: inline-block;
-            padding: 9px 11px;
-            border-radius: 7px;
+            position: relative;
+            padding: 9px 4px;
+            margin: 0 8px;
             color: #536257;
             font-size: 14px;
             text-decoration: none;
@@ -66,183 +102,742 @@
         }
 
         .site-nav__item--active {
-            color: #244b2d;
+            color: var(--brand-dark);
             font-weight: 700;
-            background-color: #e7f0e3;
         }
 
-        .site-nav__item--disabled,
-        .site-login {
-            color: #7e8a81;
+        .site-nav__item--active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 4px;
+            right: 4px;
+            height: 2px;
+            border-radius: 999px;
+            background-color: var(--brand-strong);
+        }
+
+        .site-nav__item--disabled {
+            color: #aab5ac;
             cursor: default;
         }
 
+        .site-header__right {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .site-header__icon-btn {
+            display: flex;
+            width: 34px;
+            height: 34px;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 50%;
+            color: #536257;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .site-header__icon-btn:hover {
+            background-color: var(--panel-soft);
+        }
+
+        .lang-switch {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px;
+            border-radius: 999px;
+            background-color: var(--panel-soft);
+        }
+
+        .lang-switch__button {
+            padding: 6px 12px;
+            border: 0;
+            border-radius: 999px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .lang-switch__button.is-active {
+            color: #ffffff;
+            background-color: var(--brand-strong);
+        }
+
         .site-login {
-            margin-left: auto;
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 6px;
         }
 
         .site-login form { display: inline; }
-        .site-login button { border: 0; color: #536257; background: transparent; cursor: pointer; }
+        .site-login button {
+            padding: 9px 12px;
+            border: 0;
+            border-radius: 999px;
+            color: #536257;
+            background: transparent;
+            font-size: 14px;
+            cursor: pointer;
+        }
 
+        .site-login__signup {
+            padding: 9px 16px !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            background-color: var(--brand-strong);
+        }
+
+        /* ---------- Layout ---------- */
         .page-content {
             width: 100%;
             max-width: calc(var(--content-max-width) + 64px);
             margin: 0 auto;
-            padding: 36px var(--desktop-gutter) 56px;
+            padding: 32px var(--desktop-gutter) 56px;
         }
 
+        /* ---------- Hero ---------- */
         .hero {
-            margin-bottom: var(--section-gap);
-            padding: 48px;
-            border-radius: 16px;
-            background-color: #e8f1e4;
+            margin-bottom: 20px;
+            padding: 28px 0 4px;
         }
 
-        .hero__content {
-            max-width: 650px;
+        .hero__grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+            gap: 32px;
+            align-items: center;
+        }
+
+        .hero__eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0 0 8px;
+            color: var(--brand-strong);
+            font-size: 13px;
+            font-style: italic;
+            font-weight: 700;
         }
 
         .hero__title {
             margin: 0;
-            color: #234b2d;
-            font-size: clamp(36px, 5vw, 58px);
-            line-height: 1.15;
+            color: var(--brand-dark);
+            font-size: clamp(26px, 3.4vw, 38px);
+            line-height: 1.25;
         }
 
         .hero__description {
-            margin: 18px 0 28px;
+            margin: 10px 0 0;
             color: #526558;
-            font-size: 18px;
+            font-size: 15px;
         }
 
-        .hero__search {
+        .hero__visual {
             display: flex;
+            justify-content: center;
+        }
+
+        .hero__visual-card {
+            display: flex;
+            width: 100%;
+            aspect-ratio: 16 / 8;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             gap: 8px;
-            margin-bottom: 16px;
+            border-radius: 18px;
+            background: linear-gradient(155deg, #cfe3c4 0%, #9dc48c 100%);
+            box-shadow: 0 12px 28px rgba(39, 70, 46, 0.18);
         }
 
-        .hero__search input[type="text"] {
-            min-width: 0;
+        .hero__visual-emoji { width: 40px; height: 40px; color: #1f3d26; }
+
+        .hero__visual-quote {
+            margin: 0;
+            color: #1f3d26;
+            font-size: 13px;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* ---------- Search bar + area chips ---------- */
+        .search-bar {
+            margin-bottom: var(--section-gap);
+        }
+
+        .search-bar__form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .search-bar__field {
+            position: relative;
+            display: flex;
             flex: 1;
-            padding: 13px 15px;
-            border: 1px solid #bdcdb8;
-            border-radius: 8px;
+            min-width: 0;
+        }
+
+        .search-bar__field .icon {
+            position: absolute;
+            top: 50%;
+            left: 18px;
+            width: 16px;
+            height: 16px;
+            color: #7c8c7c;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .search-bar__field input[type="text"] {
+            width: 100%;
+            padding: 15px 20px 15px 46px;
+            border: 1px solid #d7e2d2;
+            border-radius: 999px;
             background-color: #ffffff;
-            font-size: 16px;
+            font-size: 15px;
+            box-shadow: 0 2px 10px rgba(39, 70, 46, 0.04);
         }
 
-        .hero__search button,
-        .hero__filters button,
+        .search-bar__field input[type="text"]:focus {
+            outline: none;
+            border-color: var(--brand-strong);
+        }
+
+        .search-bar__button,
         .taste-filter__actions button {
-            padding: 11px 16px;
-            border: 1px solid #52735a;
-            border-radius: 8px;
+            padding: 13px 26px;
+            border: 1px solid var(--brand-strong);
+            border-radius: 999px;
             color: #ffffff;
-            background-color: #52735a;
+            background-color: var(--brand-strong);
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
+            white-space: nowrap;
         }
 
-        .hero__filters {
+        .area-chips {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
         }
 
+        .area-chip {
+            padding: 9px 18px;
+            border: 1px solid #d7e2d2;
+            border-radius: 999px;
+            color: #3b5741;
+            background-color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .area-chip.is-active {
+            border-color: var(--brand-strong);
+            color: #ffffff;
+            font-weight: 700;
+            background-color: var(--brand-strong);
+        }
+
+        /* ---------- City grid ---------- */
+        .city-grid {
+            margin-bottom: var(--section-gap);
+        }
+
+        .city-grid__header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .city-grid__header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--brand-dark);
+        }
+
+        .city-grid__subtitle {
+            margin: 0;
+            color: #7c8c7c;
+            font-size: 13px;
+        }
+
+        .city-grid__list {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .city-card {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            aspect-ratio: 3 / 4;
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: #dfe8db;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 8px 20px rgba(39, 70, 46, 0.12);
+            text-decoration: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .city-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(15, 30, 18, 0) 45%, rgba(10, 22, 12, 0.75) 100%);
+        }
+
+        .city-card:hover,
+        .city-card:focus-visible {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(39, 70, 46, 0.22);
+        }
+
+        .city-card.is-active {
+            outline: 3px solid var(--brand-strong);
+            outline-offset: 2px;
+        }
+
+        .city-card__label {
+            position: relative;
+            z-index: 1;
+            padding: 8px 10px;
+            color: #ffffff;
+        }
+
+        .city-card__name {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .city-card__name-en {
+            display: block;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 720px) {
+            .city-grid__list {
+                grid-auto-flow: column;
+                grid-auto-columns: minmax(84px, 1fr);
+                grid-template-columns: none;
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+        }
+
+        /* ---------- Explore row: map + taste filter ---------- */
+        .explore-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr);
+            gap: 24px;
+            margin-bottom: var(--section-gap);
+        }
+
+        .map-panel {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background-color: var(--panel);
+            box-shadow: 0 8px 24px rgba(39, 70, 46, 0.06);
+        }
+
+        .map-panel__view-toggle {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 500;
+            display: flex;
+            padding: 3px;
+            border-radius: 999px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 14px rgba(39, 70, 46, 0.18);
+        }
+
+        .map-panel__view-toggle a {
+            padding: 7px 14px;
+            border-radius: 999px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .map-panel__view-toggle a.is-active {
+            color: #ffffff;
+            background-color: var(--brand-strong);
+        }
+
+        .map-panel__header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .map-panel__title {
+            margin: 0 0 4px;
+            color: var(--brand-dark);
+            font-size: 17px;
+        }
+
+        .map-panel__subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .map-panel__expand {
+            display: flex;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            color: var(--brand-dark);
+            background-color: #ffffff;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        #map {
+            width: 100%;
+            height: 480px;
+            background-color: #edf3e9;
+        }
+
+        .map-panel--expanded {
+            position: fixed;
+            inset: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 48px rgba(20, 40, 25, 0.35);
+        }
+
+        .map-panel--expanded #map {
+            flex: 1;
+            height: auto;
+        }
+
+        body.map-expanded-active {
+            overflow: hidden;
+        }
+
+        .map-panel__legend {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 20px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .map-panel__legend-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--brand-strong);
+        }
+
+        /* Leaflet marker/tooltip overrides */
+        .cafe-marker-pin {
+            display: flex;
+            width: 30px;
+            height: 30px;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffffff;
+            border-radius: 50% 50% 50% 0;
+            background-color: var(--brand-strong);
+            box-shadow: 0 3px 8px rgba(39, 70, 46, 0.35);
+            transform: rotate(-45deg);
+        }
+
+        .cafe-marker-pin__icon {
+            width: 14px;
+            height: 14px;
+            color: #ffffff;
+            transform: rotate(45deg);
+        }
+
+        .cafe-marker-label {
+            padding: 3px 9px !important;
+            border: none !important;
+            border-radius: 999px !important;
+            box-shadow: 0 2px 6px rgba(39, 70, 46, 0.18) !important;
+            color: var(--brand-dark) !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            background-color: #ffffff !important;
+        }
+
+        .cafe-marker-label::before {
+            display: none !important;
+        }
+
         .taste-filter {
-            margin-top: 24px;
-            padding: 20px;
-            border: 1px solid #cddbc8;
-            border-radius: 12px;
-            background-color: rgba(255, 255, 255, 0.72);
+            padding: 24px;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            background: linear-gradient(145deg, #fffef9 0%, #f6f8ee 100%);
+            box-shadow: 0 10px 28px rgba(39, 70, 46, 0.08);
         }
 
         .taste-filter__title {
-            margin: 0 0 16px;
-            color: #294f32;
-            font-size: 19px;
+            margin: 0 0 6px;
+            color: var(--brand-dark);
+            font-size: 20px;
+        }
+
+        .taste-filter__subtitle {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.55;
         }
 
         .taste-filter__fields {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
         }
 
-        .taste-filter__field label {
-            display: block;
-            margin-bottom: 6px;
+        .taste-filter__field {
+            display: grid;
+            gap: 8px;
+            min-width: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        .taste-filter__label {
             color: #465247;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
         }
 
-        .taste-filter__field select {
-            width: 100%;
-            padding: 9px;
-            border: 1px solid #bdcdb8;
-            border-radius: 7px;
-            background: #ffffff;
+        .taste-filter__levels {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 7px;
+        }
+
+        .taste-choice {
+            position: relative;
+            display: block;
+            cursor: pointer;
+        }
+
+        .taste-choice input,
+        .option-chip input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            clip-path: inset(50%);
+            white-space: nowrap;
+        }
+
+        .taste-choice__text {
+            display: flex;
+            min-height: 40px;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 6px;
+            border: 1px solid #d7dfcd;
+            border-radius: 12px;
+            color: #63705f;
+            font-size: 13px;
+            font-weight: 700;
+            background-color: rgba(255, 255, 255, 0.78);
+            transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        }
+
+        .taste-choice:hover .taste-choice__text {
+            border-color: #a9bca0;
+            background-color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .taste-choice input:checked + .taste-choice__text {
+            border-color: var(--brand-strong);
+            color: #ffffff;
+            background-color: var(--brand-strong);
+            box-shadow: 0 4px 10px rgba(48, 82, 50, 0.18);
+        }
+
+        .taste-choice input:focus-visible + .taste-choice__text,
+        .option-chip input:focus-visible + .option-chip__text {
+            outline: 3px solid rgba(92, 124, 76, 0.3);
+            outline-offset: 2px;
         }
 
         .taste-filter__options {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px 20px;
-            margin-top: 16px;
+            gap: 9px;
+            margin: 22px 0;
+            padding-top: 18px;
+            border-top: 1px solid var(--line);
         }
 
-        .taste-filter__options label {
+        .taste-filter__options-title {
+            flex-basis: 100%;
+            margin: 0 0 2px;
+            color: #657061;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .option-chip {
+            position: relative;
             cursor: pointer;
+        }
+
+        .option-chip__text {
+            display: inline-flex;
+            min-height: 36px;
+            align-items: center;
+            padding: 7px 12px;
+            border: 1px solid #ced9c8;
+            border-radius: 999px;
+            color: #52604e;
+            font-size: 13px;
+            font-weight: 700;
+            background-color: #ffffff;
+            transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+        }
+
+        .option-chip:hover .option-chip__text {
+            border-color: #91aa87;
+        }
+
+        .option-chip input:checked + .option-chip__text {
+            border-color: #91aa87;
+            color: var(--brand-dark);
+            background-color: #dfead8;
+        }
+
+        .option-chip input:checked + .option-chip__text::before {
+            content: "✓";
+            margin-right: 5px;
+            color: var(--brand-strong);
         }
 
         .taste-filter__actions {
             display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 10px;
-            margin-top: 18px;
+        }
+
+        .taste-filter__actions button {
+            width: 100%;
+            min-height: 48px;
+            font-size: 15px;
         }
 
         .taste-filter__reset {
-            padding: 10px 14px;
-            color: #526558;
-            text-decoration: none;
+            color: var(--muted);
+            font-size: 12px;
+            text-decoration: underline;
+            text-decoration-color: transparent;
+            text-underline-offset: 3px;
+        }
+
+        .taste-filter__reset:hover {
+            color: var(--brand-dark);
+            text-decoration-color: currentColor;
         }
 
         .filter-errors {
             margin: 0 0 12px;
             color: #a12626;
+            font-size: 13px;
         }
 
-        .hero__filters button {
-            padding: 8px 13px;
-            color: #36533d;
-            background-color: #ffffff;
-        }
-
-        #map {
-            width: 100%;
-            height: 520px;
-            margin-bottom: var(--section-gap);
-            overflow: hidden;
-            border: 1px solid #d5e0d1;
-            border-radius: 16px;
-            background-color: #edf3e9;
-            box-shadow: 0 8px 24px rgba(39, 70, 46, 0.08);
-        }
-
+        /* ---------- Cafe cards ---------- */
         .cafe-section {
             scroll-margin-top: 20px;
+            margin-bottom: var(--section-gap);
+        }
+
+        .cafe-section__header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 18px;
         }
 
         .cafe-section__title {
-            margin: 0 0 20px;
-            color: #294f32;
-            font-size: 28px;
+            margin: 0;
+            color: var(--brand-dark);
+            font-size: 24px;
         }
 
         .cafe-section__count {
-            margin: -10px 0 20px;
-            color: #68766b;
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .cafe-section__meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .cafe-section__toggle {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0;
+            border: 0;
+            color: var(--brand-strong);
+            background: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .cafe-section__toggle .icon {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s ease;
+        }
+
+        .cafe-section__toggle[aria-expanded="true"] .icon {
+            transform: rotate(90deg);
         }
 
         .cafe-list {
@@ -254,15 +849,27 @@
             list-style: none;
         }
 
+        .cafe-list--collapsed {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .cafe-list--collapsed .cafe-card:nth-child(n+4) {
+            display: none;
+        }
+
         .cafe-card {
             display: flex;
             flex-direction: column;
             scroll-margin-top: 20px;
             overflow: hidden;
-            border: 1px solid #dce5d7;
-            border-radius: 12px;
-            background-color: #ffffff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background-color: var(--panel);
             box-shadow: 0 5px 16px rgba(39, 70, 46, 0.06);
+        }
+
+        .cafe-card__media {
+            position: relative;
         }
 
         .cafe-card__image,
@@ -277,7 +884,26 @@
         }
 
         .cafe-card__image-placeholder {
-            background-color: #edf3e9;
+            background-color: var(--panel-soft);
+        }
+
+        .favorite-form--floating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            margin: 0;
+        }
+
+        .favorite-form--floating .favorite-button {
+            display: flex;
+            width: 32px;
+            height: 32px;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 15px;
+            box-shadow: 0 2px 6px rgba(39, 70, 46, 0.18);
         }
 
         .cafe-card__body {
@@ -285,9 +911,31 @@
             padding: 16px;
         }
 
+        .matchayojung-pick-badge {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            margin-bottom: 8px;
+            padding: 4px 9px;
+            border-radius: 999px;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            background-color: var(--brand-dark);
+        }
+
+        .cafe-card__name-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 0 0 6px;
+        }
+
         .cafe-card__name {
-            margin: 0 0 12px;
-            font-size: 18px;
+            margin: 0;
+            font-size: 17px;
         }
 
         .cafe-card__name a {
@@ -299,13 +947,53 @@
             text-decoration: underline;
         }
 
-        .cafe-card__info {
-            margin: 6px 0;
-            color: #465247;
+        .cafe-card__rating {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            color: #8a6d1d;
+            font-size: 12px;
+            font-weight: 700;
+            background-color: #fdf3d9;
+        }
+
+        .cafe-card__rating .icon {
+            width: 12px;
+            height: 12px;
+            color: #d3a325;
+        }
+
+        .cafe-card__area {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .cafe-card__stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 0 0 10px;
+        }
+
+        .cafe-card__stats dt {
+            margin: 0;
+            color: #8a958c;
+            font-size: 11px;
+        }
+
+        .cafe-card__stats dd {
+            margin: 2px 0 0;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 700;
         }
 
         .cafe-card__taste {
-            margin: 12px 0 0;
+            margin: 0 0 10px;
             color: #526558;
             font-size: 13px;
             line-height: 1.6;
@@ -315,19 +1003,14 @@
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-top: 10px;
         }
 
         .cafe-card__tag {
-            padding: 4px 7px;
+            padding: 4px 8px;
             border-radius: 999px;
             color: #315c3b;
             font-size: 12px;
-            background: #e8f1e4;
-        }
-
-        .favorite-form {
-            margin-top: 14px;
+            background: var(--panel-soft);
         }
 
         .favorite-button {
@@ -341,14 +1024,78 @@
 
         .cafe-list__empty {
             grid-column: 1 / -1;
+            color: var(--muted);
+        }
+
+        /* ---------- AI recommendation CTA ---------- */
+        .ai-cta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            padding: 22px 26px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background-color: var(--panel);
+            box-shadow: 0 8px 24px rgba(39, 70, 46, 0.06);
+        }
+
+        .ai-cta__icon {
+            display: flex;
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--brand-strong);
+            background-color: var(--panel-soft);
+        }
+
+        .ai-cta__text {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .ai-cta__text strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--brand-dark);
+            font-size: 16px;
+        }
+
+        .ai-cta__text p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .ai-cta__button {
+            padding: 12px 22px;
+            border-radius: 999px;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            background-color: var(--brand-strong);
+            white-space: nowrap;
         }
 
         @media (max-width: 900px) {
-            .taste-filter__fields {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+            .hero__grid {
+                grid-template-columns: 1fr;
             }
 
-            .cafe-list {
+            .hero__visual {
+                display: none;
+            }
+
+            .explore-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cafe-list,
+            .cafe-list--collapsed {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
@@ -365,200 +1112,455 @@
                 order: 3;
                 flex-basis: 100%;
                 flex-wrap: wrap;
+                justify-content: flex-start;
             }
 
             .hero {
-                padding: 30px 22px;
+                padding: 20px 0 4px;
             }
 
             .page-content {
                 padding: 24px 16px 40px;
             }
 
-            .hero__search {
+            .search-bar__form {
                 flex-direction: column;
             }
 
-            .taste-filter__fields {
-                grid-template-columns: 1fr;
-            }
-
             #map {
-                height: 360px;
-                border-radius: 12px;
+                height: 320px;
             }
 
-            .cafe-list {
+            .taste-filter {
+                padding: 20px 16px;
+            }
+
+            .taste-filter__fields {
+                gap: 16px;
+            }
+
+            .taste-filter__levels {
+                gap: 6px;
+            }
+
+            .taste-choice__text {
+                min-height: 44px;
+                font-size: 12px;
+            }
+
+            .option-chip__text {
+                min-height: 40px;
+                padding-inline: 11px;
+            }
+
+            .cafe-list,
+            .cafe-list--collapsed {
                 grid-template-columns: 1fr;
+            }
+
+            .ai-cta {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            .ai-cta__button {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>
+    <link rel="stylesheet" href="{% static 'cafeapp/home.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <header class="site-header">
         <div class="site-header__inner">
-            <a class="site-brand" href="{% url 'cafe_list' %}">🍵 말차지도</a>
+            <a class="site-brand" href="{% url 'cafe_list' %}">
+                <img class="site-brand__rabbit" src="{% static 'cafeapp/matcha-rabbit-logo.png' %}" alt="" width="66" height="60">
+                <span>
+                    <span class="site-brand__title">말차요정의 지도</span>
+                    <span class="site-brand__tagline">{% trans "말차가 좋은 날, 꺼내보는 지도" %}</span>
+                </span>
+            </a>
 
-            <nav class="site-nav" aria-label="주요 메뉴">
-                <a class="site-nav__item site-nav__item--active" href="{% url 'cafe_list' %}" aria-current="page">지도</a>
-                <a class="site-nav__item" href="#cafe-list">카페 목록</a>
-                <a class="site-nav__item" href="{% url 'favorite_list' %}">즐겨찾기</a>
-                <a class="site-nav__item" href="{% url 'cafe_suggestion' %}">카페 제보</a>
-                <a class="site-nav__item" href="{% url 'cafe_recommendations' %}">말차 취향 찾기</a>
-                <span class="site-nav__item site-nav__item--disabled">리뷰</span>
-                <span class="site-nav__item site-nav__item--disabled">이벤트</span>
+            <nav class="site-nav" aria-label="{% trans "주요 메뉴" %}">
+                <a class="site-nav__item{% if not is_catalog and not is_guide %} site-nav__item--active{% endif %}" href="{% url 'cafe_list' %}?{{ request.GET.urlencode }}"{% if not is_catalog and not is_guide %} aria-current="page"{% endif %}>{% trans "지도" %}</a>
+                <a class="site-nav__item{% if is_catalog %} site-nav__item--active{% endif %}" href="{% url 'cafe_catalog' %}?{{ request.GET.urlencode }}"{% if is_catalog %} aria-current="page"{% endif %}>{% trans "카페 목록" %}</a>
+                <a class="site-nav__item{% if is_guide %} site-nav__item--active{% endif %}" href="{% url 'matcha_guide' %}"{% if is_guide %} aria-current="page"{% endif %}>{% trans "말차 가이드" %}</a>
+                <a class="site-nav__item" href="{% url 'cafe_suggestion' %}">{% trans "카페 제보" %}</a>
             </nav>
 
-            <div class="site-login">
-                {% if user.is_authenticated %}
-                    <span>{{ user.username }}님</span>
-                    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">로그아웃</button></form>
-                {% else %}
-                    <a href="{% url 'login' %}">로그인</a> · <a href="{% url 'signup' %}">회원가입</a>
-                {% endif %}
+            <div class="site-header__right">
+                {% if is_guide %}<a class="site-header__icon-btn" href="{% url 'cafe_catalog' %}#search-input" aria-label="{% trans "검색" %}">
+                {% else %}<button type="button" class="site-header__icon-btn" id="header-search-btn" aria-label="{% trans "검색" %}">{% endif %}
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                {% if is_guide %}</a>{% else %}</button>{% endif %}
+                <a class="site-header__icon-btn" href="{% url 'favorite_list' %}" aria-label="{% trans "즐겨찾기" %}">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                </a>
+
+                <form class="lang-switch" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" name="language" value="ko" class="lang-switch__button{% if LANGUAGE_CODE == 'ko' %} is-active{% endif %}">한국어</button>
+                    <button type="submit" name="language" value="en" class="lang-switch__button{% if LANGUAGE_CODE == 'en' %} is-active{% endif %}">English</button>
+                </form>
+
+                <div class="site-login">
+                    {% if user.is_authenticated %}
+                        <span>{% blocktrans with username=user.username %}{{ username }}님{% endblocktrans %}</span>
+                        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">{% trans "로그아웃" %}</button></form>
+                    {% else %}
+                        <a href="{% url 'login' %}">{% trans "로그인" %}</a>
+                        <a class="site-login__signup" href="{% url 'signup' %}">{% trans "회원가입" %}</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </header>
 
     <main class="page-content">
+        {% block main_content %}
         <section class="hero">
-            <div class="hero__content">
-                <h1 class="hero__title">오늘,<br>어디서 말차 마실까?</h1>
-                <p class="hero__description">말차러버를 위한 진짜 말차 카페 지도 🌿</p>
+            <div class="hero__grid">
+                <div class="hero__content">
+                    <p class="hero__eyebrow">
+                        A LITTLE MATCHA, A LITTLE MAGIC
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20C4 13 7 5 19 4c2 11-5 17-13 16z"></path><path d="M8 18C10 14 12 10 16 6"></path></svg>
+                    </p>
+                    <h1 class="hero__title">오늘은 어디서<br>말차 한 잔 할까요?</h1>
+                    <p class="hero__description">{% trans "나만의 취향에 맞는 말차 카페를 찾아보세요." %}</p>
+<section class="search-bar" aria-label="카페 검색">
+            <form class="search-bar__form" method="get">
+                {% if selected_area in areas %}
+                    <input type="hidden" name="area" value="{{ selected_area }}">
+                {% endif %}
+                {% for key, value in request.GET.items %}
+                    {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
+                {% endfor %}
+                <span class="search-bar__field">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                    <input type="text" name="q" aria-label="카페 이름 또는 지역 검색" id="search-input" value="{{ query }}" placeholder="{% trans "카페 이름 또는 지역 검색" %}">
+                </span>
+                <button type="submit" class="search-bar__button">{% trans "검색" %}</button>
+            </form>
 
-                <form class="hero__search" method="get">
-                    {% if selected_area in areas %}
-                        <input type="hidden" name="area" value="{{ selected_area }}">
+            <form class="area-chips" method="get">
+                {% if query %}
+                    <input type="hidden" name="q" value="{{ query }}">
+                {% endif %}
+                {% for key, value in request.GET.items %}
+                    {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
+                {% endfor %}
+                <button type="submit" class="area-chip{% if not selected_area %} is-active{% endif %}">{% trans "전체" %}</button>
+                {% for area in areas %}
+                    <button type="submit" name="area" value="{{ area }}" class="area-chip{% if selected_area == area %} is-active{% endif %}">{{ area }}</button>
+                {% endfor %}
+            </form>
+        </section>
+                </div>
+
+                <div class="hero__visual" aria-hidden="true">
+                    {% if hero_banner.image %}
+                    <img class="hero__image hero__image--{{ hero_banner.position }}" src="{{ hero_banner.image.url }}" alt="" fetchpriority="high">
+                    {% else %}
+                    <svg class="matcha-art" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="tea" x2="0" y2="1"><stop stop-color="#73934a"/><stop offset="1" stop-color="#3c602d"/></linearGradient>
+                            <linearGradient id="milk" x2="0" y2="1"><stop stop-color="#f8f3dc"/><stop offset="1" stop-color="#d6d9b2"/></linearGradient>
+                        </defs>
+                        <ellipse cx="268" cy="263" rx="139" ry="19" fill="#456038" opacity=".12"/>
+                        <path d="M351 221Q380 106 425 89Q432 164 351 221" fill="#879c6c"/>
+                        <path d="M355 211Q323 138 337 111Q377 143 355 211" fill="#b3bf8f"/>
+                        <ellipse cx="240" cy="251" rx="92" ry="17" fill="#ac9570"/>
+                        <path d="M168 80L182 233Q239 262 297 233L313 80Z" fill="url(#milk)" stroke="#fffdf1" stroke-width="5"/>
+                        <path d="M171 98L177 159Q206 137 231 162T306 147L311 96Z" fill="url(#tea)"/>
+                        <ellipse cx="240" cy="81" rx="73" ry="23" fill="#4b712e" stroke="#fffdf1" stroke-width="5"/>
+                        <ellipse cx="240" cy="81" rx="62" ry="16" fill="#87a556"/>
+                        <g fill="#e5edc9" opacity=".65" stroke="#fff" stroke-width="2"><rect x="201" y="65" width="28" height="23" rx="6" transform="rotate(15 215 77)"/><rect x="247" y="72" width="32" height="22" rx="6" transform="rotate(-18 263 83)"/></g>
+                        <path d="M189 111L199 222" stroke="#fff" stroke-width="5" opacity=".5" stroke-linecap="round"/>
+                        <g fill="#73894e"><path d="M134 43l4 12 12 4-12 4-4 12-4-12-12-4 12-4Z"/><path d="M347 54l3 9 9 3-9 3-3 9-3-9-9-3 9-3Z"/><circle cx="126" cy="181" r="3"/></g>
+                        <text x="28" y="127" fill="#6e8256" font-family="Georgia, serif" font-size="20" font-style="italic" transform="rotate(-12 28 127)">a sip of magic</text>
+                    </svg>
                     {% endif %}
-                    {% for key, value in request.GET.items %}
-                        {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
-                    {% endfor %}
-                    <input type="text" name="q" value="{{ query }}" placeholder="카페 이름 검색">
-                    <button type="submit">검색</button>
-                </form>
-
-                <form class="hero__filters" method="get">
-                    {% if query %}
-                        <input type="hidden" name="q" value="{{ query }}">
-                    {% endif %}
-                    {% for key, value in request.GET.items %}
-                        {% if key != 'q' and key != 'area' %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endif %}
-                    {% endfor %}
-                    <button type="submit">서울 전체</button>
-                    {% for area in areas %}
-                        <button type="submit" name="area" value="{{ area }}">{{ area }}</button>
-                    {% endfor %}
-                </form>
-
-                <form class="taste-filter" method="get">
-                    <h2 class="taste-filter__title">내 취향에 맞는 말차 찾기</h2>
-                    {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
-                    {% if selected_area in areas %}<input type="hidden" name="area" value="{{ selected_area }}">{% endif %}
-                    {% if taste_filter_form.errors %}<p class="filter-errors">필터 값을 다시 확인해주세요.</p>{% endif %}
-                    <div class="taste-filter__fields">
-                        <div class="taste-filter__field">{{ taste_filter_form.matcha_strength.label_tag }}{{ taste_filter_form.matcha_strength }}</div>
-                        <div class="taste-filter__field">{{ taste_filter_form.bitterness.label_tag }}{{ taste_filter_form.bitterness }}</div>
-                        <div class="taste-filter__field">{{ taste_filter_form.sweetness.label_tag }}{{ taste_filter_form.sweetness }}</div>
-                        <div class="taste-filter__field">{{ taste_filter_form.milkiness.label_tag }}{{ taste_filter_form.milkiness }}</div>
-                        <div class="taste-filter__field">{{ taste_filter_form.matcha_aroma.label_tag }}{{ taste_filter_form.matcha_aroma }}</div>
-                    </div>
-                    <div class="taste-filter__options">
-                        <label>{{ taste_filter_form.is_decaf }} {{ taste_filter_form.is_decaf.label }}</label>
-                        <label>{{ taste_filter_form.is_vegan }} {{ taste_filter_form.is_vegan.label }}</label>
-                        <label>{{ taste_filter_form.has_parking }} {{ taste_filter_form.has_parking.label }}</label>
-                        <label>{{ taste_filter_form.has_takeout }} {{ taste_filter_form.has_takeout.label }}</label>
-                    </div>
-                    <div class="taste-filter__actions">
-                        <button type="submit">취향 필터 적용</button>
-                        <a class="taste-filter__reset" href="{% url 'cafe_list' %}">전체 초기화</a>
-                    </div>
-                </form>
+                </div>
             </div>
         </section>
 
-        <div id="map"></div>
+
+        <section class="explore-grid">
+            <div class="map-panel">
+                <div class="map-panel__header">
+                    <div>
+                        <h2 class="map-panel__title">📍 {{ city_name }} 지도</h2>
+                        <p class="map-panel__subtitle">{% trans "지도의 마커를 클릭하면 카페 정보를 볼 수 있어요." %}</p>
+                    </div>
+                    <button type="button" class="map-panel__expand" id="map-expand-toggle" aria-label="{% trans "지도 크게 보기" %}" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></button>
+                </div>
+                <div class="map-panel__view-toggle">
+                    <a href="#map" class="is-active">{% trans "지도" %}</a>
+                    <a href="#cafe-list">{% trans "목록" %}</a>
+                </div>
+                <div id="map"></div>
+                <div class="map-panel__legend"><span class="map-panel__legend-dot"></span> {% trans "말차 카페" %}</div>
+            </div>
+
+            <form class="taste-filter" method="get">
+                <input type="hidden" name="country" value="{{ selected_country }}">
+                <input type="hidden" name="city" value="{{ selected_city }}">
+                <h2 class="taste-filter__title">{% trans "내 취향으로 찾기" %}</h2>
+                <p class="taste-filter__subtitle">{% trans "나만의 말차 취향으로, 딱 맞는 카페를 찾아보세요." %}</p>
+                {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                {% if selected_area in areas %}<input type="hidden" name="area" value="{{ selected_area }}">{% endif %}
+                {% if taste_filter_form.errors %}<p class="filter-errors">{% trans "필터 값을 다시 확인해주세요." %}</p>{% endif %}
+                <div class="taste-filter__fields">
+                    <fieldset class="taste-filter__field">
+                        <legend class="taste-filter__label">{% trans "말차 진하기" %}</legend>
+                        <div class="taste-filter__levels">
+                            <label class="taste-choice"><input type="radio" name="matcha_strength" value="1"{% if taste_filter_form.matcha_strength.value == '1' %} checked{% endif %}><span class="taste-choice__text">{% trans "연함" %}</span></label>
+                            <label class="taste-choice"><input type="radio" name="matcha_strength" value="3"{% if taste_filter_form.matcha_strength.value == '3' %} checked{% endif %}><span class="taste-choice__text">{% trans "보통" %}</span></label>
+                            <label class="taste-choice"><input type="radio" name="matcha_strength" value="4"{% if taste_filter_form.matcha_strength.value == '4' %} checked{% endif %}><span class="taste-choice__text">{% trans "진함" %}</span></label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="taste-filter__field">
+                        <legend class="taste-filter__label">{% trans "쌉싸름함" %}</legend>
+                        <div class="taste-filter__levels">
+                            <label class="taste-choice"><input type="radio" name="bitterness" value="1"{% if taste_filter_form.bitterness.value == '1' %} checked{% endif %}><span class="taste-choice__text">{% trans "적음" %}</span></label>
+                            <label class="taste-choice"><input type="radio" name="bitterness" value="3"{% if taste_filter_form.bitterness.value == '3' %} checked{% endif %}><span class="taste-choice__text">{% trans "보통" %}</span></label>
+                            <label class="taste-choice"><input type="radio" name="bitterness" value="4"{% if taste_filter_form.bitterness.value == '4' %} checked{% endif %}><span class="taste-choice__text">{% trans "많음" %}</span></label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="taste-filter__field">
+                        <legend class="taste-filter__label">{% trans "단맛" %}</legend>
+                        <div class="taste-filter__levels">
+                            <label class="taste-choice"><input type="radio" name="sweetness" value="2"{% if taste_filter_form.sweetness.value == '2' %} checked{% endif %}><span class="taste-choice__text">{% trans "적음" %}</span></label>
+                            <label class="taste-choice"><input type="radio" name="sweetness" value="3"{% if taste_filter_form.sweetness.value == '3' %} checked{% endif %}><span class="taste-choice__text">{% trans "보통" %}</span></label>
+                            <label class="taste-choice"><input type="radio" name="sweetness" value="5"{% if taste_filter_form.sweetness.value == '5' %} checked{% endif %}><span class="taste-choice__text">{% trans "많음" %}</span></label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="taste-filter__field">
+                        <legend class="taste-filter__label">{% trans "말차 향" %}</legend>
+                        <div class="taste-filter__levels">
+                            <label class="taste-choice"><input type="radio" name="matcha_aroma" value="1"{% if taste_filter_form.matcha_aroma.value == '1' %} checked{% endif %}><span class="taste-choice__text">{% trans "연함" %}</span></label>
+                            <label class="taste-choice"><input type="radio" name="matcha_aroma" value="3"{% if taste_filter_form.matcha_aroma.value == '3' %} checked{% endif %}><span class="taste-choice__text">{% trans "보통" %}</span></label>
+                            <label class="taste-choice"><input type="radio" name="matcha_aroma" value="4"{% if taste_filter_form.matcha_aroma.value == '4' %} checked{% endif %}><span class="taste-choice__text">{% trans "진함" %}</span></label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="taste-filter__options">
+                    <p class="taste-filter__options-title">{% trans "더 필요한 조건이 있나요?" %}</p>
+                    <label class="option-chip"><input type="checkbox" name="pick" value="1"{% if is_pick_filter_active %} checked{% endif %}><span class="option-chip__text">🌿 {% trans "말차요정 PICK" %}</span></label>
+                    <label class="option-chip"><input type="checkbox" name="is_decaf"{% if taste_filter_form.is_decaf.value %} checked{% endif %}><span class="option-chip__text">{% trans "디카페인" %}</span></label>
+                    <label class="option-chip"><input type="checkbox" name="is_vegan"{% if taste_filter_form.is_vegan.value %} checked{% endif %}><span class="option-chip__text">{% trans "비건 메뉴" %}</span></label>
+                    <label class="option-chip"><input type="checkbox" name="has_parking"{% if taste_filter_form.has_parking.value %} checked{% endif %}><span class="option-chip__text">{% trans "주차 가능" %}</span></label>
+                    <label class="option-chip"><input type="checkbox" name="has_takeout"{% if taste_filter_form.has_takeout.value %} checked{% endif %}><span class="option-chip__text">{% trans "테이크아웃" %}</span></label>
+                </div>
+                <div class="taste-filter__actions">
+                    <button type="submit"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg> {% trans "필터 적용" %}</button>
+                    <a class="taste-filter__reset" href="{% url 'cafe_list' %}?country={{ selected_country }}&amp;city={{ selected_city }}">{% trans "전체 초기화" %}</a>
+                </div>
+            </form>
+        </section>
 
         <section class="cafe-section" id="cafe-list">
-            <h2 class="cafe-section__title">지금 제일 인기 있는 말차 카페 🌿</h2>
-            <p class="cafe-section__count">조건에 맞는 카페 {{ result_count }}곳</p>
+            <div class="cafe-section__header">
+                <h2 class="cafe-section__title">🌿 {% trans "말차요정의 오늘 픽" %}</h2>
+                <div class="cafe-section__meta">
+                    <p class="cafe-section__count">{{ city_name }}{% if selected_area %} · {{ selected_area }}{% endif %} · {% blocktrans count counter=result_count %}{{ counter }}개의 말차 카페{% plural %}{{ counter }}개의 말차 카페{% endblocktrans %}</p>
+                    {% if result_count > 3 %}
+                        <button type="button" class="cafe-section__toggle" id="cafe-list-toggle" aria-expanded="false" aria-controls="cafe-list-items" data-label-expand="{% trans "전체 보기" %}" data-label-collapse="{% trans "접기" %}">
+                            {% trans "전체 보기" %}
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
 
-            <ul class="cafe-list">
+            <ul class="cafe-list{% if result_count > 3 %} cafe-list--collapsed{% endif %}" id="cafe-list-items">
                 {% for cafe in cafes %}
-                    <li class="cafe-card" id="cafe-{{ cafe.id }}">
-                        {% if cafe.image %}
-                            <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
-                        {% else %}
-                            <div class="cafe-card__image-placeholder" aria-label="대표 이미지 없음"></div>
-                        {% endif %}
-                        <div class="cafe-card__body">
-                            <h3 class="cafe-card__name">
-                                <a href="{% url 'cafe_detail' cafe.id %}">{{ cafe.name }}</a>
-                            </h3>
-                            <p class="cafe-card__info">지역: {{ cafe.area }}</p>
-                            <p class="cafe-card__info">대표 메뉴: {{ cafe.menu_name }}</p>
-                            <p class="cafe-card__info">가격: {{ cafe.price }}원</p>
-                            {% if cafe.matcha_strength or cafe.bitterness or cafe.sweetness or cafe.milkiness or cafe.matcha_aroma %}
-                                <p class="cafe-card__taste">
-                                    {% if cafe.matcha_strength %}진하기 {{ cafe.matcha_strength }}{% endif %}
-                                    {% if cafe.sweetness %} · 단맛 {{ cafe.sweetness }}{% endif %}
-                                    {% if cafe.matcha_aroma %} · 말차 향 {{ cafe.matcha_aroma }}{% endif %}
-                                </p>
-                            {% else %}
-                                <p class="cafe-card__taste">맛 정보 준비 중</p>
-                            {% endif %}
-                            {% if cafe.is_decaf or cafe.is_vegan or cafe.has_parking or cafe.has_takeout %}
-                                <div class="cafe-card__tags" aria-label="편의 정보">
-                                    {% if cafe.is_decaf %}<span class="cafe-card__tag">디카페인</span>{% endif %}
-                                    {% if cafe.is_vegan %}<span class="cafe-card__tag">비건</span>{% endif %}
-                                    {% if cafe.has_parking %}<span class="cafe-card__tag">주차</span>{% endif %}
-                                    {% if cafe.has_takeout %}<span class="cafe-card__tag">테이크아웃</span>{% endif %}
-                                </div>
-                            {% endif %}
-                            <form class="favorite-form" method="post" action="{% url 'toggle_favorite' cafe.id %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="{{ request.get_full_path }}#cafe-{{ cafe.id }}">
-                                <button class="favorite-button" type="submit">
-                                    {% if cafe.id in favorite_cafe_ids %}♥ 가보고 싶어요{% else %}♡ 가보고 싶어요{% endif %}
-                                </button>
-                            </form>
-                        </div>
-                    </li>
+                    {% include 'cafeapp/includes/cafe_card.html' %}
                 {% empty %}
-                    <li class="cafe-list__empty">등록된 카페가 없습니다.</li>
+                    <li class="cafe-list__empty">{% trans "조건에 맞는 카페가 없어요. 검색어나 필터를 바꿔보세요." %}</li>
                 {% endfor %}
             </ul>
         </section>
-    </main>
 
+        <section class="city-grid" aria-label="도시별 말차 카페">
+            <div class="city-grid__header">
+                <h2>📍 {% trans "세계별 말차 카페" %}</h2>
+                <p class="city-grid__subtitle">{% trans "지금, 세계의 말차를 만나보세요." %}</p>
+            </div>
+            <div class="city-grid__list">
+                {% for item in city_grid_choices %}
+                    <a href="{{ item.url }}" class="city-card{% if item.code == selected_city %} is-active{% endif %}"{% if item.code == selected_city %} aria-current="true"{% endif %} style="background-image: url('{% static item.image %}')">
+                        <span class="city-card__label">
+                            <span class="city-card__name">{{ item.name }}</span>
+                            <span class="city-card__name-en">{{ item.name_en }}</span>
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="ai-cta">
+            <div class="ai-cta__icon"><svg class="icon" style="width:22px;height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="9" width="14" height="10" rx="2"></rect><path d="M12 9V5"></path><circle cx="12" cy="3.5" r="1"></circle><circle cx="9" cy="14" r="1"></circle><circle cx="15" cy="14" r="1"></circle><path d="M2 12h3M19 12h3"></path></svg></div>
+            <div class="ai-cta__text">
+                <strong>{% trans "말차 취향 추천" %}</strong>
+                <p>{% trans "취향 정보를 입력하면 딱 맞는 말차 카페를 찾아드려요." %}</p>
+            </div>
+            <a class="ai-cta__button" href="{% url 'cafe_recommendations' %}">{% trans "추천 받기" %} <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"></path></svg></a>
+        </section>
+        {% endblock %}
+    </main>
+    <footer class="site-footer"><strong>말차요정지도</strong><span>작은 한 잔이 만드는, 조금 더 좋은 하루.</span></footer>
+
+    {% block page_scripts %}
     {{ map_cafes|json_script:"map-cafes-data" }}
+    {{ city_bounds|json_script:"city-bounds-data" }}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map').setView([37.5665, 126.9780], 11);
+        const cityBounds = JSON.parse(document.getElementById('city-bounds-data').textContent);
+        const map = L.map('map', { zoomControl: false }).fitBounds(cityBounds);
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, USGS, Intermap, INCREMENT P, NRCan, Esri Japan, METI, Esri China (Hong Kong), Esri Korea, Esri (Thailand), NGCC, (c) OpenStreetMap contributors, and the GIS User Community'
         }).addTo(map);
 
+        const cafeIcon = L.divIcon({
+            className: 'cafe-marker-pin-wrapper',
+            html: '<span class="cafe-marker-pin"><svg class="cafe-marker-pin__icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M6 20C4 13 7 5 19 4c2 11-5 17-13 16z"></path></svg></span>',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -28],
+        });
+
         const mapCafes = JSON.parse(document.getElementById('map-cafes-data').textContent);
+        const pickIcon = L.divIcon({
+            className: 'cafe-marker-pin-wrapper',
+            html: '<span class="cafe-marker-pin cafe-marker-pin--pick"><span class="cafe-marker-pin__icon">★</span></span>',
+            iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -28],
+        });
 
         mapCafes.forEach((cafe) => {
             const cafeLatitude = Number(cafe.latitude);
             const cafeLongitude = Number(cafe.longitude);
             const popupContent = document.createElement('div');
-            const cafeName = document.createElement('strong');
-            const detailLink = document.createElement('a');
-
-            cafeName.textContent = cafe.name;
-            detailLink.textContent = '상세보기';
+            popupContent.className = 'cafe-popup';
+            const addText = (tag, className, text) => {
+                const element = document.createElement(tag);
+                element.className = className;
+                element.textContent = text;
+                popupContent.append(element);
+                return element;
+            };
+            const placeholder = document.createElement('div');
+            placeholder.className = 'cafe-popup__placeholder';
+            placeholder.textContent = '사진 준비 중';
+            if (cafe.image_url) {
+                const photo = document.createElement('img');
+                photo.className = 'cafe-popup__image';
+                photo.src = cafe.image_url;
+                photo.alt = cafe.name;
+                photo.addEventListener('error', () => photo.replaceWith(placeholder), { once: true });
+                popupContent.append(photo);
+            } else {
+                popupContent.append(placeholder);
+            }
+            addText('strong', 'cafe-popup__name', cafe.name);
+            if (cafe.is_pick) addText('span', 'matchayojung-pick-badge', '말차요정 PICK');
+            addText('p', 'cafe-popup__area', cafe.area);
+            addText('p', 'cafe-popup__menu', cafe.menu_name);
+            addText('p', 'cafe-popup__price', Number(cafe.price) > 0
+                ? Number(cafe.price).toLocaleString('ko-KR') + '원'
+                : '가격 정보 확인 중');
+            addText('p', 'cafe-popup__rating', cafe.review_count > 0
+                ? '★ ' + Number(cafe.average_rating).toFixed(1) + ' · 리뷰 ' + cafe.review_count + '개'
+                : '아직 리뷰가 없어요');
+            const detailLink = addText('a', 'cafe-popup__link', '상세보기 →');
             detailLink.href = cafe.detail_url;
+            const tooltip = document.createElement('span');
+            tooltip.textContent = cafe.name;
 
-            popupContent.append(cafeName, document.createElement('br'), detailLink);
-
-            L.marker([cafeLatitude, cafeLongitude])
-                .bindPopup(popupContent)
+            L.marker([cafeLatitude, cafeLongitude], { icon: cafe.is_pick ? pickIcon : cafeIcon })
+                .bindPopup(popupContent, { maxWidth: 260, minWidth: 180, maxHeight: 350 })
+                .bindTooltip(tooltip, {
+                    permanent: true,
+                    direction: 'top',
+                    offset: [0, -26],
+                    className: 'cafe-marker-label',
+                })
                 .addTo(map);
         });
+
+        if (mapCafes.length > 0) {
+            const resultBounds = L.latLngBounds(
+                mapCafes.map((cafe) => [Number(cafe.latitude), Number(cafe.longitude)])
+            );
+            map.fitBounds(resultBounds, { padding: [40, 40], maxZoom: 14 });
+        }
+
+        const mapPanel = document.querySelector('.map-panel');
+        const expandToggle = document.getElementById('map-expand-toggle');
+        const expandIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>';
+        const collapseIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="10" y1="14" x2="3" y2="21"></line></svg>';
+
+        expandToggle.addEventListener('click', () => {
+            const isExpanded = mapPanel.classList.toggle('map-panel--expanded');
+            document.body.classList.toggle('map-expanded-active', isExpanded);
+            expandToggle.setAttribute('aria-pressed', String(isExpanded));
+            expandToggle.innerHTML = isExpanded ? collapseIcon : expandIcon;
+            setTimeout(() => map.invalidateSize(), 300);
+        });
+
+        const cafeListEl = document.getElementById('cafe-list-items');
+        const cafeListToggle = document.getElementById('cafe-list-toggle');
+        const chevronDownIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+        const chevronUpIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+
+        function expandCafeList() {
+            if (!cafeListEl || !cafeListToggle) {
+                return;
+            }
+            cafeListEl.classList.remove('cafe-list--collapsed');
+            cafeListToggle.setAttribute('aria-expanded', 'true');
+            cafeListToggle.innerHTML = `${cafeListToggle.dataset.labelCollapse} ${chevronUpIcon}`;
+        }
+
+        if (cafeListEl && cafeListToggle) {
+            cafeListToggle.addEventListener('click', () => {
+                const isCollapsed = cafeListEl.classList.contains('cafe-list--collapsed');
+                if (isCollapsed) {
+                    expandCafeList();
+                } else {
+                    cafeListEl.classList.add('cafe-list--collapsed');
+                    cafeListToggle.setAttribute('aria-expanded', 'false');
+                    cafeListToggle.innerHTML = `${cafeListToggle.dataset.labelExpand} ${chevronDownIcon}`;
+                }
+            });
+
+            if (window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if (target && target.closest('.cafe-list--collapsed')) {
+                    expandCafeList();
+                    target.scrollIntoView();
+                }
+            }
+        }
+
+        const headerSearchBtn = document.getElementById('header-search-btn');
+        const searchInput = document.getElementById('search-input');
+
+        if (headerSearchBtn && searchInput) {
+            headerSearchBtn.addEventListener('click', () => {
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                searchInput.focus();
+            });
+        }
     </script>
+    {% endblock %}
 </body>
 </html>

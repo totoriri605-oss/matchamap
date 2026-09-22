@@ -22,7 +22,14 @@ from django.urls import include, path
 urlpatterns = [
     path('', include('cafeapp.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    # allauth.urls 전체를 쓰지 않고 소셜 로그인 관련 URL만 추가한다.
+    # (allauth.urls는 자체 로그인/로그아웃 화면도 포함하는데, 그건
+    # django.contrib.auth.urls의 기존 로그인 화면과 이름이 겹친다.)
+    path('accounts/', include('allauth.socialaccount.urls')),
+    path('accounts/', include('allauth.socialaccount.providers.google.urls')),
+    path('accounts/', include('allauth.socialaccount.providers.kakao.urls')),
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 if settings.DEBUG:
