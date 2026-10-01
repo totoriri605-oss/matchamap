@@ -7,3 +7,7 @@ env/
 *.log
 .DS_Store
 .env
+/backups/taste/
+
+# 로컬 데이터베이스(실제 데이터). 시드는 cafeapp/fixtures/seed_cafes.json
+db.sqlite3
