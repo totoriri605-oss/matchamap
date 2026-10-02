@@ -43,7 +43,7 @@
                                 </div>
                                 <div>
                                     <dt>{% trans "가격" %}</dt>
-                                    <dd>{% if cafe.price %}{% blocktrans with price=cafe.price %}{{ price }}원{% endblocktrans %}{% else %}{% trans "가격 정보 확인 중" %}{% endif %}</dd>
+                                    <dd>{% if cafe.price %}{% blocktrans with price=cafe.price|floatformat:"0g" %}{{ price }}원{% endblocktrans %}{% else %}{% trans "가격 정보 확인 중" %}{% endif %}</dd>
                                 </div>
                             </dl>
                             {% if cafe.matcha_strength or cafe.bitterness or cafe.sweetness or cafe.milkiness or cafe.matcha_aroma %}

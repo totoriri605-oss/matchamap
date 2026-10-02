@@ -1,0 +1,481 @@
+/* 카페 상세 화면. 색상 변수(--brand-dark 등)와 머리글은 cafe_list.html 기본 틀에서 온다. */
+.cafe-detail {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 8px 0 48px;
+}
+
+.detail-messages {
+    margin: 0 0 16px;
+    padding: 0;
+    list-style: none;
+}
+
+.detail-messages li {
+    margin-bottom: 8px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: var(--brand-dark);
+    background: #e8f1e4;
+    font-size: 14px;
+}
+
+.detail-back {
+    margin: 4px 0 14px;
+}
+
+.detail-back a {
+    color: var(--muted);
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.detail-back a:hover {
+    color: var(--brand-dark);
+}
+
+.detail-card {
+    margin-top: 18px;
+    padding: 26px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--panel);
+    box-shadow: 0 8px 24px rgba(39, 70, 46, 0.06);
+}
+
+.detail-card h2 {
+    margin: 0 0 14px;
+    color: var(--brand-dark);
+    font-size: 19px;
+}
+
+/* ---- 대표 영역 ---- */
+.detail-hero {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.9fr) 1.1fr;
+    gap: 32px;
+    margin-top: 0;
+}
+
+.detail-photo__img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    object-fit: cover;
+    background: #edf3e9;
+}
+
+.detail-photo__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    color: #6f8a63;
+    background: linear-gradient(135deg, #eef4e8, #e0ebd6);
+    font-size: 14px;
+}
+
+.detail-photo__empty img {
+    width: 66px;
+    height: 60px;
+    object-fit: contain;
+    opacity: 0.8;
+}
+
+.detail-eyebrow {
+    margin: 2px 0 6px;
+    color: var(--brand-strong);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.detail-main h1 {
+    margin: 0 0 10px;
+    color: var(--brand-dark);
+    font-size: 30px;
+    line-height: 1.25;
+}
+
+.detail-main .matchayojung-pick-badge {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 0 12px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    color: #ffffff;
+    background: var(--brand-dark);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.detail-description {
+    margin: 0 0 18px;
+    color: #3d4b40;
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+.detail-facts {
+    margin: 0 0 20px;
+    padding: 4px 0;
+    border-top: 1px solid var(--line);
+}
+
+.detail-facts > div {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid #edf2ea;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.detail-facts dt {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.detail-facts dd {
+    margin: 0;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+}
+
+.detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.detail-actions form {
+    margin: 0;
+}
+
+.detail-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 20px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.detail-btn--primary {
+    color: #ffffff;
+    background: var(--brand-strong);
+}
+
+.detail-btn--primary.is-on {
+    background: #b8473f;
+}
+
+.detail-btn--soft {
+    color: var(--brand-dark);
+    background: var(--panel-soft);
+    border-color: var(--line);
+}
+
+.detail-btn:focus-visible {
+    outline: 3px solid rgba(47, 107, 60, 0.35);
+    outline-offset: 2px;
+}
+
+.detail-directions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    margin: 16px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.detail-directions > span {
+    font-weight: 700;
+}
+
+.detail-directions a {
+    color: var(--brand-strong);
+    text-decoration: none;
+}
+
+.detail-directions a:hover {
+    text-decoration: underline;
+}
+
+/* ---- 맛 정보 ---- */
+.taste-bars {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.taste-bars li {
+    display: grid;
+    grid-template-columns: 76px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #f4f8f1;
+    font-size: 14px;
+}
+
+.taste-bars__label {
+    color: #3d4b40;
+}
+
+.taste-bars strong {
+    color: var(--brand-dark);
+}
+
+.leaves {
+    display: inline-flex;
+    gap: 5px;
+}
+
+.leaf {
+    display: block;
+    width: 13px;
+    height: 20px;
+    border-radius: 90% 0 90% 0;
+    background: #dfe7d2;
+    transform: rotate(12deg);
+}
+
+.leaf.is-on {
+    background: #6f9a52;
+}
+
+.taste-unset,
+.taste-empty {
+    margin: 14px 0 0;
+    color: #7a867c;
+    font-size: 13px;
+}
+
+.taste-empty {
+    margin-top: 0;
+}
+
+.taste-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.taste-tag {
+    padding: 6px 12px;
+    border-radius: 999px;
+    color: #315c3b;
+    background: #e8f1e4;
+    font-size: 13px;
+}
+
+/* ---- 말차요정 한줄평 ---- */
+.detail-note {
+    background: #f6faf3;
+}
+
+.matchayojung-note h2 {
+    margin-bottom: 8px;
+    font-size: 17px;
+}
+
+.matchayojung-note p {
+    margin: 0;
+    color: #2f3f33;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.blog-review-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 14px;
+    padding: 9px 16px;
+    border: 1px solid var(--brand-strong);
+    border-radius: 999px;
+    color: var(--brand-strong);
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.blog-review-link:hover {
+    color: #ffffff;
+    background: var(--brand-strong);
+}
+
+/* ---- 리뷰 ---- */
+.reviews__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 16px;
+    margin-bottom: 14px;
+}
+
+.reviews__head h2 {
+    margin: 0;
+}
+
+.review-summary {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.review-summary__stars {
+    color: #c79a1c;
+}
+
+.reviews__notice {
+    margin: 0 0 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    color: #4a5a4d;
+    background: var(--panel-soft);
+    font-size: 14px;
+}
+
+.reviews__notice a {
+    color: var(--brand-strong);
+    font-weight: 700;
+}
+
+.review-form {
+    margin-bottom: 18px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fbfdfa;
+}
+
+.review-form p {
+    margin: 0 0 12px;
+}
+
+.review-form ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.review-form label {
+    font-size: 14px;
+}
+
+.review-form input[type="text"] {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid #c7d6c2;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.review-form .errorlist {
+    margin: 6px 0 0;
+    padding: 0;
+    color: #b03a3a;
+    font-size: 13px;
+    list-style: none;
+}
+
+.review {
+    margin-top: 12px;
+    padding: 16px 18px;
+    border: 1px solid #e6eee2;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.review-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    font-size: 14px;
+}
+
+.review .stars {
+    color: #c79a1c;
+}
+
+.review time {
+    color: #7a867c;
+    font-size: 13px;
+}
+
+.review p {
+    margin: 8px 0 0;
+    line-height: 1.65;
+}
+
+.delete-button {
+    margin-top: 10px;
+    padding: 6px 12px;
+    border: 1px solid #c9a0a0;
+    border-radius: 999px;
+    color: #8b3434;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* ---- 좁은 화면 ---- */
+@media (max-width: 760px) {
+    .detail-card {
+        padding: 18px;
+        border-radius: 16px;
+    }
+
+    .detail-hero {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+
+    .detail-main h1 {
+        font-size: 25px;
+    }
+
+    .taste-bars {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .detail-actions .detail-btn {
+        width: 100%;
+    }
+
+    .detail-actions form {
+        flex: 1 1 100%;
+    }
+
+    .detail-actions a.detail-btn {
+        flex: 1 1 100%;
+    }
+}

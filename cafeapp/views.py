@@ -6,6 +6,7 @@ from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
+from urllib.parse import quote
 from django.utils.translation import get_language, gettext as _
 
 from .forms import (
@@ -145,15 +146,51 @@ def cafe_list(request, catalog=False):
     return render(request, template, context)
 
 
+def _cafe_detail_context(request, cafe, review_form, reviews, has_reviewed):
+    """카페 상세 화면(정상 조회와 리뷰 입력 오류 재표시)이 함께 쓰는 데이터."""
+    review_summary = cafe.reviews.aggregate(
+        average_rating=Avg('rating'),
+        review_count=Count('id'),
+    )
+    taste_fields = (
+        ('matcha_strength', _('진하기')),
+        ('bitterness', _('쌉싸름함')),
+        ('sweetness', _('단맛')),
+        ('milkiness', _('우유맛')),
+        ('matcha_aroma', _('말차 향')),
+    )
+    place_query = quote(f'{cafe.name} {cafe.address}')
+    directions = [{'name': _('구글 지도'), 'url': f'https://www.google.com/maps/search/?api=1&query={place_query}'}]
+    if cafe.country == 'KR':
+        directions.append({'name': _('네이버 지도'), 'url': f'https://map.naver.com/p/search/{place_query}'})
+    city = CITIES.get(cafe.city)
+    is_english = (get_language() or '').startswith('en')
+    return {
+        'is_catalog': True,  # 머리글에서 '카페 목록' 메뉴를 강조한다.
+        'is_detail': True,   # 머리글 검색 아이콘이 카페 목록 검색으로 이동한다.
+        'city_name': (city['name_en'] if is_english else city['name']) if city else '',
+        'cafe': cafe,
+        'is_favorite': cafe.id in _favorite_cafe_ids(request.user),
+        'reviews': reviews,
+        'average_rating': review_summary['average_rating'],
+        'review_count': review_summary['review_count'],
+        'review_form': review_form,
+        'has_reviewed': has_reviewed,
+        'taste_rows': [
+            {'label': label, 'value': getattr(cafe, field)}
+            for field, label in taste_fields
+            if getattr(cafe, field)
+        ],
+        'unset_taste_labels': [label for field, label in taste_fields if not getattr(cafe, field)],
+        'taste_levels': range(1, 6),
+        'directions': directions,
+    }
+
+
 def cafe_detail(request, cafe_id):
     cafe = get_object_or_404(
         Cafe.objects.prefetch_related('reviews__author'),
         id=cafe_id,
-    )
-    favorite_cafe_ids = _favorite_cafe_ids(request.user)
-    review_summary = cafe.reviews.aggregate(
-        average_rating=Avg('rating'),
-        review_count=Count('id'),
     )
     has_reviewed = (
         request.user.is_authenticated
@@ -162,15 +199,7 @@ def cafe_detail(request, cafe_id):
     return render(
         request,
         'cafeapp/cafe_detail.html',
-        {
-            'cafe': cafe,
-            'is_favorite': cafe.id in favorite_cafe_ids,
-            'reviews': cafe.reviews.all(),
-            'average_rating': review_summary['average_rating'],
-            'review_count': review_summary['review_count'],
-            'review_form': ReviewForm(),
-            'has_reviewed': has_reviewed,
-        },
+        _cafe_detail_context(request, cafe, ReviewForm(), cafe.reviews.all(), has_reviewed),
     )
 
 
@@ -329,23 +358,10 @@ def review_create(request, cafe_id):
         messages.success(request, _('리뷰가 등록되었습니다.'))
         return redirect('cafe_detail', cafe_id=cafe.id)
 
-    favorite_cafe_ids = _favorite_cafe_ids(request.user)
-    review_summary = cafe.reviews.aggregate(
-        average_rating=Avg('rating'),
-        review_count=Count('id'),
-    )
     return render(
         request,
         'cafeapp/cafe_detail.html',
-        {
-            'cafe': cafe,
-            'is_favorite': cafe.id in favorite_cafe_ids,
-            'reviews': cafe.reviews.select_related('author'),
-            'average_rating': review_summary['average_rating'],
-            'review_count': review_summary['review_count'],
-            'review_form': form,
-            'has_reviewed': False,
-        },
+        _cafe_detail_context(request, cafe, form, cafe.reviews.select_related('author'), False),
         status=400,
     )
 

@@ -495,12 +495,6 @@ msgstr "Matcha Fairy Map"
 msgid "🍵 말차요정지도"
 msgstr "🍵 Matcha Fairy Map"
 
-msgid "정보 없음"
-msgstr "No info"
-
-msgid "미등록"
-msgstr "Not set"
-
 msgid "주소"
 msgstr "Address"
 
@@ -722,3 +716,18 @@ msgstr "San Francisco"
 #. dynamic: 도시 이름은 템플릿 변수로 번역해서 보여준다
 msgid "제주"
 msgstr "Jeju"
+
+msgid "카페 목록으로"
+msgstr "Back to cafes"
+
+msgid "아직 등록되지 않은 맛 정보"
+msgstr "Not yet rated"
+
+msgid "길찾기"
+msgstr "Directions"
+
+msgid "구글 지도"
+msgstr "Google Maps"
+
+msgid "네이버 지도"
+msgstr "Naver Map"
