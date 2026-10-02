@@ -281,3 +281,46 @@ a { color: inherit; }
         padding: 20px;
     }
 }
+
+/* 제보 접수 완료 화면 */
+.complete-card {
+    text-align: center;
+}
+
+.complete-card__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin: 4px auto 18px;
+    border-radius: 50%;
+    background-color: var(--panel-soft);
+}
+
+.icon--complete {
+    width: 30px;
+    height: 30px;
+    vertical-align: 0;
+    color: var(--brand-strong);
+}
+
+.complete-card__title {
+    margin: 0 0 12px;
+    color: var(--brand-dark);
+    font-size: 26px;
+}
+
+.complete-card__name {
+    margin: 0 0 8px;
+    color: var(--ink);
+    font-size: 16px;
+    overflow-wrap: anywhere;
+}
+
+.complete-card__desc {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+}

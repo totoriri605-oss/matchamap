@@ -216,7 +216,8 @@ def cafe_suggestion_create(request):
     if request.method == 'POST':
         form = CafeSuggestionForm(request.POST)
         if form.is_valid():
-            form.save()
+            suggestion = form.save()
+            request.session['last_suggestion_name'] = suggestion.name
             return redirect('cafe_suggestion_complete')
     else:
         form = CafeSuggestionForm()
@@ -229,7 +230,11 @@ def cafe_suggestion_create(request):
 
 
 def cafe_suggestion_complete(request):
-    return render(request, 'cafeapp/cafe_suggestion_complete.html')
+    # 방금 제보한 카페 이름은 한 번만 보여준다(새로고침하면 일반 문구).
+    suggestion_name = request.session.pop('last_suggestion_name', None)
+    return render(request, 'cafeapp/cafe_suggestion_complete.html', {
+        'suggestion_name': suggestion_name,
+    })
 
 
 def cafe_recommendations(request):
