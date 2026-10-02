@@ -16,7 +16,7 @@ from .forms import (
 )
 from .models import Cafe, Favorite, Review, HeroBanner
 from .locations import COUNTRIES, CITIES
-from .guide_content import GUIDE_ARTICLES, GUIDE_REGIONS, GUIDE_TASTES
+from .guide_content import GUIDE_ARTICLES, GUIDE_REGIONS
 
 
 def matcha_guide(request):
@@ -24,8 +24,6 @@ def matcha_guide(request):
         'is_guide': True,
         'guide_articles': GUIDE_ARTICLES,
         'guide_regions': GUIDE_REGIONS,
-        'guide_tastes': GUIDE_TASTES,
-        'guide_levels': range(1, 6),
     })
 
 

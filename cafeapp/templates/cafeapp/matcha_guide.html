@@ -47,22 +47,6 @@
         </div>
     </section>
 
-    <section class="guide-section guide-taste-section" aria-labelledby="guide-taste-title">
-        <div class="guide-section__heading"><h2 id="guide-taste-title"><span aria-hidden="true">🌿</span> 내 취향 찾기</h2><p>어떤 말차를 좋아하시나요?</p></div>
-        <p class="guide-section__intro">취향에 맞는 맛의 특징을 알아보고, 나만의 말차 스타일을 찾아보세요.</p>
-        <div class="guide-tastes">
-            {% for taste in guide_tastes %}
-            <article class="guide-taste"><h3>{{ taste.name }}</h3><p>{{ taste.description }}</p>
-                <ol class="guide-levels" aria-label="{{ taste.name }} 1단계 {{ taste.low }}부터 5단계 {{ taste.high }}까지">
-                    {% for level in guide_levels %}<li><span class="guide-leaf guide-leaf--{{ level }}" aria-hidden="true"></span><span>{{ level }}</span></li>{% endfor %}
-                </ol>
-                <div class="guide-taste__ends"><span>{{ taste.low }}</span><span>{{ taste.high }}</span></div>
-            </article>
-            {% endfor %}
-        </div>
-        <div class="guide-taste__footer"><p>위 단계는 맛을 이해하기 위한 안내예요. 실제 취향 선택은 아래에서 시작해요.</p><a class="guide-button guide-button--soft" href="{% url 'cafe_recommendations' %}">내 취향으로 추천받기 <span aria-hidden="true">→</span></a></div>
-    </section>
-
     <section class="guide-section" aria-labelledby="guide-regions-title">
         <div class="guide-section__heading"><h2 id="guide-regions-title"><span aria-hidden="true">🌿</span> 지역별 말차 이야기</h2><p>차가 자라는 곳부터, 한 잔을 즐기는 도시까지.</p></div>
         <div class="guide-regions">
@@ -79,7 +63,10 @@
     <section class="guide-cta" aria-labelledby="guide-cta-title">
         <img class="guide-cta__photo" src="{% static 'cafeapp/guide/latte.png' %}" alt="" width="240" height="160" loading="lazy">
         <div><h2 id="guide-cta-title">가이드를 읽고, 내 취향 카페를 찾아보세요</h2><p>이제, 알고 즐기는 말차 한 잔의 특별함을 만나볼까요?</p></div>
-        <a class="guide-button" href="{% url 'cafe_catalog' %}">카페 목록 보러가기 <span aria-hidden="true">→</span></a>
+        <div class="guide-cta__actions">
+            <a class="guide-button" href="{% url 'cafe_catalog' %}">카페 목록 보러가기 <span aria-hidden="true">→</span></a>
+            <a class="guide-button guide-button--soft" href="{% url 'cafe_recommendations' %}">내 취향으로 추천받기 <span aria-hidden="true">→</span></a>
+        </div>
     </section>
     <p class="guide-note guide-image-note">말차 사진과 차밭 일러스트는 AI로 제작한 이해를 돕기 위한 이미지입니다. 맛은 제품과 만드는 방법에 따라 달라질 수 있어요.</p>
 </div>

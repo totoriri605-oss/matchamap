@@ -56,14 +56,6 @@ GUIDE_ARTICLES = [
     },
 ]
 
-GUIDE_TASTES = [
-    {'name': '말차 진하기', 'description': '한 모금에 느껴지는 말차의 존재감', 'low': '연함', 'high': '진함'},
-    {'name': '쌉싸름함', 'description': '입안에 남는 쌉싸름한 느낌', 'low': '적음', 'high': '많음'},
-    {'name': '단맛', 'description': '음료에서 느껴지는 달콤함', 'low': '적음', 'high': '많음'},
-    {'name': '우유맛', 'description': '차와 어우러지는 우유의 고소함', 'low': '가벼움', 'high': '진함'},
-    {'name': '말차 향', 'description': '코끝과 입안에 머무는 차의 향', 'low': '은은함', 'high': '풍부함'},
-]
-
 GUIDE_REGIONS = [
     {'name': '우지', 'label': 'KYOTO', 'description': '교토의 차 문화를 알아보는 출발점.', 'image': 'cafeapp/guide/fields.png', 'url': 'https://www.japan.travel/en/spot/2017/'},
     {'name': '니시오', 'label': 'AICHI', 'description': '아이치의 말차 산지 이야기를 만나보세요.', 'image': 'cafeapp/guide/fields.png', 'url': 'https://japan-food.jetro.go.jp/greentea/business/japanese_greentea_brochure.pdf'},

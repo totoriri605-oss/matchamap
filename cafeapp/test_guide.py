@@ -5,7 +5,7 @@ from django.contrib.staticfiles import finders
 from django.test import TestCase
 from django.urls import reverse
 
-from .guide_content import GUIDE_ARTICLES, GUIDE_REGIONS, GUIDE_TASTES
+from .guide_content import GUIDE_ARTICLES, GUIDE_REGIONS
 from .models import Cafe
 
 
@@ -30,12 +30,11 @@ class MatchaGuideTests(TestCase):
         response = self.client.get(reverse('matcha_guide'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'cafeapp/matcha_guide.html')
-        for text in ['말차 가이드', '이런 글부터 읽어보세요', '내 취향 찾기', '지역별 말차 이야기', '카페 목록 보러가기']:
+        for text in ['말차 가이드', '이런 글부터 읽어보세요', '지역별 말차 이야기', '카페 목록 보러가기']:
             self.assertContains(response, text)
         self.assertNotContains(response, 'L.map(')
         self.assertNotContains(response, '<script')
         self.assertEqual(len(response.context['guide_articles']), 4)
-        self.assertEqual(len(response.context['guide_tastes']), 5)
         self.assertEqual(len(response.context['guide_regions']), 5)
 
     def test_only_current_navigation_is_active_on_each_shared_page(self):
@@ -78,4 +77,3 @@ class MatchaGuideTests(TestCase):
         self.client.get(reverse('matcha_guide'), {'pick': '1'})
         self.assertEqual(before, list(Cafe.objects.values()))
         self.assertTrue(Cafe.objects.filter(pk=cafe.pk).exists())
-        self.assertEqual([taste['name'] for taste in GUIDE_TASTES], ['말차 진하기', '쌉싸름함', '단맛', '우유맛', '말차 향'])
