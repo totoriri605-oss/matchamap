@@ -372,7 +372,8 @@ def signup(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            # 인증 백엔드가 2개(ModelBackend, allauth)라서 어느 쪽으로 로그인할지 지정해야 한다.
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, '회원가입이 완료되었습니다.')
             return redirect('cafe_list')
     else:
