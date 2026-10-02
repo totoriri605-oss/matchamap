@@ -13,12 +13,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "말차 카페 목록"
-msgstr "Matcha Cafe List"
-
-msgid "좋은 말차가 좋은 하루를 만든다."
-msgstr "Good matcha makes a good day."
-
 msgid "주요 메뉴"
 msgstr "Main menu"
 
@@ -33,15 +27,6 @@ msgstr "Favorites"
 
 msgid "카페 제보"
 msgstr "Suggest a Cafe"
-
-msgid "말차 취향 찾기"
-msgstr "Find by Taste"
-
-msgid "리뷰"
-msgstr "Reviews"
-
-msgid "이벤트"
-msgstr "Events"
 
 msgid "검색"
 msgstr "Search"
@@ -59,20 +44,11 @@ msgstr "Log In"
 msgid "회원가입"
 msgstr "Sign Up"
 
-msgid "오늘, 어디서 말차 마실까?"
-msgstr "Today, where should I drink matcha?"
-
 msgid "나만의 취향에 맞는 말차 카페를 찾아보세요."
 msgstr "Find a matcha cafe that matches your taste."
 
-msgid "카페 이름, 지역을 검색해보세요"
-msgstr "Search by cafe name or area"
-
 msgid "전체"
 msgstr "All"
-
-msgid "서울 지도"
-msgstr "Seoul Map"
 
 msgid "지도의 마커를 클릭하면 카페 정보를 볼 수 있어요."
 msgstr "Click a marker on the map to see cafe details."
@@ -95,21 +71,6 @@ msgstr "Find the perfect cafe based on your own matcha taste."
 msgid "필터 값을 다시 확인해주세요."
 msgstr "Please check your filter values again."
 
-msgid "진하기(이상)"
-msgstr "Strength (min)"
-
-msgid "쌉싸름함(이상)"
-msgstr "Bitterness (min)"
-
-msgid "단맛(이하)"
-msgstr "Sweetness (max)"
-
-msgid "우유맛(이하)"
-msgstr "Milkiness (max)"
-
-msgid "말차 향(이상)"
-msgstr "Aroma (min)"
-
 msgid "비건 메뉴"
 msgstr "Vegan menu"
 
@@ -127,12 +88,6 @@ msgstr "Apply Filter"
 
 msgid "전체 초기화"
 msgstr "Reset All"
-
-msgid "지금 제일 인기 있는 말차 카페"
-msgstr "Most Popular Matcha Cafes Right Now"
-
-msgid "서울 전체"
-msgstr "All of Seoul"
 
 #, python-format
 msgid "%(counter)s개의 말차 카페"
@@ -195,9 +150,6 @@ msgstr "Vegan"
 msgid "주차"
 msgstr "Parking"
 
-msgid "등록된 카페가 없습니다."
-msgstr "No cafes found."
-
 msgid "말차 취향 추천"
 msgstr "Matcha Taste Recommendation"
 
@@ -207,3 +159,224 @@ msgstr ""
 
 msgid "추천 받기"
 msgstr "Get Recommendation"
+
+
+msgid "말차가 좋은 날, 꺼내보는 지도"
+msgstr "A map for the days matcha feels right"
+
+msgid "말차 가이드"
+msgstr "Matcha Guide"
+
+msgid "카페 이름 또는 지역 검색"
+msgstr "Search by cafe name or area"
+
+msgid "말차 진하기"
+msgstr "Matcha Strength"
+
+msgid "연함"
+msgstr "Light"
+
+msgid "보통"
+msgstr "Medium"
+
+msgid "진함"
+msgstr "Strong"
+
+msgid "쌉싸름함"
+msgstr "Bitterness"
+
+msgid "적음"
+msgstr "Low"
+
+msgid "많음"
+msgstr "High"
+
+msgid "단맛"
+msgstr "Sweetness"
+
+msgid "말차 향"
+msgstr "Matcha Aroma"
+
+msgid "더 필요한 조건이 있나요?"
+msgstr "Anything else you need?"
+
+msgid "말차요정 PICK"
+msgstr "Matcha Fairy's PICK"
+
+msgid "말차요정의 오늘 픽"
+msgstr "Today's Matcha Fairy Picks"
+
+msgid "조건에 맞는 카페가 없어요. 검색어나 필터를 바꿔보세요."
+msgstr "No cafes match your filters. Try changing your search or filters."
+
+msgid "세계별 말차 카페"
+msgstr "Matcha Cafes Around the World"
+
+msgid "지금, 세계의 말차를 만나보세요."
+msgstr "Discover matcha from around the world."
+
+msgid "가격 정보 확인 중"
+msgstr "Price info being confirmed"
+
+msgid "말차요정지도 | 내 취향의 말차를 찾아서"
+msgstr "Matcha Fairy Map | Find matcha that suits your taste"
+
+msgid "오늘은 어디서<br>말차 한 잔 할까요?"
+msgstr "Where shall we enjoy<br>a cup of matcha today?"
+
+msgid "카페 검색"
+msgstr "Cafe search"
+
+msgid "도시별 말차 카페"
+msgstr "Matcha cafes by city"
+
+#, python-format
+msgid "%(city)s 지도"
+msgstr "%(city)s Map"
+
+msgid "작은 한 잔이 만드는, 조금 더 좋은 하루."
+msgstr "A small cup makes a slightly better day."
+
+msgid "사진 준비 중"
+msgstr "Photo coming soon"
+
+msgid "리뷰 __N__개"
+msgstr "__N__ reviews"
+
+msgid "아직 리뷰가 없어요"
+msgstr "No reviews yet"
+
+msgid "상세보기 →"
+msgstr "View details →"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "삼성"
+msgstr "Samseong"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "성수"
+msgstr "Seongsu"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "명동"
+msgstr "Myeongdong"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "연남"
+msgstr "Yeonnam"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "서촌"
+msgstr "Seochon"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "삼청"
+msgstr "Samcheong"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "용산"
+msgstr "Yongsan"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "김포공항"
+msgstr "Gimpo Airport"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "잠실"
+msgstr "Jamsil"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "강동"
+msgstr "Gangdong"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "합정"
+msgstr "Hapjeong"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "한남"
+msgstr "Hannam"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "망원"
+msgstr "Mangwon"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "용담"
+msgstr "Yongdam"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "조천"
+msgstr "Jocheon"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "애월"
+msgstr "Aewol"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "중문"
+msgstr "Jungmun"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "한경"
+msgstr "Hangyeong"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "안덕"
+msgstr "Andeok"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "보스턴"
+msgstr "Boston"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "뉴욕"
+msgstr "New York"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "우메다"
+msgstr "Umeda"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "텐진바시"
+msgstr "Tenjinbashi"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "난바"
+msgstr "Namba"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "아우터리치먼드"
+msgstr "Outer Richmond"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "재팬타운"
+msgstr "Japantown"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "프레시디오"
+msgstr "Presidio"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "선셋"
+msgstr "Sunset"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "도그패치"
+msgstr "Dogpatch"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "긴자"
+msgstr "Ginza"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "오모테산도"
+msgstr "Omotesando"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "마루노우치"
+msgstr "Marunouchi"
+
+#. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
+msgid "시부야"
+msgstr "Shibuya"

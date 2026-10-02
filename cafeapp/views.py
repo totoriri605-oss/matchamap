@@ -6,6 +6,7 @@ from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.translation import get_language
 
 from .forms import (
     CafeRecommendationForm,
@@ -129,7 +130,7 @@ def cafe_list(request, catalog=False):
         'cafes': cafes,
         'selected_country': selected_country,
         'selected_city': selected_city,
-        'city_name': CITIES[selected_city]['name'],
+        'city_name': CITIES[selected_city]['name_en' if (get_language() or '').startswith('en') else 'name'],
         'city_bounds': CITIES[selected_city]['bounds'],
         'city_grid_choices': city_grid_choices,
         'hero_banner': HeroBanner.objects.first(),
