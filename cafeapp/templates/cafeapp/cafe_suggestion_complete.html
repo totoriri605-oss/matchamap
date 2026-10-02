@@ -1,11 +1,12 @@
 {% load static i18n %}
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>제보 접수 완료 | 말차요정의 지도</title>
+    <title>{% trans "제보 접수 완료 | 말차요정의 지도" %}</title>
     <link rel="stylesheet" href="{% static 'cafeapp/suggestion.css' %}">
+    {% include 'cafeapp/includes/brand_font.html' %}
 </head>
 <body>
     <header class="site-header">
@@ -17,7 +18,7 @@
                     <span class="site-brand__tagline">{% trans "말차가 좋은 날, 꺼내보는 지도" %}</span>
                 </span>
             </a>
-            <a class="site-header__back" href="{% url 'cafe_list' %}"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg> 카페 목록으로</a>
+            <a class="site-header__back" href="{% url 'cafe_list' %}"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg> {% trans "카페 목록으로" %}</a>
         </div>
     </header>
 
@@ -26,17 +27,17 @@
             <div class="complete-card__badge" aria-hidden="true">
                 <svg class="icon icon--complete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-            <h1 class="complete-card__title">제보해 주셔서 고마워요 🍵</h1>
+            <h1 class="complete-card__title">{% trans "제보해 주셔서 고마워요 🍵" %}</h1>
             {% if suggestion_name %}
-                <p class="complete-card__name"><strong>{{ suggestion_name }}</strong> 제보가 접수되었어요.</p>
+                <p class="complete-card__name"><strong>{{ suggestion_name }}</strong> {% trans "제보가 접수되었어요." %}</p>
             {% else %}
-                <p class="complete-card__name">카페 제보가 접수되었어요.</p>
+                <p class="complete-card__name">{% trans "카페 제보가 접수되었어요." %}</p>
             {% endif %}
-            <p class="complete-card__desc">관리자가 내용을 확인한 뒤 지도에 올려 드릴게요.<br>알려 주신 정보가 더 좋은 말차 지도를 만들어요.</p>
+            <p class="complete-card__desc">{% trans "관리자가 내용을 확인한 뒤 지도에 올려 드릴게요." %}<br>{% trans "알려 주신 정보가 더 좋은 말차 지도를 만들어요." %}</p>
 
             <div class="form-actions">
-                <a class="btn btn--primary" href="{% url 'cafe_suggestion' %}">다른 카페도 제보하기</a>
-                <a class="btn btn--secondary" href="{% url 'cafe_list' %}">카페 목록 보기</a>
+                <a class="btn btn--primary" href="{% url 'cafe_suggestion' %}">{% trans "다른 카페도 제보하기" %}</a>
+                <a class="btn btn--secondary" href="{% url 'cafe_list' %}">{% trans "카페 목록 보기" %}</a>
             </div>
         </div>
     </main>

@@ -146,3 +146,83 @@ class EnglishScreensTests(TestCase):
         self.assertContains(response, '조건 초기화')
         self.assertContains(response, '총 1개의 말차 카페')
         self.assertNotContains(response, 'Reset filters')
+
+
+class EnglishAccountAndSuggestionScreensTests(TestCase):
+    def english(self, url, method='get', data=None):
+        self.client.cookies['django_language'] = 'en'
+        return getattr(self.client, method)(url, data or {}, follow=True)
+
+    def test_login_page_is_translated(self):
+        response = self.english(reverse('login'))
+
+        for text in ('Log in with Google · Coming soon', 'Log in with Kakao · Coming soon', "Don't have an account?",
+                     'Username', 'Password', 'Show password', 'Good cafes<br>are always right here.'):
+            self.assertContains(response, text)
+        self.assertNotContains(response, '계정이 없나요?')
+
+    def test_wrong_login_message_is_translated(self):
+        response = self.english(reverse('login'), 'post', {'username': 'nobody', 'password': 'wrong'})
+
+        self.assertContains(response, 'Please check your username or password.')
+
+    def test_signup_page_is_translated(self):
+        response = self.english(reverse('signup'))
+
+        for text in ('Confirm password', 'Already have an account?', 'Letters, numbers and @/./+/-/_ only.'):
+            self.assertContains(response, text)
+
+    def test_suggestion_form_is_translated_including_city_choices(self):
+        response = self.english(reverse('cafe_suggestion'))
+
+        for text in ('Choose the city where the cafe is.', 'Please enter the exact address.', 'Before you submit',
+                     '<optgroup label="Korea">', '<optgroup label="Japan">', '<option value="tokyo">Tokyo</option>',
+                     '<option value="seoul" selected>Seoul</option>'):
+            self.assertContains(response, text)
+        self.assertContains(response, 'Cafe name')
+        self.assertNotContains(response, '제보하기')
+
+    def test_suggestion_complete_page_is_translated(self):
+        data = {'name': 'Test Cafe', 'city': 'seoul', 'area': 'Seongsu', 'address': 'addr',
+               'menu_name': 'Latte', 'price': 6500, 'description': 'd'}
+
+        response = self.english(reverse('cafe_suggestion'), 'post', data)
+
+        self.assertContains(response, 'Thank you for your suggestion')
+        self.assertContains(response, '<strong>Test Cafe</strong> suggestion received.')
+        self.assertContains(response, 'Suggest another cafe')
+
+    def test_html_lang_attribute_follows_the_language(self):
+        for name in ('login', 'signup', 'cafe_suggestion', 'cafe_suggestion_complete', 'cafe_recommendations'):
+            self.assertContains(self.english(reverse(name)), '<html lang="en">', msg_prefix=name)
+
+    def test_korean_remains_the_default(self):
+        for name in ('login', 'signup', 'cafe_suggestion'):
+            self.assertContains(self.client.get(reverse(name)), '<html lang="ko">', msg_prefix=name)
+        self.assertContains(self.client.get(reverse('login')), '계정이 없나요?')
+        self.assertContains(self.client.get(reverse('cafe_suggestion')), '<optgroup label="한국">')
+
+
+class AreaNameTranslationTests(TestCase):
+    def test_map_popup_and_favorites_use_translated_area_names(self):
+        from django.contrib.auth import get_user_model
+
+        from .models import Cafe, Favorite
+
+        cafe = Cafe.objects.create(
+            name='Area cafe', country='KR', city='seoul', area='성수', address='a', menu_name='m', price=1,
+            description='d', latitude='37.5', longitude='127.0',
+        )
+        user = get_user_model().objects.create_user('area-reader', password='pw-for-tests')
+        Favorite.objects.create(user=user, cafe=cafe)
+        self.client.force_login(user)
+        self.client.cookies['django_language'] = 'en'
+
+        home = self.client.get(reverse('cafe_list'))
+        favorites = self.client.get(reverse('favorite_list'))
+
+        self.assertEqual(home.context['map_cafes'][0]['area'], 'Seongsu')
+        self.assertContains(favorites, 'Seongsu')
+
+        self.client.cookies['django_language'] = 'ko'
+        self.assertEqual(self.client.get(reverse('cafe_list')).context['map_cafes'][0]['area'], '성수')

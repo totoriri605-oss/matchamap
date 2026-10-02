@@ -108,7 +108,7 @@ def cafe_list(request, catalog=False):
         {
             'name': cafe.name,
             'is_pick': cafe.is_matchayojung_pick,
-            'area': cafe.area,
+            'area': _(cafe.area),  # 동네 이름은 .po에 있으면 번역된다
             'menu_name': cafe.menu_name,
             'price': cafe.price,
             'image_url': cafe.image.url if cafe.image else None,

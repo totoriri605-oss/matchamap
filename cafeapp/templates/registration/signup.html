@@ -1,9 +1,11 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입 | 말차요정지도</title>
+    <title>{% trans "회원가입 | 말차요정지도" %}</title>
+    {% include 'cafeapp/includes/brand_font.html' %}
     <style>
         * {
             box-sizing: border-box;
@@ -77,6 +79,15 @@
             font-size: 19px;
             font-weight: 700;
             text-decoration: none;
+        }
+
+        .site-brand__name {
+            display: block;
+            font-family: 'Jua', 'AppleMyungjo', 'Batang', '바탕', serif;
+            font-size: 1.4em;
+            font-weight: 400;
+            line-height: 1.25;
+            letter-spacing: -.01em;
         }
 
         .site-brand .icon {
@@ -393,22 +404,22 @@
             <a class="site-brand" href="{% url 'cafe_list' %}">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
                 <span>
-                    말차요정지도
-                    <span class="site-brand__tagline">좋은 말차, 더 가까이</span>
+                    <span class="site-brand__name">말차요정지도</span>
+                    <span class="site-brand__tagline">{% trans "좋은 말차, 더 가까이" %}</span>
                 </span>
             </a>
             <a class="site-header__back" href="{% url 'cafe_list' %}">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg>
-                홈으로 돌아가기
+                {% trans "홈으로 돌아가기" %}
             </a>
         </div>
     </header>
 
     <main class="signup-layout">
         <div class="signup-side signup-side--left">
-            <h2>좋은 말차가<br>좋은 하루를 만듭니다.</h2>
-            <p class="signup-side__desc">말차요정지도에 가입하고 나만의 취향에 맞는<br>말차 카페를 기록하고 즐겨찾기해보세요.</p>
-            <p class="signup-side__caption">MATCHA MAP<br>카페가 있는, 더 맛있는 일상</p>
+            <h2>{% trans "좋은 말차가" %}<br>{% trans "좋은 하루를 만듭니다." %}</h2>
+            <p class="signup-side__desc">{% trans "말차요정지도에 가입하고 나만의 취향에 맞는" %}<br>{% trans "말차 카페를 기록하고 즐겨찾기해보세요." %}</p>
+            <p class="signup-side__caption">MATCHA MAP<br>{% trans "카페가 있는, 더 맛있는 일상" %}</p>
         </div>
 
         <div class="signup-card-wrap">
@@ -417,12 +428,12 @@
                     <span class="signup-card__brand-icon">
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
                     </span>
-                    <p class="signup-card__brand-name">말차요정지도</p>
+                    <p class="signup-card__brand-name">{% trans "말차요정지도" %}</p>
                     <p class="signup-card__brand-tagline">MATCHA MAP</p>
                 </div>
 
-                <h1 class="signup-card__title">회원가입</h1>
-                <p class="signup-card__subtitle">말차요정지도에서 나만의 카페를 기록해보세요.</p>
+                <h1 class="signup-card__title">{% trans "회원가입" %}</h1>
+                <p class="signup-card__subtitle">{% trans "말차요정지도에서 나만의 카페를 기록해보세요." %}</p>
 
                 {% if form.non_field_errors %}
                     <p class="signup-card__error">{{ form.non_field_errors|join:" " }}</p>
@@ -431,34 +442,34 @@
                 <form method="post">
                     {% csrf_token %}
                     <div class="form-field">
-                        <label for="{{ form.username.id_for_label }}">아이디</label>
+                        <label for="{{ form.username.id_for_label }}">{% trans "아이디" %}</label>
                         <span class="input-wrap">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path></svg>
                             {{ form.username }}
                         </span>
-                        <p class="field-hint">영문, 숫자, @/./+/-/_ 만 사용할 수 있어요.</p>
+                        <p class="field-hint">{% trans "영문, 숫자, @/./+/-/_ 만 사용할 수 있어요." %}</p>
                         {{ form.username.errors }}
                     </div>
 
                     <div class="form-field">
-                        <label for="{{ form.password1.id_for_label }}">비밀번호</label>
+                        <label for="{{ form.password1.id_for_label }}">{% trans "비밀번호" %}</label>
                         <span class="input-wrap">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
                             {{ form.password1 }}
-                            <button type="button" class="password-toggle" data-target="{{ form.password1.id_for_label }}" aria-label="비밀번호 표시">
+                            <button type="button" class="password-toggle" data-target="{{ form.password1.id_for_label }}" aria-label="{% trans "비밀번호 표시" %}">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             </button>
                         </span>
-                        <p class="field-hint">8자 이상, 너무 흔하거나 숫자로만 이루어진 비밀번호는 피해주세요.</p>
+                        <p class="field-hint">{% trans "8자 이상, 너무 흔하거나 숫자로만 이루어진 비밀번호는 피해주세요." %}</p>
                         {{ form.password1.errors }}
                     </div>
 
                     <div class="form-field">
-                        <label for="{{ form.password2.id_for_label }}">비밀번호 확인</label>
+                        <label for="{{ form.password2.id_for_label }}">{% trans "비밀번호 확인" %}</label>
                         <span class="input-wrap">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
                             {{ form.password2 }}
-                            <button type="button" class="password-toggle" data-target="{{ form.password2.id_for_label }}" aria-label="비밀번호 표시">
+                            <button type="button" class="password-toggle" data-target="{{ form.password2.id_for_label }}" aria-label="{% trans "비밀번호 표시" %}">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             </button>
                         </span>
@@ -466,17 +477,17 @@
                     </div>
 
                     <button type="submit" class="btn btn--primary">
-                        회원가입
+                        {% trans "회원가입" %}
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </button>
                 </form>
 
                 <div class="signup-card__divider"></div>
 
-                <p class="signup-card__login">이미 계정이 있나요? <a href="{% url 'login' %}">로그인</a></p>
+                <p class="signup-card__login">{% trans "이미 계정이 있나요?" %} <a href="{% url 'login' %}">{% trans "로그인" %}</a></p>
                 <a class="btn btn--secondary" href="{% url 'cafe_list' %}">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="20" y2="6"></line><line x1="8" y1="12" x2="20" y2="12"></line><line x1="8" y1="18" x2="20" y2="18"></line><line x1="4" y1="6" x2="4.01" y2="6"></line><line x1="4" y1="12" x2="4.01" y2="12"></line><line x1="4" y1="18" x2="4.01" y2="18"></line></svg>
-                    카페 목록으로 돌아가기
+                    {% trans "카페 목록으로 돌아가기" %}
                 </a>
             </div>
         </div>
@@ -485,8 +496,8 @@
             <div class="signup-side__visual">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
             </div>
-            <p class="signup-side__quote">"좋은 카페는<br>언제나 여기 있어요."</p>
-            <p class="signup-side__caption">좋은 공간이,<br>좋은 하루를 만든다.</p>
+            <p class="signup-side__quote">{% blocktrans %}"좋은 카페는<br>언제나 여기 있어요."{% endblocktrans %}</p>
+            <p class="signup-side__caption">{% trans "좋은 공간이," %}<br>{% trans "좋은 하루를 만든다." %}</p>
         </div>
     </main>
 

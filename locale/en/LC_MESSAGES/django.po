@@ -731,3 +731,165 @@ msgstr "Google Maps"
 
 msgid "네이버 지도"
 msgstr "Naver Map"
+
+msgid "로그인 | 말차요정지도"
+msgstr "Log In | Matcha Fairy Map"
+
+msgid "좋은 말차, 더 가까이"
+msgstr "Good matcha, closer to you"
+
+msgid "좋은 말차가"
+msgstr "Good matcha"
+
+msgid "좋은 하루를 만듭니다."
+msgstr "makes a good day."
+
+msgid "말차요정지도로 특별한 카페를 발견하고,"
+msgstr "Discover special cafes with Matcha Fairy Map,"
+
+msgid "나만의 취향을 기록해보세요."
+msgstr "and keep a record of your own taste."
+
+msgid "카페가 있는, 더 맛있는 일상"
+msgstr "A tastier everyday life, with cafes"
+
+msgid "말차요정지도에서 나만의 카페를 저장해보세요."
+msgstr "Save your own favorite cafes on Matcha Fairy Map."
+
+msgid "아이디 또는 비밀번호를 확인해주세요."
+msgstr "Please check your username or password."
+
+msgid "아이디"
+msgstr "Username"
+
+msgid "비밀번호"
+msgstr "Password"
+
+msgid "비밀번호 표시"
+msgstr "Show password"
+
+msgid "또는"
+msgstr "or"
+
+msgid "구글로 로그인"
+msgstr "Log in with Google"
+
+msgid "카카오로 로그인"
+msgstr "Log in with Kakao"
+
+msgid "계정이 없나요?"
+msgstr "Don't have an account?"
+
+msgid "좋은 공간이,"
+msgstr "Good places"
+
+msgid "좋은 하루를 만든다."
+msgstr "make good days."
+
+msgid "\"좋은 카페는<br>언제나 여기 있어요.\""
+msgstr "\"Good cafes<br>are always right here.\""
+
+msgid "회원가입 | 말차요정지도"
+msgstr "Sign Up | Matcha Fairy Map"
+
+msgid "말차요정지도에 가입하고 나만의 취향에 맞는"
+msgstr "Join Matcha Fairy Map and"
+
+msgid "말차 카페를 기록하고 즐겨찾기해보세요."
+msgstr "save the matcha cafes that suit your taste."
+
+msgid "말차요정지도에서 나만의 카페를 기록해보세요."
+msgstr "Keep a record of your own cafes on Matcha Fairy Map."
+
+msgid "영문, 숫자, @/./+/-/_ 만 사용할 수 있어요."
+msgstr "Letters, numbers and @/./+/-/_ only."
+
+msgid "8자 이상, 너무 흔하거나 숫자로만 이루어진 비밀번호는 피해주세요."
+msgstr "At least 8 characters; avoid very common or all-numeric passwords."
+
+msgid "비밀번호 확인"
+msgstr "Confirm password"
+
+msgid "이미 계정이 있나요?"
+msgstr "Already have an account?"
+
+msgid "카페 제보 | 말차요정의 지도"
+msgstr "Suggest a Cafe | Matcha Fairy Map"
+
+msgid "좋은 말차 카페를 함께 만들어가요"
+msgstr "Let's build a great matcha cafe map together"
+
+msgid "알고 있는 말차 카페를 알려주세요."
+msgstr "Tell us about a matcha cafe you know."
+
+msgid "예: 카페 말차, 오설록 티하우스"
+msgstr "e.g. Cafe Matcha, Osulloc Tea House"
+
+msgid "카페가 있는 도시를 골라 주세요."
+msgstr "Choose the city where the cafe is."
+
+msgid "도시 안의 동네 이름. 예: 성수, 한남, 시부야"
+msgstr "The neighborhood within the city, e.g. Seongsu, Hannam, Shibuya"
+
+msgid "정확한 주소를 입력해 주세요."
+msgstr "Please enter the exact address."
+
+msgid "예: 말차 라떼, 말차 케이크 등"
+msgstr "e.g. matcha latte, matcha cake"
+
+msgid "숫자만 입력해 주세요. (단위: 원)"
+msgstr "Numbers only, please. (Unit: KRW)"
+
+msgid "카페의 분위기, 맛, 추천 이유 등을 자유롭게 적어주세요."
+msgstr "Feel free to describe the atmosphere, taste, and why you recommend it."
+
+msgid "제보하기"
+msgstr "Submit"
+
+msgid "카페 목록으로 돌아가기"
+msgstr "Back to cafe list"
+
+msgid "제보 전 확인해주세요!"
+msgstr "Before you submit"
+
+msgid "제보된 카페는 관리자 확인 후 등록됩니다."
+msgstr "Suggested cafes are added after an admin review."
+
+msgid "개인정보나 불필요한 정보는 입력하지 말아주세요."
+msgstr "Please don't enter personal or unnecessary information."
+
+msgid "제보 접수 완료 | 말차요정의 지도"
+msgstr "Suggestion received | Matcha Fairy Map"
+
+msgid "제보해 주셔서 고마워요 🍵"
+msgstr "Thank you for your suggestion 🍵"
+
+msgid "제보가 접수되었어요."
+msgstr "suggestion received."
+
+msgid "카페 제보가 접수되었어요."
+msgstr "Your cafe suggestion has been received."
+
+msgid "관리자가 내용을 확인한 뒤 지도에 올려 드릴게요."
+msgstr "An admin will review it and add it to the map."
+
+msgid "알려 주신 정보가 더 좋은 말차 지도를 만들어요."
+msgstr "What you share helps make a better matcha map."
+
+msgid "다른 카페도 제보하기"
+msgstr "Suggest another cafe"
+
+msgid "카페 목록 보기"
+msgstr "View cafe list"
+
+#. dynamic: 국가 이름은 폼에서 변수로 번역해서 보여준다
+msgid "한국"
+msgstr "Korea"
+
+#. dynamic: 국가 이름은 폼에서 변수로 번역해서 보여준다
+msgid "일본"
+msgstr "Japan"
+
+#. dynamic: 국가 이름은 폼에서 변수로 번역해서 보여준다
+msgid "미국"
+msgstr "United States"

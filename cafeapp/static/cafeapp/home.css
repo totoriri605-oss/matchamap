@@ -8,7 +8,7 @@ a, button, input, select { -webkit-tap-highlight-color: transparent; }
 .site-header__inner { min-height: 82px; gap: 20px; flex-wrap: wrap; padding-top: 14px; padding-bottom: 14px; }
 .site-brand { font-size: 22px; letter-spacing: -.8px; gap: 10px; }
 .site-brand__rabbit { width: 66px; height: 60px; object-fit: contain; flex-shrink: 0; align-self: center; }
-.site-brand__title { display: block; font-family: 'AppleMyungjo', 'Batang', '바탕', serif; font-size: 1.25em; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+.site-brand__title { display: block; font-family: 'Jua', 'AppleMyungjo', 'Batang', '바탕', serif; font-size: 1.4em; font-weight: 400; line-height: 1.2; letter-spacing: -.01em; }
 .site-brand__tagline { margin-top: 4px; font-size: 11px; line-height: 1.4; letter-spacing: 0; }
 .site-nav { gap: 3px; }
 .site-header__right { flex-wrap: wrap; align-items: center; gap: 8px; }

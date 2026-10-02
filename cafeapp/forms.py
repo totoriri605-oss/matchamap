@@ -91,7 +91,7 @@ class CafeRecommendationForm(forms.Form):
 def _grouped_city_choices():
     """(국가 이름, [(도시 키, 도시 이름), ...]) 형태로 묶어 드롭다운에 국가별로 보여준다."""
     return [
-        (country_name, [(key, city['name']) for key, city in CITIES.items() if city['country'] == code])
+        (str(_(country_name)), [(key, str(_(city['name']))) for key, city in CITIES.items() if city['country'] == code])
         for code, country_name in COUNTRIES.items()
     ]
 

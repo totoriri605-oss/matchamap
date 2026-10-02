@@ -1,10 +1,11 @@
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans "즐겨찾기 | 말차요정지도" %}</title>
+    {% include 'cafeapp/includes/brand_font.html' %}
     <style>
         * {
             box-sizing: border-box;
@@ -60,6 +61,15 @@
             font-size: 19px;
             font-weight: 700;
             text-decoration: none;
+        }
+
+        .site-brand__name {
+            display: block;
+            font-family: 'Jua', 'AppleMyungjo', 'Batang', '바탕', serif;
+            font-size: 1.4em;
+            font-weight: 400;
+            line-height: 1.25;
+            letter-spacing: -.01em;
         }
 
         .site-brand .icon {
@@ -264,7 +274,7 @@
         <div class="site-header__inner">
             <a class="site-brand" href="{% url 'cafe_list' %}">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
-                <span>{% trans "말차요정지도" %}</span>
+                <span class="site-brand__name">말차요정지도</span>
             </a>
             <a class="site-header__back" href="{% url 'cafe_list' %}">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg>
@@ -303,7 +313,7 @@
                         </h2>
                         <p class="cafe-card__area">
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.58-7-12a7 7 0 0 1 14 0c0 4.42-7 12-7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
-                            {{ cafe.area }}
+                            {% trans cafe.area %}
                         </p>
                         <dl class="cafe-card__stats">
                             <div>
