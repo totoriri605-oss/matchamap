@@ -1,4 +1,4 @@
-{% load i18n static %}
+{% load i18n static static_version %}
 <!DOCTYPE html>
 <html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
@@ -1171,7 +1171,7 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="{% static 'cafeapp/home.css' %}">
+    <link rel="stylesheet" href="{% static_v 'cafeapp/home.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>

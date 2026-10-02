@@ -1,7 +1,7 @@
 {% extends 'cafeapp/cafe_list.html' %}
-{% load static i18n %}
+{% load static i18n static_version %}
 {% block page_title %}말차 가이드 | 말차요정의 지도{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'cafeapp/guide.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static_v 'cafeapp/guide.css' %}">{% endblock %}
 {% block main_content %}
 <div class="matcha-guide">
     <section class="guide-hero" aria-labelledby="guide-title">

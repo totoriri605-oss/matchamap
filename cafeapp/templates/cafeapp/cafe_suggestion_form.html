@@ -1,11 +1,11 @@
-{% load static i18n %}
+{% load static i18n static_version %}
 <!DOCTYPE html>
 <html lang="{% get_current_language as LANGUAGE_CODE %}{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans "카페 제보 | 말차요정의 지도" %}</title>
-    <link rel="stylesheet" href="{% static 'cafeapp/suggestion.css' %}">
+    <link rel="stylesheet" href="{% static_v 'cafeapp/suggestion.css' %}">
     {% include 'cafeapp/includes/brand_font.html' %}
 </head>
 <body>

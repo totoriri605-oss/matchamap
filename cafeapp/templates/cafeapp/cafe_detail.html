@@ -1,7 +1,7 @@
 {% extends 'cafeapp/cafe_list.html' %}
-{% load static i18n %}
+{% load static i18n static_version %}
 {% block page_title %}{{ cafe.name }} | {% trans "말차요정지도" %}{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'cafeapp/detail.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static_v 'cafeapp/detail.css' %}">{% endblock %}
 {% block main_content %}
 <div class="cafe-detail">
     {% if messages %}<ul class="detail-messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
