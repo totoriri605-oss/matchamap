@@ -93,6 +93,8 @@ class CafeSuggestion(models.Model):
         APPROVED = 'approved', '승인'
         REJECTED = 'rejected', '거절'
 
+    country = models.CharField('국가', max_length=2, choices=list(COUNTRIES.items()), default='KR')
+    city = models.CharField('도시', max_length=30, choices=[(key, value['name']) for key, value in CITIES.items()], default='seoul')
     name = models.CharField(max_length=100)
     area = models.CharField(max_length=100)
     address = models.CharField(max_length=255)

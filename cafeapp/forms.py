@@ -1,5 +1,6 @@
 from django import forms
 
+from .locations import CITIES, COUNTRIES
 from .models import CafeSuggestion, Review
 
 
@@ -85,11 +86,23 @@ class CafeRecommendationForm(forms.Form):
     has_takeout = forms.BooleanField(label='테이크아웃 필수', required=False)
 
 
+def _grouped_city_choices():
+    """(국가 이름, [(도시 키, 도시 이름), ...]) 형태로 묶어 드롭다운에 국가별로 보여준다."""
+    return [
+        (country_name, [(key, city['name']) for key, city in CITIES.items() if city['country'] == code])
+        for code, country_name in COUNTRIES.items()
+    ]
+
+
 class CafeSuggestionForm(forms.ModelForm):
+    # 국가는 고른 도시에서 정해지므로 입력받지 않는다(어긋난 조합을 막기 위함).
+    city = forms.ChoiceField(label='도시', choices=_grouped_city_choices, initial='seoul')
+
     class Meta:
         model = CafeSuggestion
         fields = (
             'name',
+            'city',
             'area',
             'address',
             'menu_name',
@@ -104,6 +117,10 @@ class CafeSuggestionForm(forms.ModelForm):
             'price': '가격',
             'description': '설명',
         }
+
+    def save(self, commit=True):
+        self.instance.country = CITIES[self.cleaned_data['city']]['country']
+        return super().save(commit=commit)
 
 
 class ReviewForm(forms.ModelForm):

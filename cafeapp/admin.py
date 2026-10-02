@@ -245,8 +245,8 @@ class CafeAdmin(admin.ModelAdmin):
 
 @admin.register(CafeSuggestion)
 class CafeSuggestionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'area', 'status', 'created_at')
-    list_filter = ('status',)
+    list_display = ('name', 'country', 'city', 'area', 'status', 'created_at')
+    list_filter = ('status', 'country', 'city')
     actions = (
         'approve_and_create_cafes',
         'approve_suggestions',
@@ -260,6 +260,8 @@ class CafeSuggestionAdmin(admin.ModelAdmin):
         for suggestion in queryset:
             _, created = Cafe.objects.get_or_create(
                 name=suggestion.name,
+                country=suggestion.country,
+                city=suggestion.city,
                 area=suggestion.area,
                 address=suggestion.address,
                 menu_name=suggestion.menu_name,

@@ -166,6 +166,7 @@ a { color: inherit; }
 }
 
 .form-field input,
+.form-field select,
 .form-field textarea {
     width: 100%;
     padding: 12px 14px;
@@ -177,7 +178,8 @@ a { color: inherit; }
     font-size: 14px;
 }
 
-.form-field input {
+.form-field input,
+.form-field select {
     height: 46px;
 }
 
@@ -187,6 +189,7 @@ a { color: inherit; }
 }
 
 .form-field input:focus,
+.form-field select:focus,
 .form-field textarea:focus {
     outline: none;
     border-color: var(--brand-strong);
