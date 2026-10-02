@@ -1,9 +1,10 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ cafe.name }} | 말차요정지도</title>
+    <title>{{ cafe.name }} | {% trans "말차요정지도" %}</title>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; color: #26352a; font-family: Arial, sans-serif; background: #fafcf9; }
@@ -46,73 +47,74 @@
     </style>
 </head>
 <body>
-    <header><a href="{% url 'cafe_list' %}">🍵 말차요정지도</a></header>
+    <header><a href="{% url 'cafe_list' %}">{% trans "🍵 말차요정지도" %}</a></header>
     <main>
+        {% trans "정보 없음" as t_no_info %}{% trans "미등록" as t_not_set %}
         {% if messages %}<ul class="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
         <section class="cafe">
             <div>
-                {% if cafe.image %}<img src="{{ cafe.image.url }}" alt="{{ cafe.name }}">{% else %}<div class="image-placeholder" aria-label="대표 이미지 없음"></div>{% endif %}
+                {% if cafe.image %}<img src="{{ cafe.image.url }}" alt="{{ cafe.name }}">{% else %}<div class="image-placeholder" aria-label="{% trans "대표 이미지 없음" %}"></div>{% endif %}
             </div>
             <div>
                 <h1>{{ cafe.name }}</h1>
-                {% if cafe.is_matchayojung_pick %}<span class="matchayojung-pick-badge">말차요정 PICK</span>{% endif %}
-                <p class="info"><strong>지역</strong> {{ cafe.area }}</p>
-                <p class="info"><strong>주소</strong> {{ cafe.address }}</p>
-                <p class="info"><strong>영업시간</strong> {{ cafe.business_hours|default:"정보 없음" }}</p>
-                <p class="info"><strong>대표 메뉴</strong> {{ cafe.menu_name }}</p>
-                <p class="info"><strong>가격</strong> {% if cafe.price %}{{ cafe.price }}원{% else %}가격 정보 확인 중{% endif %}</p>
+                {% if cafe.is_matchayojung_pick %}<span class="matchayojung-pick-badge">{% trans "말차요정 PICK" %}</span>{% endif %}
+                <p class="info"><strong>{% trans "지역" %}</strong> {{ cafe.area }}</p>
+                <p class="info"><strong>{% trans "주소" %}</strong> {{ cafe.address }}</p>
+                <p class="info"><strong>{% trans "영업시간" %}</strong> {{ cafe.business_hours|default:t_no_info }}</p>
+                <p class="info"><strong>{% trans "대표 메뉴" %}</strong> {{ cafe.menu_name }}</p>
+                <p class="info"><strong>{% trans "가격" %}</strong> {% if cafe.price %}{% blocktrans with price=cafe.price %}{{ price }}원{% endblocktrans %}{% else %}{% trans "가격 정보 확인 중" %}{% endif %}</p>
                 <p class="info">{{ cafe.description }}</p>
                 <section class="taste-profile">
-                    <h2>말차 취향 정보</h2>
+                    <h2>{% trans "말차 취향 정보" %}</h2>
                     {% if cafe.matcha_strength or cafe.bitterness or cafe.sweetness or cafe.milkiness or cafe.matcha_aroma %}
                         <div class="taste-scores">
-                            <div class="taste-score"><span>진하기</span><strong>{{ cafe.matcha_strength|default:"미등록" }}</strong></div>
-                            <div class="taste-score"><span>쌉싸름함</span><strong>{{ cafe.bitterness|default:"미등록" }}</strong></div>
-                            <div class="taste-score"><span>단맛</span><strong>{{ cafe.sweetness|default:"미등록" }}</strong></div>
-                            <div class="taste-score"><span>우유맛</span><strong>{{ cafe.milkiness|default:"미등록" }}</strong></div>
-                            <div class="taste-score"><span>말차 향</span><strong>{{ cafe.matcha_aroma|default:"미등록" }}</strong></div>
+                            <div class="taste-score"><span>{% trans "진하기" %}</span><strong>{{ cafe.matcha_strength|default:t_not_set }}</strong></div>
+                            <div class="taste-score"><span>{% trans "쌉싸름함" %}</span><strong>{{ cafe.bitterness|default:t_not_set }}</strong></div>
+                            <div class="taste-score"><span>{% trans "단맛" %}</span><strong>{{ cafe.sweetness|default:t_not_set }}</strong></div>
+                            <div class="taste-score"><span>{% trans "우유맛" %}</span><strong>{{ cafe.milkiness|default:t_not_set }}</strong></div>
+                            <div class="taste-score"><span>{% trans "말차 향" %}</span><strong>{{ cafe.matcha_aroma|default:t_not_set }}</strong></div>
                         </div>
                     {% else %}
-                        <p class="taste-empty">맛 정보 준비 중입니다.</p>
+                        <p class="taste-empty">{% trans "맛 정보 준비 중입니다." %}</p>
                     {% endif %}
                     {% if cafe.is_decaf or cafe.is_vegan or cafe.has_parking or cafe.has_takeout %}
-                        <div class="taste-tags" aria-label="편의 정보">
-                            {% if cafe.is_decaf %}<span class="taste-tag">디카페인</span>{% endif %}
-                            {% if cafe.is_vegan %}<span class="taste-tag">비건 메뉴</span>{% endif %}
-                            {% if cafe.has_parking %}<span class="taste-tag">주차 가능</span>{% endif %}
-                            {% if cafe.has_takeout %}<span class="taste-tag">테이크아웃</span>{% endif %}
+                        <div class="taste-tags" aria-label="{% trans "편의 정보" %}">
+                            {% if cafe.is_decaf %}<span class="taste-tag">{% trans "디카페인" %}</span>{% endif %}
+                            {% if cafe.is_vegan %}<span class="taste-tag">{% trans "비건 메뉴" %}</span>{% endif %}
+                            {% if cafe.has_parking %}<span class="taste-tag">{% trans "주차 가능" %}</span>{% endif %}
+                            {% if cafe.has_takeout %}<span class="taste-tag">{% trans "테이크아웃" %}</span>{% endif %}
                         </div>
                     {% endif %}
                 </section>
                 {% if cafe.matchayojung_comment %}
                     <section class="matchayojung-note">
-                        <h2>🌿 말차요정 한줄평</h2>
+                        <h2>{% trans "🌿 말차요정 한줄평" %}</h2>
                         <p>“{{ cafe.matchayojung_comment }}”</p>
                     </section>
                 {% endif %}
-                {% if cafe.blog_url %}<a class="blog-review-link" href="{{ cafe.blog_url }}" target="_blank" rel="noopener noreferrer">말차요정 후기 보러가기 ↗</a>{% endif %}
-                {% if cafe.latitude and cafe.longitude %}<a class="button" href="{% url 'cafe_list' %}?country={{ cafe.country }}&amp;city={{ cafe.city }}&amp;q={{ cafe.name|urlencode }}">지도에서 보기</a>{% endif %}
+                {% if cafe.blog_url %}<a class="blog-review-link" href="{{ cafe.blog_url }}" target="_blank" rel="noopener noreferrer">{% trans "말차요정 후기 보러가기 ↗" %}</a>{% endif %}
+                {% if cafe.latitude and cafe.longitude %}<a class="button" href="{% url 'cafe_list' %}?country={{ cafe.country }}&amp;city={{ cafe.city }}&amp;q={{ cafe.name|urlencode }}">{% trans "지도에서 보기" %}</a>{% endif %}
                 <form class="favorite" method="post" action="{% url 'toggle_favorite' cafe.id %}">
                     {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    <button type="submit">{% if is_favorite %}♥ 가보고 싶어요{% else %}♡ 가보고 싶어요{% endif %}</button>
+                    <button type="submit">{% if is_favorite %}♥ {% trans "가보고 싶어요" %}{% else %}♡ {% trans "가보고 싶어요" %}{% endif %}</button>
                 </form>
             </div>
         </section>
         <section class="reviews">
-            <h2>말차러버들의 한줄평</h2>
-            <p class="review-summary">{% if average_rating %}평균 {{ average_rating|floatformat:1 }}점 · {% endif %}리뷰 {{ review_count }}개</p>
+            <h2>{% trans "말차러버들의 한줄평" %}</h2>
+            <p class="review-summary">{% if average_rating %}{% blocktrans with avg=average_rating|floatformat:1 %}평균 {{ avg }}점{% endblocktrans %} · {% endif %}{% blocktrans count counter=review_count %}리뷰 {{ counter }}개{% plural %}리뷰 {{ counter }}개{% endblocktrans %}</p>
             {% if user.is_authenticated %}
-                {% if has_reviewed %}<p>이 카페에 이미 리뷰를 작성했습니다.</p>
-                {% else %}<form class="review-form" method="post" action="{% url 'review_create' cafe.id %}">{% csrf_token %}{{ review_form.as_p }}<button type="submit">리뷰 등록</button></form>{% endif %}
-            {% else %}<p><a href="{% url 'login' %}?next={{ request.path|urlencode }}">로그인</a>하면 한줄평을 남길 수 있습니다.</p>{% endif %}
+                {% if has_reviewed %}<p>{% trans "이 카페에 이미 리뷰를 작성했습니다." %}</p>
+                {% else %}<form class="review-form" method="post" action="{% url 'review_create' cafe.id %}">{% csrf_token %}{{ review_form.as_p }}<button type="submit">{% trans "리뷰 등록" %}</button></form>{% endif %}
+            {% else %}<p>{% url 'login' as login_url %}{% with next=request.path|urlencode %}{% blocktrans %}<a href="{{ login_url }}?next={{ next }}">로그인</a>하면 한줄평을 남길 수 있습니다.{% endblocktrans %}{% endwith %}</p>{% endif %}
             <div>
                 {% for review in reviews %}
                     <article class="review">
                         <div class="review-head"><div><strong>{{ review.author.username }}</strong> <span class="stars">★ {{ review.rating }}/5</span></div><time datetime="{{ review.created_at|date:'c' }}">{{ review.created_at|date:"Y.m.d" }}</time></div>
                         <p>{{ review.comment }}</p>
-                        {% if user == review.author %}<form method="post" action="{% url 'review_delete' cafe.id review.id %}">{% csrf_token %}<button class="delete-button" type="submit">삭제</button></form>{% endif %}
+                        {% if user == review.author %}<form method="post" action="{% url 'review_delete' cafe.id review.id %}">{% csrf_token %}<button class="delete-button" type="submit">{% trans "삭제" %}</button></form>{% endif %}
                     </article>
-                {% empty %}<p>아직 리뷰가 없습니다. 첫 한줄평을 남겨보세요.</p>{% endfor %}
+                {% empty %}<p>{% trans "아직 리뷰가 없습니다. 첫 한줄평을 남겨보세요." %}</p>{% endfor %}
             </div>
         </section>
     </main>

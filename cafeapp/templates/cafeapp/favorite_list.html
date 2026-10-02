@@ -1,9 +1,10 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>즐겨찾기 | 말차요정지도</title>
+    <title>{% trans "즐겨찾기 | 말차요정지도" %}</title>
     <style>
         * {
             box-sizing: border-box;
@@ -263,11 +264,11 @@
         <div class="site-header__inner">
             <a class="site-brand" href="{% url 'cafe_list' %}">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16a8 8 0 0 1-8 9 8 8 0 0 1-8-9z"></path><path d="M9 11c0-3 1-5 1-7"></path><path d="M15 11c0-3-1-5-1-7"></path></svg>
-                <span>말차요정지도</span>
+                <span>{% trans "말차요정지도" %}</span>
             </a>
             <a class="site-header__back" href="{% url 'cafe_list' %}">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg>
-                홈으로 돌아가기
+                {% trans "홈으로 돌아가기" %}
             </a>
         </div>
     </header>
@@ -275,9 +276,9 @@
     <main class="page-content">
         <h1 class="page-title">
             <svg class="icon" style="width:22px;height:22px;color:var(--brand-strong);" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
-            가보고 싶은 말차 카페
+            {% trans "가보고 싶은 말차 카페" %}
         </h1>
-        <p class="page-subtitle">내가 즐겨찾기한 카페 {{ cafes|length }}곳</p>
+        <p class="page-subtitle">{% blocktrans count counter=cafes|length %}내가 즐겨찾기한 카페 {{ counter }}곳{% plural %}내가 즐겨찾기한 카페 {{ counter }}곳{% endblocktrans %}</p>
 
         <ul class="cafe-list" id="favorite-list">
             {% for cafe in cafes %}
@@ -286,12 +287,12 @@
                         {% if cafe.image %}
                             <img class="cafe-card__image" src="{{ cafe.image.url }}" alt="{{ cafe.name }}">
                         {% else %}
-                            <div class="cafe-card__placeholder" aria-label="대표 이미지 없음"></div>
+                            <div class="cafe-card__placeholder" aria-label="{% trans "대표 이미지 없음" %}"></div>
                         {% endif %}
                         <form class="favorite-form" method="post" action="{% url 'toggle_favorite' cafe.id %}">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{% url 'favorite_list' %}#favorite-list">
-                            <button class="favorite-button" type="submit" aria-label="즐겨찾기 해제">
+                            <button class="favorite-button" type="submit" aria-label="{% trans "즐겨찾기 해제" %}">
                                 <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
                             </button>
                         </form>
@@ -306,12 +307,12 @@
                         </p>
                         <dl class="cafe-card__stats">
                             <div>
-                                <dt>대표 메뉴</dt>
+                                <dt>{% trans "대표 메뉴" %}</dt>
                                 <dd>{{ cafe.menu_name }}</dd>
                             </div>
                             <div>
-                                <dt>가격</dt>
-                                <dd>{% if cafe.price %}{{ cafe.price }}원{% else %}가격 정보 확인 중{% endif %}</dd>
+                                <dt>{% trans "가격" %}</dt>
+                                <dd>{% if cafe.price %}{% blocktrans with price=cafe.price %}{{ price }}원{% endblocktrans %}{% else %}{% trans "가격 정보 확인 중" %}{% endif %}</dd>
                             </div>
                         </dl>
                     </div>
@@ -319,8 +320,8 @@
             {% empty %}
                 <li class="empty-state">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.6 8.4 2.4 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.6 0 5.4 3.4 4 6.7C19.5 16.4 12 21 12 21z"></path></svg>
-                    <p>아직 즐겨찾기한 카페가 없습니다.</p>
-                    <a href="{% url 'cafe_list' %}">말차 카페 둘러보기</a>
+                    <p>{% trans "아직 즐겨찾기한 카페가 없습니다." %}</p>
+                    <a href="{% url 'cafe_list' %}">{% trans "말차 카페 둘러보기" %}</a>
                 </li>
             {% endfor %}
         </ul>

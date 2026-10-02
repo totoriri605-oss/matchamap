@@ -1,9 +1,10 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>말차 취향 찾기 | 말차요정지도</title>
+    <title>{% trans "말차 취향 찾기 | 말차요정지도" %}</title>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; color: #26352a; font-family: Arial, sans-serif; background: #fafcf9; }
@@ -35,12 +36,12 @@
     </style>
 </head>
 <body>
-    <header><a href="{% url 'cafe_list' %}">🍵 말차요정지도</a></header>
+    <header><a href="{% url 'cafe_list' %}">{% trans "🍵 말차요정지도" %}</a></header>
     <main>
-        <h1>내 취향 말차 카페 찾기</h1>
-        <p class="description">원하는 맛을 1점부터 5점까지 선택하면 취향 차이가 가장 작은 카페를 최대 3곳 추천해드려요.</p>
+        <h1>{% trans "내 취향 말차 카페 찾기" %}</h1>
+        <p class="description">{% trans "원하는 맛을 1점부터 5점까지 선택하면 취향 차이가 가장 작은 카페를 최대 3곳 추천해드려요." %}</p>
         <form class="preference-form" method="get">
-            {% if form.errors %}<p>모든 맛 항목을 1점부터 5점 사이로 선택해주세요.</p>{% endif %}
+            {% if form.errors %}<p>{% trans "모든 맛 항목을 1점부터 5점 사이로 선택해주세요." %}</p>{% endif %}
             <div class="taste-fields">
                 <div class="field">{{ form.matcha_strength.label_tag }}{{ form.matcha_strength }}</div>
                 <div class="field">{{ form.bitterness.label_tag }}{{ form.bitterness }}</div>
@@ -54,30 +55,30 @@
                 <label>{{ form.has_parking }} {{ form.has_parking.label }}</label>
                 <label>{{ form.has_takeout }} {{ form.has_takeout.label }}</label>
             </div>
-            <button type="submit">내 취향 카페 추천받기</button>
+            <button type="submit">{% trans "내 취향 카페 추천받기" %}</button>
         </form>
         {% if form.is_bound and form.is_valid %}
             <section class="results">
-                <h2>취향과 가까운 말차 카페</h2>
+                <h2>{% trans "취향과 가까운 말차 카페" %}</h2>
                 {% if recommendations %}
                     <ol class="cards">
                         {% for result in recommendations %}
                             <li class="card" id="recommendation-{{ result.cafe.id }}">
                                 {% if result.cafe.image %}<img src="{{ result.cafe.image.url }}" alt="{{ result.cafe.name }}">{% else %}<div class="placeholder"></div>{% endif %}
                                 <div class="card-body">
-                                    <div class="match">{{ result.match_percentage }}% 일치</div>
-                                    <h3>{{ forloop.counter }}위 · {{ result.cafe.name }}</h3>
+                                    <div class="match">{{ result.match_percentage }}% {% trans "일치" %}</div>
+                                    <h3>{% blocktrans with rank=forloop.counter %}{{ rank }}위{% endblocktrans %} · {{ result.cafe.name }}</h3>
                                     <p class="reason">{{ result.reason }}</p>
-                                    <p class="scores">진하기 {{ result.cafe.matcha_strength }} · 쌉싸름함 {{ result.cafe.bitterness }} · 단맛 {{ result.cafe.sweetness }} · 우유맛 {{ result.cafe.milkiness }} · 말차 향 {{ result.cafe.matcha_aroma }}</p>
+                                    <p class="scores">{% trans "진하기" %} {{ result.cafe.matcha_strength }} · {% trans "쌉싸름함" %} {{ result.cafe.bitterness }} · {% trans "단맛" %} {{ result.cafe.sweetness }} · {% trans "우유맛" %} {{ result.cafe.milkiness }} · {% trans "말차 향" %} {{ result.cafe.matcha_aroma }}</p>
                                     <div class="actions">
-                                        <a class="detail-link" href="{% url 'cafe_detail' result.cafe.id %}">상세보기</a>
+                                        <a class="detail-link" href="{% url 'cafe_detail' result.cafe.id %}">{% trans "상세보기" %}</a>
                                         <form method="post" action="{% url 'toggle_favorite' result.cafe.id %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}#recommendation-{{ result.cafe.id }}"><button type="submit">{% if result.cafe.id in favorite_cafe_ids %}♥{% else %}♡{% endif %}</button></form>
                                     </div>
                                 </div>
                             </li>
                         {% endfor %}
                     </ol>
-                {% else %}<p class="empty">선택한 조건으로 추천할 수 있는 카페가 아직 없습니다.</p>{% endif %}
+                {% else %}<p class="empty">{% trans "선택한 조건으로 추천할 수 있는 카페가 아직 없습니다." %}</p>{% endif %}
             </section>
         {% endif %}
     </main>

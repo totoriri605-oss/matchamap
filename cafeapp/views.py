@@ -6,7 +6,7 @@ from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.utils.translation import get_language
+from django.utils.translation import get_language, gettext as _
 
 from .forms import (
     CafeRecommendationForm,
@@ -276,14 +276,14 @@ def cafe_recommendations(request):
                 if difference == min(differences.values())
             ]
             field_labels = {
-                'matcha_strength': '진하기',
-                'bitterness': '쌉싸름함',
-                'sweetness': '단맛',
-                'milkiness': '우유맛',
-                'matcha_aroma': '말차 향',
+                'matcha_strength': _('진하기'),
+                'bitterness': _('쌉싸름함'),
+                'sweetness': _('단맛'),
+                'milkiness': _('우유맛'),
+                'matcha_aroma': _('말차 향'),
             }
             matched_labels = [field_labels[name] for name in closest_fields[:2]]
-            reason = f"{', '.join(matched_labels)}이(가) 원하는 취향과 가장 비슷해요."
+            reason = _('%(labels)s이(가) 원하는 취향과 가장 비슷해요.') % {'labels': ', '.join(matched_labels)}
             ranked_cafes.append(
                 {
                     'cafe': cafe,
@@ -317,7 +317,7 @@ def review_create(request, cafe_id):
         return redirect('cafe_detail', cafe_id=cafe.id)
 
     if Review.objects.filter(cafe=cafe, author=request.user).exists():
-        messages.info(request, '이 카페에는 이미 리뷰를 작성했습니다.')
+        messages.info(request, _('이 카페에는 이미 리뷰를 작성했습니다.'))
         return redirect('cafe_detail', cafe_id=cafe.id)
 
     form = ReviewForm(request.POST)
@@ -326,7 +326,7 @@ def review_create(request, cafe_id):
         review.cafe = cafe
         review.author = request.user
         review.save()
-        messages.success(request, '리뷰가 등록되었습니다.')
+        messages.success(request, _('리뷰가 등록되었습니다.'))
         return redirect('cafe_detail', cafe_id=cafe.id)
 
     favorite_cafe_ids = _favorite_cafe_ids(request.user)
@@ -360,7 +360,7 @@ def review_delete(request, cafe_id, review_id):
     )
     if request.method == 'POST':
         review.delete()
-        messages.success(request, '리뷰가 삭제되었습니다.')
+        messages.success(request, _('리뷰가 삭제되었습니다.'))
     return redirect('cafe_detail', cafe_id=cafe_id)
 
 
@@ -374,7 +374,7 @@ def signup(request):
             user = form.save()
             # 인증 백엔드가 2개(ModelBackend, allauth)라서 어느 쪽으로 로그인할지 지정해야 한다.
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            messages.success(request, '회원가입이 완료되었습니다.')
+            messages.success(request, _('회원가입이 완료되었습니다.'))
             return redirect('cafe_list')
     else:
         form = UserCreationForm()

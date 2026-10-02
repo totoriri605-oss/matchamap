@@ -71,3 +71,78 @@ class TranslationCatalogTests(TestCase):
             if not msgid or '\0' in msgid:
                 continue
             self.assertEqual(compiled.get(msgid), msgstr, f'.mo가 오래됨: {msgid}')
+
+
+class EnglishScreensTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        from django.contrib.auth import get_user_model
+
+        from .models import Cafe, Favorite
+
+        cls.cafe = Cafe.objects.create(
+            name='Test cafe', country='KR', city='seoul', area='성수', address='addr',
+            menu_name='Latte', price=6500, description='d', business_hours='10:00',
+            matcha_strength=4, bitterness=3, sweetness=2, milkiness=3, matcha_aroma=4,
+        )
+        cls.user = get_user_model().objects.create_user('reader', password='pw-for-tests')
+        Favorite.objects.create(user=cls.user, cafe=cls.cafe)
+
+    def english(self, url, **params):
+        self.client.cookies['django_language'] = 'en'
+        return self.client.get(url, params)
+
+    def test_catalog_is_translated(self):
+        response = self.english(reverse('cafe_catalog'))
+
+        for text in ('Reset filters', 'Choose a city', 'Matcha strength · min', 'Your next cup of matcha',
+                     'Recommended · coming soon', '1 matcha cafe in total', 'All of Seoul', '>Seoul</a>', '>Tokyo</a>'):
+            self.assertContains(response, text)
+        self.assertNotContains(response, '조건 초기화')
+        self.assertContains(response, 'value="성수"')  # 필터 값은 한국어 그대로
+
+    def test_catalog_empty_state_and_active_filters_are_translated(self):
+        response = self.english(reverse('cafe_catalog'), q='nothing-matches', area='성수')
+
+        self.assertContains(response, 'Search: nothing-matches')
+        self.assertContains(response, "We couldn't find a cafe in Seoul that matches your filters.")
+        self.assertContains(response, 'Area: Seongsu')
+
+    def test_detail_page_is_translated(self):
+        response = self.english(reverse('cafe_detail', args=[self.cafe.id]))
+
+        for text in ('Hours', 'Address', 'Matcha taste profile', 'Strength', 'Milkiness', 'Add to favorites',
+                     'No reviews yet. Be the first to leave one!', '>Log in</a> to leave a one-line review.'):
+            self.assertContains(response, text)
+        self.assertNotContains(response, '영업시간')
+
+    def test_recommendations_page_is_translated(self):
+        response = self.english(reverse('cafe_recommendations'))
+
+        self.assertContains(response, 'Find my matcha cafe')
+        self.assertContains(response, 'Preferred strength')
+        self.assertContains(response, 'Decaf required')
+
+    def test_recommendation_result_is_translated(self):
+        response = self.english(reverse('cafe_recommendations'), matcha_strength=4, bitterness=3, sweetness=2,
+                                milkiness=3, matcha_aroma=4)
+
+        self.assertContains(response, '100% match')
+        self.assertContains(response, '#1')
+        self.assertContains(response, 'most closely')
+
+    def test_favorites_page_and_messages_are_translated(self):
+        self.client.login(username='reader', password='pw-for-tests')
+        favorites = self.english(reverse('favorite_list'))
+        self.assertContains(favorites, '1 saved cafe')
+        self.assertContains(favorites, 'Remove from favorites')
+
+        posted = self.client.post(reverse('review_create', args=[self.cafe.id]), {'rating': 5, 'comment': 'nice'}, follow=True)
+        self.assertContains(posted, 'Your review has been posted.')
+
+    def test_korean_remains_the_default_for_translated_screens(self):
+        response = self.client.get(reverse('cafe_catalog'))
+
+        self.assertContains(response, '조건 초기화')
+        self.assertContains(response, '총 1개의 말차 카페')
+        self.assertNotContains(response, 'Reset filters')

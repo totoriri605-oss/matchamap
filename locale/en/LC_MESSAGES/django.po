@@ -380,3 +380,345 @@ msgstr "Marunouchi"
 #. dynamic: 동네 이름은 DB 값을 그대로 번역해서 보여준다
 msgid "시부야"
 msgstr "Shibuya"
+
+msgid "카페 목록 | 말차요정의 지도"
+msgstr "Cafes | Matcha Fairy Map"
+
+msgid "취향에 맞는 말차 카페를 한눈에 비교해보세요."
+msgstr "Compare matcha cafes that match your taste at a glance."
+
+msgid "현재 검색 조건 기준"
+msgstr "Based on current search"
+
+msgid "도시 선택"
+msgstr "Choose a city"
+
+msgid "카페 이름이나 지역을 검색해보세요. (예: 성수, 오설록)"
+msgstr "Search by cafe name or area (e.g. Seongsu, Osulloc)"
+
+msgid "오늘은 어떤 말차가 좋을까요?"
+msgstr "Which matcha sounds good today?"
+
+msgid "조건 초기화"
+msgstr "Reset filters"
+
+msgid "지역"
+msgstr "Area"
+
+msgid "말차 진하기 · 이상"
+msgstr "Matcha strength · min"
+
+msgid "쌉싸름함 · 이상"
+msgstr "Bitterness · min"
+
+msgid "단맛 · 이하"
+msgstr "Sweetness · max"
+
+msgid "말차 향 · 이상"
+msgstr "Aroma · min"
+
+msgid "가격대"
+msgstr "Price range"
+
+msgid "준비 중"
+msgstr "Coming soon"
+
+msgid "🌿 말차요정 PICK"
+msgstr "🌿 Matcha Fairy's PICK"
+
+msgid "현재 적용 조건"
+msgstr "Active filters"
+
+msgid "나의 다음 말차 한 잔"
+msgstr "Your next cup of matcha"
+
+msgid "정렬 기준"
+msgstr "Sort by"
+
+msgid "기본순"
+msgstr "Default"
+
+msgid "추천순 · 준비 중"
+msgstr "Recommended · coming soon"
+
+msgid "인기순 · 준비 중"
+msgstr "Popular · coming soon"
+
+msgid "가격 낮은순 · 준비 중"
+msgstr "Price: low to high · coming soon"
+
+msgid "최신순 · 준비 중"
+msgstr "Newest · coming soon"
+
+msgid "잠깐, 취향의 폭을 넓혀볼까요?"
+msgstr "Wait, shall we widen your taste?"
+
+#, python-format
+msgid "총 %(counter)s개의 말차 카페"
+msgid_plural "총 %(counter)s개의 말차 카페"
+msgstr[0] "%(counter)s matcha cafe in total"
+msgstr[1] "%(counter)s matcha cafes in total"
+
+#, python-format
+msgid "%(city)s 전체"
+msgstr "All of %(city)s"
+
+#, python-format
+msgid "검색: %(query)s"
+msgstr "Search: %(query)s"
+
+#, python-format
+msgid "지역: %(area)s"
+msgstr "Area: %(area)s"
+
+#, python-format
+msgid ": %(value)s점"
+msgstr ": %(value)s"
+
+#, python-format
+msgid "%(counter)s곳"
+msgid_plural "%(counter)s곳"
+msgstr[0] "%(counter)s cafe"
+msgstr[1] "%(counter)s cafes"
+
+#, python-format
+msgid "%(city)s에서 조건에 맞는 카페를 찾지 못했어요."
+msgstr "We couldn't find a cafe in %(city)s that matches your filters."
+
+#, python-format
+msgid "조건 해제하고 %(city)s 전체 보기 →"
+msgstr "Clear filters and see all of %(city)s →"
+
+msgid "말차요정지도"
+msgstr "Matcha Fairy Map"
+
+msgid "🍵 말차요정지도"
+msgstr "🍵 Matcha Fairy Map"
+
+msgid "정보 없음"
+msgstr "No info"
+
+msgid "미등록"
+msgstr "Not set"
+
+msgid "주소"
+msgstr "Address"
+
+msgid "영업시간"
+msgstr "Hours"
+
+msgid "말차 취향 정보"
+msgstr "Matcha taste profile"
+
+msgid "진하기"
+msgstr "Strength"
+
+msgid "우유맛"
+msgstr "Milkiness"
+
+msgid "맛 정보 준비 중입니다."
+msgstr "Taste info coming soon."
+
+msgid "편의 정보"
+msgstr "Amenities"
+
+msgid "🌿 말차요정 한줄평"
+msgstr "🌿 Matcha Fairy's take"
+
+msgid "말차요정 후기 보러가기 ↗"
+msgstr "Read the Matcha Fairy's review ↗"
+
+msgid "지도에서 보기"
+msgstr "View on map"
+
+msgid "말차러버들의 한줄평"
+msgstr "Matcha lovers' one-liners"
+
+msgid "이 카페에 이미 리뷰를 작성했습니다."
+msgstr "You've already reviewed this cafe."
+
+msgid "리뷰 등록"
+msgstr "Post review"
+
+#, python-format
+msgid "<a href=\"%(login_url)s?next=%(next)s\">로그인</a>하면 한줄평을 남길 수 있습니다."
+msgstr "<a href=\"%(login_url)s?next=%(next)s\">Log in</a> to leave a one-line review."
+
+msgid "삭제"
+msgstr "Delete"
+
+msgid "아직 리뷰가 없습니다. 첫 한줄평을 남겨보세요."
+msgstr "No reviews yet. Be the first to leave one!"
+
+#, python-format
+msgid "평균 %(avg)s점"
+msgstr "Average %(avg)s / 5"
+
+#, python-format
+msgid "리뷰 %(counter)s개"
+msgid_plural "리뷰 %(counter)s개"
+msgstr[0] "%(counter)s review"
+msgstr[1] "%(counter)s reviews"
+
+msgid "말차 취향 찾기 | 말차요정지도"
+msgstr "Find by Taste | Matcha Fairy Map"
+
+msgid "내 취향 말차 카페 찾기"
+msgstr "Find my matcha cafe"
+
+msgid "원하는 맛을 1점부터 5점까지 선택하면 취향 차이가 가장 작은 카페를 최대 3곳 추천해드려요."
+msgstr "Pick the flavors you want from 1 to 5 and we'll recommend up to 3 cafes closest to your taste."
+
+msgid "모든 맛 항목을 1점부터 5점 사이로 선택해주세요."
+msgstr "Please choose a score from 1 to 5 for every flavor."
+
+msgid "내 취향 카페 추천받기"
+msgstr "Get my cafe recommendations"
+
+msgid "취향과 가까운 말차 카페"
+msgstr "Matcha cafes close to your taste"
+
+msgid "일치"
+msgstr "match"
+
+msgid "상세보기"
+msgstr "View details"
+
+msgid "선택한 조건으로 추천할 수 있는 카페가 아직 없습니다."
+msgstr "There are no cafes to recommend with these conditions yet."
+
+#, python-format
+msgid "%(rank)s위"
+msgstr "#%(rank)s"
+
+msgid "즐겨찾기 | 말차요정지도"
+msgstr "Favorites | Matcha Fairy Map"
+
+msgid "홈으로 돌아가기"
+msgstr "Back to home"
+
+msgid "가보고 싶은 말차 카페"
+msgstr "Matcha cafes I want to visit"
+
+msgid "즐겨찾기 해제"
+msgstr "Remove from favorites"
+
+msgid "아직 즐겨찾기한 카페가 없습니다."
+msgstr "You haven't saved any cafes yet."
+
+msgid "말차 카페 둘러보기"
+msgstr "Browse matcha cafes"
+
+#, python-format
+msgid "내가 즐겨찾기한 카페 %(counter)s곳"
+msgid_plural "내가 즐겨찾기한 카페 %(counter)s곳"
+msgstr[0] "%(counter)s saved cafe"
+msgstr[1] "%(counter)s saved cafes"
+
+msgid "선택 안 함"
+msgstr "Any"
+
+msgid "{score}점"
+msgstr "{score} pts"
+
+msgid "진하기(이상)"
+msgstr "Strength (min)"
+
+msgid "쌉싸름함(이상)"
+msgstr "Bitterness (min)"
+
+msgid "단맛(이하)"
+msgstr "Sweetness (max)"
+
+msgid "우유맛(이하)"
+msgstr "Milkiness (max)"
+
+msgid "말차 향(이상)"
+msgstr "Aroma (min)"
+
+msgid "원하는 진하기"
+msgstr "Preferred strength"
+
+msgid "원하는 쌉싸름함"
+msgstr "Preferred bitterness"
+
+msgid "원하는 단맛"
+msgstr "Preferred sweetness"
+
+msgid "원하는 우유맛"
+msgstr "Preferred milkiness"
+
+msgid "원하는 말차 향"
+msgstr "Preferred aroma"
+
+msgid "디카페인 필수"
+msgstr "Decaf required"
+
+msgid "비건 메뉴 필수"
+msgstr "Vegan menu required"
+
+msgid "주차 필수"
+msgstr "Parking required"
+
+msgid "테이크아웃 필수"
+msgstr "Takeout required"
+
+msgid "도시"
+msgstr "City"
+
+msgid "카페 이름"
+msgstr "Cafe name"
+
+msgid "대표 말차 메뉴"
+msgstr "Signature matcha menu"
+
+msgid "설명"
+msgstr "Description"
+
+msgid "별점"
+msgstr "Rating"
+
+msgid "한줄평"
+msgstr "One-line review"
+
+msgid "한줄평을 입력해주세요."
+msgstr "Please enter a one-line review."
+
+msgid "이 카페의 말차는 어땠나요?"
+msgstr "How was the matcha at this cafe?"
+
+#, python-format
+msgid "%(labels)s이(가) 원하는 취향과 가장 비슷해요."
+msgstr "%(labels)s matches your preferred taste most closely."
+
+msgid "이 카페에는 이미 리뷰를 작성했습니다."
+msgstr "You've already reviewed this cafe."
+
+msgid "리뷰가 등록되었습니다."
+msgstr "Your review has been posted."
+
+msgid "리뷰가 삭제되었습니다."
+msgstr "Your review has been deleted."
+
+msgid "회원가입이 완료되었습니다."
+msgstr "Your account has been created."
+
+#. dynamic: 도시 이름은 템플릿 변수로 번역해서 보여준다
+msgid "서울"
+msgstr "Seoul"
+
+#. dynamic: 도시 이름은 템플릿 변수로 번역해서 보여준다
+msgid "도쿄"
+msgstr "Tokyo"
+
+#. dynamic: 도시 이름은 템플릿 변수로 번역해서 보여준다
+msgid "오사카"
+msgstr "Osaka"
+
+#. dynamic: 도시 이름은 템플릿 변수로 번역해서 보여준다
+msgid "샌프란시스코"
+msgstr "San Francisco"
+
+#. dynamic: 도시 이름은 템플릿 변수로 번역해서 보여준다
+msgid "제주"
+msgstr "Jeju"

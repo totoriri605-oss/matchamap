@@ -14,6 +14,7 @@ PO = ROOT / 'locale' / 'en' / 'LC_MESSAGES' / 'django.po'
 TRANS_RE = re.compile(r'{%\s*trans\s+"((?:[^"\\]|\\.)*)"')
 BLOCK_RE = re.compile(r'{%\s*blocktrans\b[^%]*%}(.*?){%\s*(?:plural|endblocktrans)', re.S)
 VAR_RE = re.compile(r'{{\s*(\w+)\s*}}')
+PY_RE = re.compile(r"\b_\('((?:[^'\\]|\\.)*)'\)")
 
 
 def template_msgids():
@@ -25,7 +26,17 @@ def template_msgids():
         for m in BLOCK_RE.finditer(text):
             body = VAR_RE.sub(r'%(\1)s', m.group(1)).strip()
             found.setdefault(' '.join(body.split()), path.name)
+    # 파이썬 코드의 _('...') (gettext / gettext_lazy 별칭)
+    for path in (ROOT / 'cafeapp').glob('*.py'):
+        if path.name.startswith('test') or path.name.startswith('import_'):
+            continue
+        for m in PY_RE.finditer(path.read_text(encoding='utf-8')):
+            found.setdefault(m.group(1), path.name)
     return found
+
+
+def unescape(text):
+    return text.replace('\\"', '"').replace('\\\\', '\\')
 
 
 def po_entries():
@@ -47,7 +58,7 @@ def po_entries():
     if msgid is not None:
         entries[msgid] = msgstr
     entries.pop('', None)
-    return entries
+    return {unescape(k): v for k, v in entries.items()}
 
 
 def dynamic_msgids():
